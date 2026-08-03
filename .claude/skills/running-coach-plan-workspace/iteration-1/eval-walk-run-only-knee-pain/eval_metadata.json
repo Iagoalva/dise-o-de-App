@@ -1,0 +1,12 @@
+{
+  "eval_id": 5,
+  "eval_name": "walk-run-only-knee-pain",
+  "prompt": "Tengo un atleta de 58 años con bastante sobrepeso y dolor crónico en las rodillas. Me dijo explícitamente que no quiere correr, que solo quiere caminar y trotar un poco para moverse más. Puede 3 días por semana. ¿Qué plan le armo?",
+  "assertions": [
+    "El plan NO está enmarcado como una progresión hacia trote continuo ('algún día vas a poder correr'), sino como una rutina de caminar-trotar sostenida en el tiempo",
+    "El plan menciona explícitamente el dolor de rodilla y ajusta las recomendaciones en consecuencia (terreno, calzado, o precaución)",
+    "El progreso se mide por consistencia o tiempo activo total, no por minutos de trote continuo alcanzados",
+    "El plan usa 3 días por semana con descanso entre sesiones",
+    "El plan no empuja aumentos agresivos de intensidad dado el sobrepeso y el dolor crónico"
+  ]
+}

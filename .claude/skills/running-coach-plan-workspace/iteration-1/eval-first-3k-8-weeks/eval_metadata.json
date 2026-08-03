@@ -1,0 +1,12 @@
+{
+  "eval_id": 4,
+  "eval_name": "first-3k-8-weeks",
+  "prompt": "Una mujer de 45 años se anotó en la app, quiere correr su primera carrera pero nunca corrió y no tiene mucho tiempo para entrenar. Le da un poco de miedo comprometerse a algo largo. Tiene 8 semanas hasta una carrera de 3K en su ciudad. Puede entrenar 3 días por semana.",
+  "assertions": [
+    "El plan está construido específicamente para la distancia 3K (no defaultea a 5K u otra distancia)",
+    "El plan cubre las 8 semanas disponibles hasta la carrera",
+    "El plan arranca con caminar-trotar dado que nunca corrió",
+    "El plan incluye un taper (reducción de volumen) antes de la carrera",
+    "El plan usa 3 días por semana"
+  ]
+}

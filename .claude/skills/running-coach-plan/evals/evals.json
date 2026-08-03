@@ -5,31 +5,67 @@
       "id": 1,
       "prompt": "Tengo una atleta de 34 años registrada en la app, nunca corrió antes, quiere correr una 10K en 12 semanas. Puede entrenar 3 días por semana: lunes, miércoles y sábado. Armale el plan de entrenamiento semana por semana.",
       "expected_output": "Plan semana a semana de 12 semanas, empezando con caminar-trotar (porque nunca corrió) y avanzando de forma gradual hacia trote continuo, respetando los 3 días indicados, con fases claras y taper antes de la carrera. Si el plan detecta que 12 semanas es justo/insuficiente para nivel cero yendo a 10K, debería decirlo con honestidad y ofrecer una alternativa.",
-      "files": []
+      "files": [],
+      "expectations": [
+        "El plan arranca con intervalos de caminar-trotar (no trote continuo) en las primeras semanas, porque la atleta nunca corrió",
+        "El plan respeta los 3 días específicos indicados (lunes, miércoles, sábado) o los menciona explícitamente",
+        "El plan cubre semana a semana hasta la semana 12, o explica honestamente por qué 12 semanas puede ser justo para nivel cero y ofrece una alternativa",
+        "El plan incluye una reducción de volumen (taper) en la o las últimas semanas antes de la carrera",
+        "El plan marca explícitamente días de descanso",
+        "El lenguaje evita jerga técnica sin explicar (ej. no usa términos como 'fartlek', 'zona 2', 'umbral' sin aclarar qué significan)"
+      ]
     },
     {
       "id": 2,
       "prompt": "Un atleta de 52 años, corre ocasionalmente (puede trotar unos 15 minutos seguidos), tiene una lesión vieja en la rodilla, y su objetivo es bajar de peso corriendo. Puede entrenar 4 días por semana. Armá el plan.",
       "expected_output": "Plan en bloques de 4 semanas (sin fecha de carrera) enfocado en frecuencia sostenible antes que intensidad, con una mención breve sobre la lesión de rodilla y la edad (recomendación de chequeo médico o cautela), usando los 4 días disponibles sin forzar volumen excesivo.",
-      "files": []
+      "files": [],
+      "expectations": [
+        "El plan está estructurado en bloques (ej. de 4 semanas) sin fecha de carrera fija, no como un plan de carrera con distancia y fecha",
+        "El plan menciona explícitamente la lesión de rodilla (precaución, atención a señales de dolor, o similar) en vez de ignorarla",
+        "El plan hace alguna mención a la edad (52) sugiriendo cautela o chequeo médico, sin ser alarmista ni repetitivo",
+        "El plan prioriza frecuencia y consistencia sostenible por sobre intensidad alta (no mete series o esfuerzos muy exigentes desde el arranque)",
+        "El plan usa los 4 días disponibles por semana"
+      ]
     },
     {
       "id": 3,
       "prompt": "Tengo un chico de 24 años que quiere empezar a correr de cero, nunca hizo actividad física, su objetivo es simplemente 'poder correr 30 minutos seguidos'. Tiene 5 días libres por semana pero prefiere entrenar solo 3. ¿Qué plan le armo?",
       "expected_output": "Plan en bloques de 4 semanas empezando con caminar-trotar desde cero, usando 3 días por semana (respetando la preferencia del atleta aunque tenga más días libres), progresando de forma gradual hasta el hito de 30 minutos de trote continuo, sin jerga técnica.",
-      "files": []
+      "files": [],
+      "expectations": [
+        "El plan arranca con caminar-trotar en vez de trote continuo, dado que nunca hizo actividad física",
+        "El plan usa 3 días por semana (respeta la preferencia del atleta) y no los 5 días que tiene libres",
+        "El plan está orientado a un hito concreto: sostener 30 minutos de trote continuo",
+        "La progresión es gradual semana a semana, sin saltos bruscos en minutos de trote",
+        "El lenguaje es simple, sin jerga técnica sin explicar"
+      ]
     },
     {
       "id": 4,
       "prompt": "Una mujer de 45 años se anotó en la app, quiere correr su primera carrera pero nunca corrió y no tiene mucho tiempo para entrenar. Le da un poco de miedo comprometerse a algo largo. Tiene 8 semanas hasta una carrera de 3K en su ciudad. Puede entrenar 3 días por semana.",
       "expected_output": "Plan de 8 semanas para objetivo 3K usando la referencia de 3K (no 5K), con caminar-trotar desde el inicio por no tener experiencia, 3 días por semana, fases claras y taper antes de la carrera.",
-      "files": []
+      "files": [],
+      "expectations": [
+        "El plan está construido específicamente para la distancia 3K (no defaultea a 5K u otra distancia)",
+        "El plan cubre las 8 semanas disponibles hasta la carrera",
+        "El plan arranca con caminar-trotar dado que nunca corrió",
+        "El plan incluye un taper (reducción de volumen) antes de la carrera",
+        "El plan usa 3 días por semana"
+      ]
     },
     {
       "id": 5,
       "prompt": "Tengo un atleta de 58 años con bastante sobrepeso y dolor crónico en las rodillas. Me dijo explícitamente que no quiere correr, que solo quiere caminar y trotar un poco para moverse más. Puede 3 días por semana. ¿Qué plan le armo?",
       "expected_output": "Plan que usa la lógica de caminar-trotar como objetivo en sí mismo (no un plan que progresa hacia trote continuo como meta), con foco en consistencia y tiempo activo total en vez de minutos de trote, considerando el dolor de rodilla y el sobrepeso, 3 días por semana con descanso entre sesiones.",
-      "files": []
+      "files": [],
+      "expectations": [
+        "El plan NO está enmarcado como una progresión hacia trote continuo ('algún día vas a poder correr'), sino como una rutina de caminar-trotar sostenida en el tiempo",
+        "El plan menciona explícitamente el dolor de rodilla y ajusta las recomendaciones en consecuencia (terreno, calzado, o precaución)",
+        "El progreso se mide por consistencia o tiempo activo total, no por minutos de trote continuo alcanzados",
+        "El plan usa 3 días por semana con descanso entre sesiones",
+        "El plan no empuja aumentos agresivos de intensidad dado el sobrepeso y el dolor crónico"
+      ]
     }
   ]
 }

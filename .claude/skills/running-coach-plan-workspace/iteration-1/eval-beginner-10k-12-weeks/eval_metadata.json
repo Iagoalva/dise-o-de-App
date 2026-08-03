@@ -1,0 +1,13 @@
+{
+  "eval_id": 1,
+  "eval_name": "beginner-10k-12-weeks",
+  "prompt": "Tengo una atleta de 34 años registrada en la app, nunca corrió antes, quiere correr una 10K en 12 semanas. Puede entrenar 3 días por semana: lunes, miércoles y sábado. Armale el plan de entrenamiento semana por semana.",
+  "assertions": [
+    "El plan arranca con intervalos de caminar-trotar (no trote continuo) en las primeras semanas, porque la atleta nunca corrió",
+    "El plan respeta los 3 días específicos indicados (lunes, miércoles, sábado) o los menciona explícitamente",
+    "El plan cubre semana a semana hasta la semana 12, o explica honestamente por qué 12 semanas puede ser justo para nivel cero y ofrece una alternativa",
+    "El plan incluye una reducción de volumen (taper) en la o las últimas semanas antes de la carrera",
+    "El plan marca explícitamente días de descanso",
+    "El lenguaje evita jerga técnica sin explicar (ej. no usa términos como 'fartlek', 'zona 2', 'umbral' sin aclarar qué significan)"
+  ]
+}

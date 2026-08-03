@@ -1,0 +1,12 @@
+{
+  "eval_id": 3,
+  "eval_name": "zero-to-30-min",
+  "prompt": "Tengo un chico de 24 años que quiere empezar a correr de cero, nunca hizo actividad física, su objetivo es simplemente 'poder correr 30 minutos seguidos'. Tiene 5 días libres por semana pero prefiere entrenar solo 3. ¿Qué plan le armo?",
+  "assertions": [
+    "El plan arranca con caminar-trotar en vez de trote continuo, dado que nunca hizo actividad física",
+    "El plan usa 3 días por semana (respeta la preferencia del atleta) y no los 5 días que tiene libres",
+    "El plan está orientado a un hito concreto: sostener 30 minutos de trote continuo",
+    "La progresión es gradual semana a semana, sin saltos bruscos en minutos de trote",
+    "El lenguaje es simple, sin jerga técnica sin explicar"
+  ]
+}

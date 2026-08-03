@@ -1,0 +1,12 @@
+{
+  "eval_id": 2,
+  "eval_name": "weight-loss-knee-injury",
+  "prompt": "Un atleta de 52 años, corre ocasionalmente (puede trotar unos 15 minutos seguidos), tiene una lesión vieja en la rodilla, y su objetivo es bajar de peso corriendo. Puede entrenar 4 días por semana. Armá el plan.",
+  "assertions": [
+    "El plan está estructurado en bloques (ej. de 4 semanas) sin fecha de carrera fija, no como un plan de carrera con distancia y fecha",
+    "El plan menciona explícitamente la lesión de rodilla (precaución, atención a señales de dolor, o similar) en vez de ignorarla",
+    "El plan hace alguna mención a la edad (52) sugiriendo cautela o chequeo médico, sin ser alarmista ni repetitivo",
+    "El plan prioriza frecuencia y consistencia sostenible por sobre intensidad alta (no mete series o esfuerzos muy exigentes desde el arranque)",
+    "El plan usa los 4 días disponibles por semana"
+  ]
+}
