@@ -1,6 +1,6 @@
 ---
 name: running-coach-plan
-description: Genera planes de entrenamiento de running personalizados, semana a semana y sesión por sesión, a partir de los datos que un atleta carga al registrarse en la app (objetivo, nivel actual, días disponibles, edad y salud). Usar esta skill cada vez que el usuario pida armar, ajustar o explicar un plan de entrenamiento para correr, mencione un objetivo de carrera (5K, 10K, 21K/media maratón) o un objetivo general de running (empezar a correr, bajar de peso corriendo, mejorar resistencia, correr X minutos sin parar), o describa el perfil de un atleta (edad, si nunca corrió, lesiones, días libres) y necesite saber qué debería entrenar. Pensada para principiantes de 20 a 60 años sin conocimientos previos de running, así que prioriza siempre explicaciones simples y sin jerga. Disparar también ante pedidos como "armame un plan de running", "qué entreno esta semana", "coach de running" o "cuánto debería correr para [objetivo]".
+description: Genera planes de entrenamiento de running personalizados, semana a semana y sesión por sesión, a partir de los datos que un atleta carga al registrarse en la app (objetivo, nivel actual, días disponibles, edad y salud). Usar esta skill cada vez que el usuario pida armar, ajustar o explicar un plan de entrenamiento para correr, mencione un objetivo de carrera (3K, 5K, 10K, 21K/media maratón) o un objetivo general de running (empezar a correr, bajar de peso corriendo, mejorar resistencia, correr X minutos sin parar), incluyendo atletas que no pueden o no quieren llegar a trotar continuo y solo buscan sostener una rutina de caminar y trotar. Usar también cuando se describa el perfil de un atleta (edad, si nunca corrió, lesiones, días libres, si camina/trota en vez de correr) y necesite saber qué debería entrenar. Pensada para principiantes de 20 a 60 años sin conocimientos previos de running, así que prioriza siempre explicaciones simples y sin jerga. Disparar también ante pedidos como "armame un plan de running", "qué entreno esta semana", "coach de running" o "cuánto debería correr para [objetivo]".
 ---
 
 # Coach de running
@@ -13,7 +13,7 @@ El público de la app nunca entrenó running y no tiene por qué saber qué es u
 
 Antes de escribir el plan necesitás cuatro cosas. Si el usuario no las dio todas, pedí las que falten en vez de inventarlas — un plan armado sobre un supuesto equivocado (por ejemplo, asumir que puede correr cuando en realidad nunca corrió) puede lastimar a alguien.
 
-1. **Objetivo**: una carrera con distancia y fecha (5K, 10K o 21K), o un objetivo general sin fecha fija (empezar a correr, bajar de peso, mejorar resistencia, correr X minutos seguidos).
+1. **Objetivo**: una carrera con distancia y fecha (3K, 5K, 10K o 21K), un objetivo general sin fecha fija (empezar a correr, bajar de peso, mejorar resistencia, correr X minutos seguidos), o sostener una rutina de caminar y trotar sin el objetivo de llegar a correr continuo.
 2. **Nivel actual**: lo más útil es "¿cuánto podés correr hoy sin parar?" (nada / algunos minutos / ya corre regularmente). Sirve más que etiquetas como "principiante/intermedio" porque ancla el punto de partida real.
 3. **Días disponibles por semana**: cuántos y, si los dio, cuáles.
 4. **Edad y salud**: edad, lesiones previas o condiciones médicas.
@@ -22,8 +22,9 @@ Si la persona tiene 40 años o más, o mencionó alguna lesión/condición médi
 
 ## Paso 2: elegir la estructura del plan
 
-**Si el objetivo es una carrera (5K, 10K, 21K):**
+**Si el objetivo es una carrera (3K, 5K, 10K, 21K):**
 Leé la referencia correspondiente antes de escribir nada — cada una trae la duración típica según nivel, la progresión semana a semana y el taper:
+- `references/3k.md`
 - `references/5k.md`
 - `references/10k.md`
 - `references/half-marathon.md`
@@ -32,6 +33,9 @@ Calculá las semanas disponibles entre hoy y la fecha de la carrera. Si ese tiem
 
 **Si el objetivo es general (empezar a correr, bajar de peso, mejorar resistencia, correr X minutos):**
 Leé `references/general-goal.md`. Estos planes no tienen fecha límite: se estructuran en bloques de 4 semanas con un hito claro al final de cada uno (por ejemplo "correr 10 minutos seguidos"), y se puede seguir agregando bloques hasta que la persona llegue a su meta.
+
+**Si el atleta no puede o no quiere llegar a trotar de forma continua** (por peso, articulaciones, alguna condición cardiovascular, edad, o porque simplemente prefiere esa modalidad):
+Leé `references/walk-run.md` en vez de `general-goal.md` — la lógica de progreso es distinta. Ahí el punto de llegada no es "correr", sino sostener en el tiempo una rutina de caminar y trotar. No asumas esta categoría solo por la edad: si hay duda, preguntá en vez de decidir por el atleta.
 
 ## Paso 3: principios que aplican a todo plan, sin excepción
 
@@ -66,7 +70,9 @@ Si el atleta dio menos información de la necesaria para alguna semana puntual (
 
 ## Referencias
 
+- `references/3k.md` — planes para objetivo 3K
 - `references/5k.md` — planes para objetivo 5K
 - `references/10k.md` — planes para objetivo 10K
 - `references/half-marathon.md` — planes para objetivo 21K / media maratón
 - `references/general-goal.md` — planes sin carrera puntual (empezar a correr, bajar de peso, mejorar resistencia, sostener X minutos)
+- `references/walk-run.md` — planes para quien no puede o no quiere llegar a trotar continuo, y cuyo objetivo es sostener una rutina de caminar y trotar

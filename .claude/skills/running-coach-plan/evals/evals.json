@@ -18,6 +18,18 @@
       "prompt": "Tengo un chico de 24 años que quiere empezar a correr de cero, nunca hizo actividad física, su objetivo es simplemente 'poder correr 30 minutos seguidos'. Tiene 5 días libres por semana pero prefiere entrenar solo 3. ¿Qué plan le armo?",
       "expected_output": "Plan en bloques de 4 semanas empezando con caminar-trotar desde cero, usando 3 días por semana (respetando la preferencia del atleta aunque tenga más días libres), progresando de forma gradual hasta el hito de 30 minutos de trote continuo, sin jerga técnica.",
       "files": []
+    },
+    {
+      "id": 4,
+      "prompt": "Una mujer de 45 años se anotó en la app, quiere correr su primera carrera pero nunca corrió y no tiene mucho tiempo para entrenar. Le da un poco de miedo comprometerse a algo largo. Tiene 8 semanas hasta una carrera de 3K en su ciudad. Puede entrenar 3 días por semana.",
+      "expected_output": "Plan de 8 semanas para objetivo 3K usando la referencia de 3K (no 5K), con caminar-trotar desde el inicio por no tener experiencia, 3 días por semana, fases claras y taper antes de la carrera.",
+      "files": []
+    },
+    {
+      "id": 5,
+      "prompt": "Tengo un atleta de 58 años con bastante sobrepeso y dolor crónico en las rodillas. Me dijo explícitamente que no quiere correr, que solo quiere caminar y trotar un poco para moverse más. Puede 3 días por semana. ¿Qué plan le armo?",
+      "expected_output": "Plan que usa la lógica de caminar-trotar como objetivo en sí mismo (no un plan que progresa hacia trote continuo como meta), con foco en consistencia y tiempo activo total en vez de minutos de trote, considerando el dolor de rodilla y el sobrepeso, 3 días por semana con descanso entre sesiones.",
+      "files": []
     }
   ]
 }
