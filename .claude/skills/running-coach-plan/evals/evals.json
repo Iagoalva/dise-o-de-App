@@ -1,0 +1,23 @@
+{
+  "skill_name": "running-coach-plan",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Tengo una atleta de 34 años registrada en la app, nunca corrió antes, quiere correr una 10K en 12 semanas. Puede entrenar 3 días por semana: lunes, miércoles y sábado. Armale el plan de entrenamiento semana por semana.",
+      "expected_output": "Plan semana a semana de 12 semanas, empezando con caminar-trotar (porque nunca corrió) y avanzando de forma gradual hacia trote continuo, respetando los 3 días indicados, con fases claras y taper antes de la carrera. Si el plan detecta que 12 semanas es justo/insuficiente para nivel cero yendo a 10K, debería decirlo con honestidad y ofrecer una alternativa.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Un atleta de 52 años, corre ocasionalmente (puede trotar unos 15 minutos seguidos), tiene una lesión vieja en la rodilla, y su objetivo es bajar de peso corriendo. Puede entrenar 4 días por semana. Armá el plan.",
+      "expected_output": "Plan en bloques de 4 semanas (sin fecha de carrera) enfocado en frecuencia sostenible antes que intensidad, con una mención breve sobre la lesión de rodilla y la edad (recomendación de chequeo médico o cautela), usando los 4 días disponibles sin forzar volumen excesivo.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "Tengo un chico de 24 años que quiere empezar a correr de cero, nunca hizo actividad física, su objetivo es simplemente 'poder correr 30 minutos seguidos'. Tiene 5 días libres por semana pero prefiere entrenar solo 3. ¿Qué plan le armo?",
+      "expected_output": "Plan en bloques de 4 semanas empezando con caminar-trotar desde cero, usando 3 días por semana (respetando la preferencia del atleta aunque tenga más días libres), progresando de forma gradual hasta el hito de 30 minutos de trote continuo, sin jerga técnica.",
+      "files": []
+    }
+  ]
+}
