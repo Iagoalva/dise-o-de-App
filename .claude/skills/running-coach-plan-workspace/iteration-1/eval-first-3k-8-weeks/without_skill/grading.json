@@ -1,0 +1,13 @@
+{
+  "expectations": [
+    {"text": "El plan está construido específicamente para la distancia 3K (no defaultea a 5K u otra distancia)", "passed": true, "evidence": "Contenido enteramente sobre 3K, incluye 'simulacro' de 3K en semana 7"},
+    {"text": "El plan cubre las 8 semanas disponibles hasta la carrera", "passed": true, "evidence": "Semanas 1 a 8 completas"},
+    {"text": "El plan arranca con caminar-trotar dado que nunca corrió", "passed": true, "evidence": "Semana 1: '8 rondas de (1 min trote suave + 2 min caminata)'"},
+    {"text": "El plan incluye un taper (reducción de volumen) antes de la carrera", "passed": true, "evidence": "Semana 8 explícitamente reduce volumen, 'Semana de la carrera'"},
+    {"text": "El plan usa 3 días por semana", "passed": true, "evidence": "'Vas a entrenar 3 días por semana, con al menos un día de descanso entre sesión y sesión'"}
+  ],
+  "summary": {"passed": 5, "failed": 0, "total": 5, "pass_rate": 1.0},
+  "eval_feedback": {
+    "overall": "Este caso no resultó discriminante: el modelo base ya conoce bien el patrón 'primera carrera corta = distancia accesible + caminar-trotar + taper', probablemente por ser un patrón muy documentado (tipo Couch to 5K). Vale la pena tenerlo igual como test de regresión."
+  }
+}

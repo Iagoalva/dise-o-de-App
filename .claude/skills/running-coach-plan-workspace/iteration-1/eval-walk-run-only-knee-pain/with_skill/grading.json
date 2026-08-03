@@ -1,0 +1,10 @@
+{
+  "expectations": [
+    {"text": "El plan NO está enmarcado como una progresión hacia trote continuo, sino como una rutina de caminar-trotar sostenida en el tiempo", "passed": true, "evidence": "'Este plan no busca que llegues a correr en algún momento — vos fuiste claro en que no es lo que querés'"},
+    {"text": "El plan menciona explícitamente el dolor de rodilla y ajusta las recomendaciones en consecuencia", "passed": true, "evidence": "Múltiples menciones: terreno parejo, calzado, nota específica sobre dolor durante caminata vs. trote"},
+    {"text": "El progreso se mide por consistencia o tiempo activo total, no por minutos de trote continuo alcanzados", "passed": true, "evidence": "'Se mide el progreso por consistencia... y por cuánto dura la sesión completa, no por cuánto trotás'"},
+    {"text": "El plan usa 3 días por semana con descanso entre sesiones", "passed": true, "evidence": "'Elegí 3 días no seguidos... dejando al menos un día de descanso entre sesión y sesión'"},
+    {"text": "El plan no empuja aumentos agresivos de intensidad dado el sobrepeso y el dolor crónico", "passed": true, "evidence": "Bloque 1 mantiene la misma estructura las 4 semanas explícitamente, 'no vamos a subir la exigencia todavía'"}
+  ],
+  "summary": {"passed": 5, "failed": 0, "total": 5, "pass_rate": 1.0}
+}

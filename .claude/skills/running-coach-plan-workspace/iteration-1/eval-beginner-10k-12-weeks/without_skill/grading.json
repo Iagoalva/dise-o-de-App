@@ -1,0 +1,11 @@
+{
+  "expectations": [
+    {"text": "El plan arranca con intervalos de caminar-trotar (no trote continuo) en las primeras semanas, porque la atleta nunca corrió", "passed": true, "evidence": "Semana 1: '8 series de (1 min trote suave + 2 min caminata)'"},
+    {"text": "El plan respeta los 3 días específicos indicados (lunes, miércoles, sábado) o los menciona explícitamente", "passed": true, "evidence": "'Días de entrenamiento: lunes, miércoles y sábado'"},
+    {"text": "El plan cubre semana a semana hasta la semana 12, o explica honestamente por qué 12 semanas puede ser justo para nivel cero y ofrece una alternativa", "passed": true, "evidence": "Cubre semanas 1-12 completas hasta el día de carrera, sin necesidad de advertencia (progresión razonable)"},
+    {"text": "El plan incluye una reducción de volumen (taper) en la o las últimas semanas antes de la carrera", "passed": true, "evidence": "Semana 12 explícitamente reduce a 'trote suave' y descanso los 2 días previos"},
+    {"text": "El plan marca explícitamente días de descanso", "passed": true, "evidence": "'Los días entre sesiones (martes, jueves, viernes, domingo) son de descanso'"},
+    {"text": "El lenguaje evita jerga técnica sin explicar", "passed": true, "evidence": "'ritmo conversacional' se explica; no hay jerga sin aclarar"}
+  ],
+  "summary": {"passed": 6, "failed": 0, "total": 6, "pass_rate": 1.0}
+}

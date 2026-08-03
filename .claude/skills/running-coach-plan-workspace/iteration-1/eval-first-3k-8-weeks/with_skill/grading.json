@@ -1,0 +1,10 @@
+{
+  "expectations": [
+    {"text": "El plan está construido específicamente para la distancia 3K (no defaultea a 5K u otra distancia)", "passed": true, "evidence": "Título y contenido enteramente sobre 3K; notes.md confirma uso de references/3k.md"},
+    {"text": "El plan cubre las 8 semanas disponibles hasta la carrera", "passed": true, "evidence": "Semanas 1 a 8 completas"},
+    {"text": "El plan arranca con caminar-trotar dado que nunca corrió", "passed": true, "evidence": "Semana 1: 'Trotá 1 min / caminá 2 min, repetí 5 veces'"},
+    {"text": "El plan incluye un taper (reducción de volumen) antes de la carrera", "passed": true, "evidence": "Semana 8: 'Taper: bajamos el volumen para llegar descansada'"},
+    {"text": "El plan usa 3 días por semana", "passed": true, "evidence": "'Entrenás 3 días por semana, no consecutivos'"}
+  ],
+  "summary": {"passed": 5, "failed": 0, "total": 5, "pass_rate": 1.0}
+}

@@ -1,0 +1,1325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Eval Review</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600&family=Lora:wght@400;500&display=swap" rel="stylesheet">
+  <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js" integrity="sha384-EnyY0/GSHQGSxSgMwaIPzSESbqoOLSexfnSMN2AP+39Ckmn92stwABZynq1JyzdT" crossorigin="anonymous"></script>
+  <style>
+    :root {
+      --bg: #faf9f5;
+      --surface: #ffffff;
+      --border: #e8e6dc;
+      --text: #141413;
+      --text-muted: #b0aea5;
+      --accent: #d97757;
+      --accent-hover: #c4613f;
+      --green: #788c5d;
+      --green-bg: #eef2e8;
+      --red: #c44;
+      --red-bg: #fceaea;
+      --header-bg: #141413;
+      --header-text: #faf9f5;
+      --radius: 6px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Lora', Georgia, serif;
+      background: var(--bg);
+      color: var(--text);
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ---- Header ---- */
+    .header {
+      background: var(--header-bg);
+      color: var(--header-text);
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-shrink: 0;
+    }
+    .header h1 {
+      font-family: 'Poppins', sans-serif;
+      font-size: 1.25rem;
+      font-weight: 600;
+    }
+    .header .instructions {
+      font-size: 0.8rem;
+      opacity: 0.7;
+      margin-top: 0.25rem;
+    }
+    .header .progress {
+      font-size: 0.875rem;
+      opacity: 0.8;
+      text-align: right;
+    }
+
+    /* ---- Main content ---- */
+    .main {
+      flex: 1;
+      overflow-y: auto;
+      padding: 1.5rem 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    /* ---- Sections ---- */
+    .section {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      flex-shrink: 0;
+    }
+    .section-header {
+      font-family: 'Poppins', sans-serif;
+      padding: 0.75rem 1rem;
+      font-size: 0.75rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border);
+      background: var(--bg);
+    }
+    .section-body {
+      padding: 1rem;
+    }
+
+    /* ---- Config badge ---- */
+    .config-badge {
+      display: inline-block;
+      padding: 0.2rem 0.625rem;
+      border-radius: 9999px;
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.6875rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      margin-left: 0.75rem;
+      vertical-align: middle;
+    }
+    .config-badge.config-primary {
+      background: rgba(33, 150, 243, 0.12);
+      color: #1976d2;
+    }
+    .config-badge.config-baseline {
+      background: rgba(255, 193, 7, 0.15);
+      color: #f57f17;
+    }
+
+    /* ---- Prompt ---- */
+    .prompt-text {
+      white-space: pre-wrap;
+      font-size: 0.9375rem;
+      line-height: 1.6;
+    }
+
+    /* ---- Outputs ---- */
+    .output-file {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+    .output-file + .output-file {
+      margin-top: 1rem;
+    }
+    .output-file-header {
+      padding: 0.5rem 0.75rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+      font-family: 'SF Mono', SFMono-Regular, Consolas, 'Liberation Mono', Menlo, monospace;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .output-file-header .dl-btn {
+      font-size: 0.7rem;
+      color: var(--accent);
+      text-decoration: none;
+      cursor: pointer;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-weight: 500;
+      opacity: 0.8;
+    }
+    .output-file-header .dl-btn:hover {
+      opacity: 1;
+      text-decoration: underline;
+    }
+    .output-file-content {
+      padding: 0.75rem;
+      overflow-x: auto;
+    }
+    .output-file-content pre {
+      font-size: 0.8125rem;
+      line-height: 1.5;
+      white-space: pre-wrap;
+      word-break: break-word;
+      font-family: 'SF Mono', SFMono-Regular, Consolas, 'Liberation Mono', Menlo, monospace;
+    }
+    .output-file-content img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 4px;
+    }
+    .output-file-content iframe {
+      width: 100%;
+      height: 600px;
+      border: none;
+    }
+    .output-file-content table {
+      border-collapse: collapse;
+      font-size: 0.8125rem;
+      width: 100%;
+    }
+    .output-file-content table td,
+    .output-file-content table th {
+      border: 1px solid var(--border);
+      padding: 0.375rem 0.5rem;
+      text-align: left;
+    }
+    .output-file-content table th {
+      background: var(--bg);
+      font-weight: 600;
+    }
+    .output-file-content .download-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      color: var(--accent);
+      text-decoration: none;
+      font-size: 0.875rem;
+      cursor: pointer;
+    }
+    .output-file-content .download-link:hover {
+      background: var(--border);
+    }
+    .empty-state {
+      color: var(--text-muted);
+      font-style: italic;
+      padding: 2rem;
+      text-align: center;
+    }
+
+    /* ---- Feedback ---- */
+    .prev-feedback {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 0.625rem 0.75rem;
+      margin-top: 0.75rem;
+      font-size: 0.8125rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+    .prev-feedback-label {
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 0.25rem;
+      color: var(--text-muted);
+    }
+    .feedback-textarea {
+      width: 100%;
+      min-height: 100px;
+      padding: 0.75rem;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      font-family: inherit;
+      font-size: 0.9375rem;
+      line-height: 1.5;
+      resize: vertical;
+      color: var(--text);
+    }
+    .feedback-textarea:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    }
+    .feedback-status {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 0.5rem;
+      min-height: 1.1em;
+    }
+
+    /* ---- Grades (collapsible) ---- */
+    .grades-toggle {
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      user-select: none;
+    }
+    .grades-toggle:hover {
+      color: var(--accent);
+    }
+    .grades-toggle .arrow {
+      margin-right: 0.5rem;
+      transition: transform 0.15s;
+      font-size: 0.75rem;
+    }
+    .grades-toggle .arrow.open {
+      transform: rotate(90deg);
+    }
+    .grades-content {
+      display: none;
+      margin-top: 0.75rem;
+    }
+    .grades-content.open {
+      display: block;
+    }
+    .grades-summary {
+      font-size: 0.875rem;
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .grade-badge {
+      display: inline-block;
+      padding: 0.125rem 0.5rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+    .grade-pass { background: var(--green-bg); color: var(--green); }
+    .grade-fail { background: var(--red-bg); color: var(--red); }
+    .assertion-list {
+      list-style: none;
+    }
+    .assertion-item {
+      padding: 0.625rem 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.8125rem;
+    }
+    .assertion-item:last-child { border-bottom: none; }
+    .assertion-status {
+      font-weight: 600;
+      margin-right: 0.5rem;
+    }
+    .assertion-status.pass { color: var(--green); }
+    .assertion-status.fail { color: var(--red); }
+    .assertion-evidence {
+      color: var(--text-muted);
+      font-size: 0.75rem;
+      margin-top: 0.25rem;
+      padding-left: 1.5rem;
+    }
+
+    /* ---- View tabs ---- */
+    .view-tabs {
+      display: flex;
+      gap: 0;
+      padding: 0 2rem;
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    .view-tab {
+      font-family: 'Poppins', sans-serif;
+      padding: 0.625rem 1.25rem;
+      font-size: 0.8125rem;
+      font-weight: 500;
+      cursor: pointer;
+      border: none;
+      background: none;
+      color: var(--text-muted);
+      border-bottom: 2px solid transparent;
+      transition: all 0.15s;
+    }
+    .view-tab:hover { color: var(--text); }
+    .view-tab.active {
+      color: var(--accent);
+      border-bottom-color: var(--accent);
+    }
+    .view-panel { display: none; }
+    .view-panel.active { display: flex; flex-direction: column; flex: 1; overflow: hidden; }
+
+    /* ---- Benchmark view ---- */
+    .benchmark-view {
+      padding: 1.5rem 2rem;
+      overflow-y: auto;
+      flex: 1;
+    }
+    .benchmark-table {
+      border-collapse: collapse;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      font-size: 0.8125rem;
+      width: 100%;
+      margin-bottom: 1.5rem;
+    }
+    .benchmark-table th, .benchmark-table td {
+      padding: 0.625rem 0.75rem;
+      text-align: left;
+      border: 1px solid var(--border);
+    }
+    .benchmark-table th {
+      font-family: 'Poppins', sans-serif;
+      background: var(--header-bg);
+      color: var(--header-text);
+      font-weight: 500;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .benchmark-table tr:hover { background: var(--bg); }
+    .benchmark-table tr.benchmark-row-with { background: rgba(33, 150, 243, 0.06); }
+    .benchmark-table tr.benchmark-row-without { background: rgba(255, 193, 7, 0.06); }
+    .benchmark-table tr.benchmark-row-with:hover { background: rgba(33, 150, 243, 0.12); }
+    .benchmark-table tr.benchmark-row-without:hover { background: rgba(255, 193, 7, 0.12); }
+    .benchmark-table tr.benchmark-row-avg { font-weight: 600; border-top: 2px solid var(--border); }
+    .benchmark-table tr.benchmark-row-avg.benchmark-row-with { background: rgba(33, 150, 243, 0.12); }
+    .benchmark-table tr.benchmark-row-avg.benchmark-row-without { background: rgba(255, 193, 7, 0.12); }
+    .benchmark-delta-positive { color: var(--green); font-weight: 600; }
+    .benchmark-delta-negative { color: var(--red); font-weight: 600; }
+    .benchmark-notes {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1rem;
+    }
+    .benchmark-notes h3 {
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.875rem;
+      margin-bottom: 0.75rem;
+    }
+    .benchmark-notes ul {
+      list-style: disc;
+      padding-left: 1.25rem;
+    }
+    .benchmark-notes li {
+      font-size: 0.8125rem;
+      line-height: 1.6;
+      margin-bottom: 0.375rem;
+    }
+    .benchmark-empty {
+      color: var(--text-muted);
+      font-style: italic;
+      text-align: center;
+      padding: 3rem;
+    }
+
+    /* ---- Navigation ---- */
+    .nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+      border-top: 1px solid var(--border);
+      background: var(--surface);
+      flex-shrink: 0;
+    }
+    .nav-btn {
+      font-family: 'Poppins', sans-serif;
+      padding: 0.5rem 1.25rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface);
+      cursor: pointer;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--text);
+      transition: all 0.15s;
+    }
+    .nav-btn:hover:not(:disabled) {
+      background: var(--bg);
+      border-color: var(--text-muted);
+    }
+    .nav-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+    .done-btn {
+      font-family: 'Poppins', sans-serif;
+      padding: 0.5rem 1.5rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface);
+      color: var(--text);
+      cursor: pointer;
+      font-size: 0.875rem;
+      font-weight: 500;
+      transition: all 0.15s;
+    }
+    .done-btn:hover {
+      background: var(--bg);
+      border-color: var(--text-muted);
+    }
+    .done-btn.ready {
+      border: none;
+      background: var(--accent);
+      color: white;
+      font-weight: 600;
+    }
+    .done-btn.ready:hover {
+      background: var(--accent-hover);
+    }
+    /* ---- Done overlay ---- */
+    .done-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 100;
+      justify-content: center;
+      align-items: center;
+    }
+    .done-overlay.visible {
+      display: flex;
+    }
+    .done-card {
+      background: var(--surface);
+      border-radius: 12px;
+      padding: 2rem 3rem;
+      text-align: center;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      max-width: 500px;
+    }
+    .done-card h2 {
+      font-size: 1.5rem;
+      margin-bottom: 0.5rem;
+    }
+    .done-card p {
+      color: var(--text-muted);
+      margin-bottom: 1.5rem;
+      line-height: 1.5;
+    }
+    .done-card .btn-row {
+      display: flex;
+      gap: 0.5rem;
+      justify-content: center;
+    }
+    .done-card button {
+      padding: 0.5rem 1.25rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface);
+      cursor: pointer;
+      font-size: 0.875rem;
+    }
+    .done-card button:hover {
+      background: var(--bg);
+    }
+    /* ---- Toast ---- */
+    .toast {
+      position: fixed;
+      bottom: 5rem;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--header-bg);
+      color: var(--header-text);
+      padding: 0.625rem 1.25rem;
+      border-radius: var(--radius);
+      font-size: 0.875rem;
+      opacity: 0;
+      transition: opacity 0.3s;
+      pointer-events: none;
+      z-index: 200;
+    }
+    .toast.visible {
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+  <div id="app" style="height:100vh; display:flex; flex-direction:column;">
+    <div class="header">
+      <div>
+        <h1>Eval Review: <span id="skill-name"></span></h1>
+        <div class="instructions">Review each output and leave feedback below. Navigate with arrow keys or buttons. When done, copy feedback and paste into Claude Code.</div>
+      </div>
+      <div class="progress" id="progress"></div>
+    </div>
+
+    <!-- View tabs (only shown when benchmark data exists) -->
+    <div class="view-tabs" id="view-tabs" style="display:none;">
+      <button class="view-tab active" onclick="switchView('outputs')">Outputs</button>
+      <button class="view-tab" onclick="switchView('benchmark')">Benchmark</button>
+    </div>
+
+    <!-- Outputs panel (qualitative review) -->
+    <div class="view-panel active" id="panel-outputs">
+    <div class="main">
+      <!-- Prompt -->
+      <div class="section">
+        <div class="section-header">Prompt <span class="config-badge" id="config-badge" style="display:none;"></span></div>
+        <div class="section-body">
+          <div class="prompt-text" id="prompt-text"></div>
+        </div>
+      </div>
+
+      <!-- Outputs -->
+      <div class="section">
+        <div class="section-header">Output</div>
+        <div class="section-body" id="outputs-body">
+          <div class="empty-state">No output files found</div>
+        </div>
+      </div>
+
+      <!-- Previous Output (collapsible) -->
+      <div class="section" id="prev-outputs-section" style="display:none;">
+        <div class="section-header">
+          <div class="grades-toggle" onclick="togglePrevOutputs()">
+            <span class="arrow" id="prev-outputs-arrow">&#9654;</span>
+            Previous Output
+          </div>
+        </div>
+        <div class="grades-content" id="prev-outputs-content"></div>
+      </div>
+
+      <!-- Grades (collapsible) -->
+      <div class="section" id="grades-section" style="display:none;">
+        <div class="section-header">
+          <div class="grades-toggle" onclick="toggleGrades()">
+            <span class="arrow" id="grades-arrow">&#9654;</span>
+            Formal Grades
+          </div>
+        </div>
+        <div class="grades-content" id="grades-content"></div>
+      </div>
+
+      <!-- Feedback -->
+      <div class="section">
+        <div class="section-header">Your Feedback</div>
+        <div class="section-body">
+          <textarea
+            class="feedback-textarea"
+            id="feedback"
+            placeholder="What do you think of this output? Any issues, suggestions, or things that look great?"
+          ></textarea>
+          <div class="feedback-status" id="feedback-status"></div>
+          <div class="prev-feedback" id="prev-feedback" style="display:none;">
+            <div class="prev-feedback-label">Previous feedback</div>
+            <div id="prev-feedback-text"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="nav" id="outputs-nav">
+      <button class="nav-btn" id="prev-btn" onclick="navigate(-1)">&#8592; Previous</button>
+      <button class="done-btn" id="done-btn" onclick="showDoneDialog()">Submit All Reviews</button>
+      <button class="nav-btn" id="next-btn" onclick="navigate(1)">Next &#8594;</button>
+    </div>
+    </div><!-- end panel-outputs -->
+
+    <!-- Benchmark panel (quantitative stats) -->
+    <div class="view-panel" id="panel-benchmark">
+      <div class="benchmark-view" id="benchmark-content">
+        <div class="benchmark-empty">No benchmark data available. Run a benchmark to see quantitative results here.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Done overlay -->
+  <div class="done-overlay" id="done-overlay">
+    <div class="done-card">
+      <h2>Review Complete</h2>
+      <p>Your feedback has been saved. Go back to your Claude Code session and tell Claude you're done reviewing.</p>
+      <div class="btn-row">
+        <button onclick="closeDoneDialog()">OK</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
+
+  <script>
+    // ---- Embedded data (injected by generate_review.py) ----
+    const EMBEDDED_DATA = {"skill_name": "running-coach-plan", "runs": [{"id": "eval-beginner-10k-12-weeks-with_skill", "prompt": "Tengo una atleta de 34 a\u00f1os registrada en la app, nunca corri\u00f3 antes, quiere correr una 10K en 12 semanas. Puede entrenar 3 d\u00edas por semana: lunes, mi\u00e9rcoles y s\u00e1bado. Armale el plan de entrenamiento semana por semana.", "eval_id": 1, "outputs": [{"name": "notes.md", "type": "text", "content": "# Notas sobre la generaci\u00f3n del plan\n\n## Referencias consultadas\n- `.claude/skills/running-coach-plan/SKILL.md` (pasos 1-4 y principios generales)\n- `.claude/skills/running-coach-plan/references/10k.md` (duraci\u00f3n seg\u00fan nivel, estructura por fases, frecuencia, progresi\u00f3n de ejemplo, notas de seguridad)\n\n## Datos del atleta (dados en la consigna)\n- Objetivo: carrera de 10K en 12 semanas.\n- Nivel: nunca corri\u00f3 antes (arranca de cero).\n- D\u00edas disponibles: 3 por semana, fijos \u2014 lunes, mi\u00e9rcoles, s\u00e1bado.\n- Edad: 34 a\u00f1os. Sin lesiones ni condiciones m\u00e9dicas mencionadas.\n\n## Por qu\u00e9 esta estructura\n- `10k.md` indica que para alguien que \"nunca corri\u00f3\", la duraci\u00f3n m\u00ednima recomendada es 12-14 semanas, primero construyendo base de trote continuo antes de estirar hacia el 10K. 12 semanas cae justo en el l\u00edmite inferior de ese rango, as\u00ed que el plan es viable sin necesidad de avisar que el tiempo es insuficiente (a diferencia de, por ejemplo, un pedido de 5-6 semanas).\n- Como el atleta nunca corri\u00f3, apliqu\u00e9 el principio de \"caminar-trotar para quien arranca de cero\" (Paso 3 del SKILL.md) durante toda la fase de base, en vez de usar la tabla de progresi\u00f3n de ejemplo de `10k.md` (que est\u00e1 pensada para nivel \"puede trotar 20-25 min\", no para nivel cero).\n- Repart\u00ed las 12 semanas en las 3 fases que indica `10k.md`: Base (semanas 1-6, ~50%), Construcci\u00f3n (semanas 7-10, ~33%), Taper (semanas 11-12, ~17%), respetando los porcentajes sugeridos en la referencia.\n- El trote largo de los s\u00e1bados no llega a cubrir los 10K completos en el entrenamiento (pico de 50 minutos en la semana 10): sigue la l\u00f3gica de la nota de seguridad de `10k.md` de no subir el trote largo m\u00e1s de ~10% (o 5-8 min) por semana, y el principio general de progresi\u00f3n gradual del SKILL.md.\n- Inclu\u00ed la secci\u00f3n de se\u00f1ales de alerta una sola vez (no en cada sesi\u00f3n), tal como pide el Paso 3.\n- No agregu\u00e9 la recomendaci\u00f3n de aval m\u00e9dico porque la atleta tiene 34 a\u00f1os (menos de 40) y no mencion\u00f3 lesiones ni condiciones \u2014 el SKILL.md solo pide esa l\u00ednea para 40+ o con antecedentes m\u00e9dicos.\n\n## Supuestos que tom\u00e9 (declarados tambi\u00e9n dentro del plan)\n- Asum\u00ed que entrena en superficie mayormente plana (calle, parque o cinta), ya que no se especific\u00f3 el terreno.\n- Asum\u00ed que los 3 d\u00edas de entrenamiento (lunes, mi\u00e9rcoles, s\u00e1bado) son fijos todas las semanas, incluyendo la semana de la carrera \u2014 como no se dio la fecha exacta ni el d\u00eda de semana en que cae la carrera, dej\u00e9 una nota en la Semana 12 para que ajuste cu\u00e1les son \"los 2 d\u00edas previos de descanso\" seg\u00fan el d\u00eda real en que corra.\n- No se mencionaron sesiones de fuerza ni cross-training, as\u00ed que el plan se limita a las 3 sesiones de running semanales pedidas.\n- La sesi\u00f3n del mi\u00e9rcoles la dise\u00f1\u00e9 sistem\u00e1ticamente m\u00e1s liviana que lunes y s\u00e1bado (rol de recuperaci\u00f3n), ya que el s\u00e1bado funciona como el d\u00eda de trote largo \u2014 esto no est\u00e1 expl\u00edcito en las referencias pero es consistente con el principio de \"no correr dos d\u00edas seguidos\" y con dar variedad de est\u00edmulo sin sumar volumen extra.\n"}, {"name": "plan.md", "type": "text", "content": "# Plan de entrenamiento \u2014 10K en 12 semanas\n\nPerfil: 34 a\u00f1os, nunca corri\u00f3 antes, entrena 3 d\u00edas por semana (lunes, mi\u00e9rcoles y s\u00e1bado).\n\n## C\u00f3mo est\u00e1 armado el plan\n\nEl plan tiene tres bloques. **Semanas 1 a 6 (Base):** vas a alternar caminata y trote hasta lograr trotar sin parar. No importa si al principio parecen \"muy pocos minutos de trote\" \u2014 es la forma m\u00e1s segura de que el cuerpo se acostumbre al impacto sin lesionarse. **Semanas 7 a 10 (Construcci\u00f3n):** una vez que ya pod\u00e9s trotar continuo, estiramos semana a semana el trote m\u00e1s largo (el del s\u00e1bado) hasta acercarnos a los 50 minutos, y sumamos una sesi\u00f3n con tramos algo m\u00e1s r\u00e1pidos para variar el est\u00edmulo. **Semanas 11 y 12 (Taper):** bajamos el volumen a prop\u00f3sito para que llegues a la carrera con las piernas frescas, no cansada.\n\nEn todas las sesiones, \"ritmo c\u00f3modo\" quiere decir un ritmo al que pod\u00e9s hablar sin quedarte sin aire \u2014 si no pod\u00e9s, vas m\u00e1s r\u00e1pido de lo que corresponde. Asumo que entren\u00e1s en superficie m\u00e1s o menos plana (calle, parque o cinta); si ten\u00e9s subidas marcadas cerca de tu casa, and\u00e1 tranquila los primeros minutos ah\u00ed igual.\n\n---\n\n## Fase 1: Base (semanas 1 a 6)\n\n### Semana 1 \u2014 Objetivo: probar el cuerpo con trote cortado\n- **Lunes:** Caminata 5 min. Trot\u00e1 1 min / camin\u00e1 2 min, repet\u00ed 6 veces (18 min). Caminata 5 min.\n- **Mi\u00e9rcoles:** mismo esquema que el lunes.\n- **S\u00e1bado:** Caminata 5 min. Trot\u00e1 1 min / camin\u00e1 2 min, repet\u00ed 7 veces (21 min). Caminata 5 min.\n\nPor qu\u00e9: arrancamos con trotes cortos y caminatas m\u00e1s largas para que el cuerpo se adapte al impacto sin sobrecargarse.\n\n### Semana 2 \u2014 Objetivo: sumar un poco m\u00e1s de trote en cada tramo\n- **Lunes:** Caminata 5 min. Trot\u00e1 2 min / camin\u00e1 2 min, repet\u00ed 5 veces (20 min). Caminata 5 min.\n- **Mi\u00e9rcoles:** mismo esquema que el lunes.\n- **S\u00e1bado:** Caminata 5 min. Trot\u00e1 2 min / camin\u00e1 2 min, repet\u00ed 6 veces (24 min). Caminata 5 min.\n\n### Semana 3 \u2014 Objetivo: sostener 5 minutos de trote seguido\n- **Lunes:** Caminata 3 min. Trot\u00e1 3 min / camin\u00e1 2 min, repet\u00ed 5 veces (25 min). Caminata 3 min.\n- **Mi\u00e9rcoles:** Caminata 3 min. Trot\u00e1 3 min / camin\u00e1 2 min, repet\u00ed 4 veces (20 min) \u2014 d\u00eda m\u00e1s liviano para recuperar. Caminata 3 min.\n- **S\u00e1bado:** Caminata 3 min. Trot\u00e1 4 min / camin\u00e1 2 min, repet\u00ed 4 veces (24 min). Caminata 3 min.\n\n### Semana 4 \u2014 Objetivo: acercarse a 8-10 minutos de trote seguido\n- **Lunes:** Caminata 3 min. Trot\u00e1 5 min / camin\u00e1 2 min, repet\u00ed 3 veces (21 min). Caminata 3 min.\n- **Mi\u00e9rcoles:** Caminata 3 min. Trot\u00e1 4 min / camin\u00e1 2 min, repet\u00ed 4 veces (24 min). Caminata 3 min.\n- **S\u00e1bado:** Caminata 3 min. Trot\u00e1 6 min / camin\u00e1 2 min, repet\u00ed 3 veces (24 min). Caminata 3 min.\n\n### Semana 5 \u2014 Objetivo: trotar 10 minutos seguidos\n- **Lunes:** Caminata 3 min. Trot\u00e1 8 min / camin\u00e1 2 min, repet\u00ed 2 veces (20 min). Caminata 3 min.\n- **Mi\u00e9rcoles:** Caminata 3 min. Trot\u00e1 6 min / camin\u00e1 1 min, repet\u00ed 3 veces (21 min). Caminata 3 min.\n- **S\u00e1bado:** Caminata 3 min. Trot\u00e1 10 min / camin\u00e1 2 min, repet\u00ed 2 veces (24 min). Caminata 3 min.\n\n### Semana 6 \u2014 Objetivo: cerrar la base trotando 20-25 minutos sin parar\n- **Lunes:** Caminata 3 min. Trot\u00e1 12 min, camin\u00e1 2 min, trot\u00e1 8 min m\u00e1s (22 min de trote en total). Caminata 3 min.\n- **Mi\u00e9rcoles:** Caminata 3 min. Trot\u00e1 15 minutos seguidos, sin cortes. Caminata 3 min.\n- **S\u00e1bado:** Caminata 5 min. Trot\u00e1 20-22 minutos seguidos a ritmo c\u00f3modo. Caminata 5 min.\n\nPor qu\u00e9 esta semana: es la primera vez que trot\u00e1s un tramo largo sin ning\u00fan corte. De ac\u00e1 en adelante, el trabajo pasa a ser estirar ese tiempo hasta acercarnos al 10K.\n\n---\n\n## Fase 2: Construcci\u00f3n (semanas 7 a 10)\n\n### Semana 7 \u2014 Objetivo: sostener 25-30 minutos de trote\n- **Lunes:** Caminata 5 min. Trot\u00e1 22-25 minutos seguidos a ritmo c\u00f3modo. Caminata 5 min.\n- **Mi\u00e9rcoles:** Caminata 5 min. Trot\u00e1 20 minutos a ritmo c\u00f3modo. Caminata 5 min.\n- **S\u00e1bado (trote largo de la semana):** Caminata 5 min. Trot\u00e1 28-30 minutos seguidos a ritmo c\u00f3modo. Caminata 5 min.\n\n### Semana 8 \u2014 Objetivo: primera sesi\u00f3n con algo de ritmo\n- **Lunes:** Caminata 5 min. Trot\u00e1 25 minutos a ritmo c\u00f3modo. Caminata 5 min.\n- **Mi\u00e9rcoles:** Caminata 5 min. Trot\u00e1 3 min a un ritmo algo m\u00e1s exigente (que cueste un poco pero se pueda sostener) / trot\u00e1 2 min suave para recuperar, repet\u00ed 3 veces (15 min). Caminata 5 min.\n- **S\u00e1bado:** Caminata 5 min. Trot\u00e1 32-35 minutos seguidos a ritmo c\u00f3modo. Caminata 5 min.\n\nPor qu\u00e9: metemos por primera vez tramos algo m\u00e1s r\u00e1pidos el mi\u00e9rcoles. No es velocidad pura \u2014 es acostumbrar al cuerpo a variar el ritmo, algo que ayuda el d\u00eda de la carrera.\n\n### Semana 9 \u2014 Objetivo: acercarse a los 40 minutos en el trote largo\n- **Lunes:** Caminata 5 min. Trot\u00e1 25-28 minutos a ritmo c\u00f3modo. Caminata 5 min.\n- **Mi\u00e9rcoles:** Caminata 5 min. Trot\u00e1 4 min algo m\u00e1s r\u00e1pido / 2 min suave, repet\u00ed 3 veces (18 min). Caminata 5 min.\n- **S\u00e1bado:** Caminata 5 min. Trot\u00e1 40 minutos seguidos a ritmo c\u00f3modo. Caminata 5 min.\n\n### Semana 10 \u2014 Objetivo: pico del plan, trote largo de 50 minutos\n- **Lunes:** Caminata 5 min. Trot\u00e1 25 minutos a ritmo c\u00f3modo. Caminata 5 min.\n- **Mi\u00e9rcoles:** Caminata 5 min. Trot\u00e1 4 min algo m\u00e1s r\u00e1pido / 2 min suave, repet\u00ed 4 veces (24 min). Caminata 5 min.\n- **S\u00e1bado:** Caminata 5 min. Trot\u00e1 50 minutos seguidos a ritmo c\u00f3modo \u2014 la sesi\u00f3n m\u00e1s larga de todo el plan. Caminata 5 min.\n\nPor qu\u00e9: no hace falta correr en el entrenamiento los 60-70 minutos que puede llevar el 10K completo. Con 50 minutos de base ya ten\u00e9s el fondo necesario, y la adrenalina del d\u00eda de la carrera hace el resto.\n\n---\n\n## Fase 3: Taper \u2014 bajar la carga antes de la carrera (semanas 11 y 12)\n\n### Semana 11 \u2014 Objetivo: bajar el volumen a la mitad\n- **Lunes:** Caminata 5 min. Trot\u00e1 25 minutos a ritmo c\u00f3modo. Caminata 5 min.\n- **Mi\u00e9rcoles:** Caminata 5 min. Trot\u00e1 15-18 minutos a ritmo c\u00f3modo, con 2-3 tramos cortos (1 min) algo m\u00e1s r\u00e1pidos para sentir las piernas activas. Caminata 5 min.\n- **S\u00e1bado:** Caminata 5 min. Trot\u00e1 25 minutos a ritmo c\u00f3modo. Caminata 5 min.\n\n### Semana 12 \u2014 Semana de la carrera\n- **Lunes:** Caminata 5 min. Trot\u00e1 15-20 minutos suaves. Caminata 5 min.\n- **Mi\u00e9rcoles:** Caminata 5 min. Trot\u00e1 10 minutos suaves, con 2 tramos de 1 minuto algo m\u00e1s r\u00e1pidos para activar las piernas. Caminata 5 min.\n- **Los 2 d\u00edas antes de la carrera:** descanso completo, sin trotar (caminar est\u00e1 bien si ten\u00e9s ganas de moverte, pero no es necesario).\n- **D\u00eda de la carrera:** entrada en calor de 10 minutos entre caminata y trote muy suave antes de la largada. Arranc\u00e1 los primeros kil\u00f3metros a un ritmo controlado \u2014 es normal ir m\u00e1s r\u00e1pido de lo que corresponde por los nervios, trat\u00e1 de frenarte un poco al principio para no pagarlo despu\u00e9s.\n\nNota: como todav\u00eda no tenemos la fecha exacta de la carrera dentro de la semana 12, ajust\u00e1 qu\u00e9 d\u00edas caen como \"los 2 previos de descanso\" seg\u00fan el d\u00eda real de la carrera, manteniendo la misma l\u00f3gica.\n\n---\n\n## Antes de arrancar\n\n- **Progresi\u00f3n:** el volumen no sube de golpe \u2014 cada semana suma un poco sobre la anterior, nunca duplica. Si una semana te resulta m\u00e1s dura de lo esperado, est\u00e1 bien repetirla en vez de avanzar a la siguiente.\n- **Descanso:** los d\u00edas que no aparecen en la lista (martes, jueves, viernes y domingo) son de descanso. No hace falta hacer nada m\u00e1s, aunque una caminata liviana o estiramiento no hacen da\u00f1o.\n- **Se\u00f1ales de alerta:** el cansancio, la respiraci\u00f3n agitada o las piernas pesadas despu\u00e9s de entrenar son normales. Lo que **no** es normal es un dolor agudo, tipo punzada, o un dolor que persiste incluso en reposo \u2014 si aparece algo as\u00ed, parar y consultar a un profesional antes de seguir entrenando.\n- Como referencia de nivel: si sent\u00eds que alguna semana te queda grande, mejor repetirla que forzar el avance \u2014 llegar a la carrera sana importa m\u00e1s que cumplir el calendario al pie de la letra.\n\n\u00a1\u00c9xitos con el 10K!\n"}], "grading": {"expectations": [{"text": "El plan arranca con intervalos de caminar-trotar (no trote continuo) en las primeras semanas, porque la atleta nunca corri\u00f3", "passed": true, "evidence": "Semana 1: 'Trot\u00e1 1 min / camin\u00e1 2 min, repet\u00ed 6 veces'"}, {"text": "El plan respeta los 3 d\u00edas espec\u00edficos indicados (lunes, mi\u00e9rcoles, s\u00e1bado) o los menciona expl\u00edcitamente", "passed": true, "evidence": "Cada semana detalla Lunes/Mi\u00e9rcoles/S\u00e1bado por separado"}, {"text": "El plan cubre semana a semana hasta la semana 12, o explica honestamente por qu\u00e9 12 semanas puede ser justo para nivel cero y ofrece una alternativa", "passed": true, "evidence": "Cubre semanas 1-12 completas; notes.md documenta que 12 semanas cae dentro del rango 12-14 de references/10k.md, por eso no hizo falta advertir"}, {"text": "El plan incluye una reducci\u00f3n de volumen (taper) en la o las \u00faltimas semanas antes de la carrera", "passed": true, "evidence": "Fase 3: Taper, semanas 11-12, volumen expl\u00edcitamente reducido"}, {"text": "El plan marca expl\u00edcitamente d\u00edas de descanso", "passed": true, "evidence": "'los d\u00edas que no aparecen en la lista (martes, jueves, viernes y domingo) son de descanso'"}, {"text": "El lenguaje evita jerga t\u00e9cnica sin explicar", "passed": true, "evidence": "'ritmo c\u00f3modo' se explica como 'un ritmo al que pod\u00e9s hablar sin quedarte sin aire'; no aparecen t\u00e9rminos sin explicar"}], "summary": {"passed": 6, "failed": 0, "total": 6, "pass_rate": 1.0}}}, {"id": "eval-beginner-10k-12-weeks-without_skill", "prompt": "Tengo una atleta de 34 a\u00f1os registrada en la app, nunca corri\u00f3 antes, quiere correr una 10K en 12 semanas. Puede entrenar 3 d\u00edas por semana: lunes, mi\u00e9rcoles y s\u00e1bado. Armale el plan de entrenamiento semana por semana.", "eval_id": 1, "outputs": [{"name": "plan.md", "type": "text", "content": "# Plan de entrenamiento para tu primera 10K\n\n**Perfil:** mujer, 34 a\u00f1os, sin experiencia previa corriendo.\n**Objetivo:** completar una carrera de 10K.\n**Duraci\u00f3n:** 12 semanas.\n**D\u00edas de entrenamiento:** lunes, mi\u00e9rcoles y s\u00e1bado (3 d\u00edas/semana).\n\n---\n\n## Antes de empezar\n\n- Si ten\u00e9s alguna condici\u00f3n de salud, sobrepeso importante, o hace mucho tiempo que no hac\u00e9s actividad f\u00edsica, consult\u00e1 con un m\u00e9dico antes de arrancar.\n- Consegu\u00ed un buen par de zapatillas de running (no cualquier zapatilla deportiva sirve).\n- Los d\u00edas entre sesiones (martes, jueves, viernes, domingo) son de descanso o actividad muy suave (caminar, estirar, yoga). El domingo y el viernes conviene que sean de descanso total, sobre todo despu\u00e9s del s\u00e1bado que es el d\u00eda m\u00e1s largo.\n- Cada sesi\u00f3n arranca con 5 minutos de caminata r\u00e1pida o trote muy suave como entrada en calor, y termina con 5 minutos de caminata + 5-10 minutos de estiramientos suaves (pantorrillas, isquiotibiales, cu\u00e1driceps, gl\u00fateos).\n- El ritmo en todos los tramos de \"trote\" debe ser conversacional: si no pod\u00e9s hablar mientras corr\u00e9s, vas demasiado r\u00e1pido. No importa la velocidad, importa completar el tiempo/distancia.\n- Si sent\u00eds dolor agudo (no la fatiga normal), parate. Molestia leve y cansancio son normales; dolor articular o punzante no lo es.\n- Hidratate bien durante el d\u00eda, no solo en el entrenamiento.\n\n---\n\n## Fase 1 (semanas 1-4): Caminar y trotar\n\nObjetivo: acostumbrar al cuerpo al impacto y crear el h\u00e1bito de entrenar 3 veces por semana.\n\n### Semana 1\n- **Lunes:** Calentamiento 5 min. Luego 8 series de (1 min trote suave + 2 min caminata). Enfriamiento 5 min. Total ~34 min.\n- **Mi\u00e9rcoles:** Igual que el lunes: 8 series de (1 min trote + 2 min caminata).\n- **S\u00e1bado:** Caminata continua a paso firme, 30-35 minutos (el d\u00eda \"largo\" de la semana, sin trotar).\n\n### Semana 2\n- **Lunes:** Calentamiento 5 min. 8 series de (1:30 min trote + 1:30 min caminata). Enfriamiento 5 min.\n- **Mi\u00e9rcoles:** Igual que el lunes.\n- **S\u00e1bado:** Caminata continua 35 minutos, ritmo firme.\n\n### Semana 3\n- **Lunes:** Calentamiento 5 min. 6 series de (2 min trote + 1 min caminata). Enfriamiento 5 min.\n- **Mi\u00e9rcoles:** Igual que el lunes.\n- **S\u00e1bado:** 5 series de (3 min trote + 2 min caminata) + caminata final si hace falta. Total ~30-35 min.\n\n### Semana 4\n- **Lunes:** Calentamiento 5 min. 5 series de (3 min trote + 1 min caminata). Enfriamiento 5 min.\n- **Mi\u00e9rcoles:** Igual que el lunes.\n- **S\u00e1bado:** 4 series de (5 min trote + 2 min caminata). Total ~35-38 min. Es tu semana de mayor volumen relativo hasta ahora: si te sent\u00eds muy cansada, repet\u00ed la semana 3 en vez de avanzar.\n\n---\n\n## Fase 2 (semanas 5-8): M\u00e1s trote, menos caminata\n\nObjetivo: ir estirando los bloques de trote hasta correr de forma continua.\n\n### Semana 5\n- **Lunes:** Calentamiento 5 min. 4 series de (4 min trote + 1:30 min caminata). Enfriamiento 5 min.\n- **Mi\u00e9rcoles:** Igual que el lunes.\n- **S\u00e1bado:** 3 series de (6 min trote + 2 min caminata). Total ~35 min.\n\n### Semana 6\n- **Lunes:** Calentamiento 5 min. 3 series de (6 min trote + 1:30 min caminata). Enfriamiento 5 min.\n- **Mi\u00e9rcoles:** Igual que el lunes.\n- **S\u00e1bado:** 2 series de (10 min trote + 2 min caminata). Total ~35-40 min.\n\n### Semana 7\n- **Lunes:** Calentamiento 5 min. 2 series de (10 min trote + 2 min caminata). Enfriamiento 5 min.\n- **Mi\u00e9rcoles:** 20 minutos de trote continuo, ritmo c\u00f3modo (con caminata si es imprescindible).\n- **S\u00e1bado:** 25-28 minutos de trote continuo (aprox. 3 a 3.5 km), ritmo suave. Pod\u00e9s cortar con caminata puntual si lo necesit\u00e1s.\n\n### Semana 8\n- **Lunes:** 22 minutos de trote continuo, ritmo c\u00f3modo.\n- **Mi\u00e9rcoles:** 20 minutos de trote continuo + al final 4 x 30 segundos un poco m\u00e1s r\u00e1pido (para empezar a sentir cambios de ritmo).\n- **S\u00e1bado:** 30-32 minutos de trote continuo (aprox. 4 a 4.5 km), el d\u00eda largo de la semana.\n\n---\n\n## Fase 3 (semanas 9-12): Construyendo la distancia hacia los 10K\n\nObjetivo: acercar el cuerpo al volumen y la duraci\u00f3n de la carrera, y llegar descansada al d\u00eda de la 10K.\n\n### Semana 9\n- **Lunes:** 25 minutos de trote continuo, ritmo c\u00f3modo.\n- **Mi\u00e9rcoles:** 20 minutos de trote continuo, ritmo c\u00f3modo.\n- **S\u00e1bado:** 5 km continuos (aprox. 32-38 min seg\u00fan tu ritmo). Es tu primera vez llegando a la distancia de \"medio 10K\".\n\n### Semana 10\n- **Lunes:** 25 minutos de trote continuo, ritmo c\u00f3modo.\n- **Mi\u00e9rcoles:** 20 minutos con 5 minutos en el medio a ritmo un poco m\u00e1s exigente (no forzado, solo un poco m\u00e1s vivo) y el resto c\u00f3modo.\n- **S\u00e1bado:** 6-6.5 km continuos, ritmo c\u00f3modo, sin apuro.\n\n### Semana 11\n- **Lunes:** 25 minutos de trote continuo, ritmo c\u00f3modo.\n- **Mi\u00e9rcoles:** 20 minutos de trote continuo, ritmo c\u00f3modo.\n- **S\u00e1bado:** 7-8 km continuos. Es tu entrenamiento m\u00e1s largo del plan; despu\u00e9s de esto empieza el descenso de volumen para llegar fresca a la carrera.\n\n### Semana 12 (semana de carrera)\n- **Lunes:** 20 minutos de trote suave, ritmo muy c\u00f3modo, para activar sin cansarte.\n- **Mi\u00e9rcoles:** 15 minutos de trote suave + 4 x 20 segundos un poco m\u00e1s r\u00e1pido (para sentir las piernas frescas y \"despiertas\"), con caminata de recuperaci\u00f3n entre cada una.\n- **Jueves y viernes:** descanso total, buena hidrataci\u00f3n y buen dormir.\n- **S\u00e1bado: \u00a1D\u00cdA DE CARRERA! Los 10K.**\n  - Calent\u00e1 10 minutos con caminata + trote muy suave antes de la largada.\n  - Arranc\u00e1 m\u00e1s lento de lo que te nace, los primeros 2-3 km te van a parecer \"f\u00e1ciles\"; ese es el ritmo correcto para no fundirte despu\u00e9s.\n  - Si en alg\u00fan tramo necesit\u00e1s caminar, est\u00e1 bien. Terminar es el objetivo de esta primera 10K, no el tiempo.\n  - Disfrut\u00e1 la llegada: es el resultado de 12 semanas de trabajo constante.\n\n---\n\n## Resumen r\u00e1pido de la progresi\u00f3n de los s\u00e1bados (el d\u00eda largo)\n\n| Semana | S\u00e1bado |\n|---|---|\n| 1 | Caminata 30-35 min |\n| 2 | Caminata 35 min |\n| 3 | Trote/caminata ~30-35 min |\n| 4 | Trote/caminata ~35-38 min |\n| 5 | Trote/caminata ~35 min |\n| 6 | Trote/caminata ~35-40 min |\n| 7 | Trote continuo ~25-28 min |\n| 8 | Trote continuo ~30-32 min (4-4.5 km) |\n| 9 | 5 km continuos |\n| 10 | 6-6.5 km continuos |\n| 11 | 7-8 km continuos |\n| 12 | **Carrera: 10K** |\n\n---\n\n## Consejos finales\n\n- Es normal no avanzar en l\u00ednea recta: si una semana te sent\u00eds muy cansada o con molestias, repet\u00ed la semana anterior antes de seguir. Es mejor llegar sana a la carrera que \"cumplir\" el calendario al pie de la letra.\n- No hace falta correr r\u00e1pido en ning\u00fan entrenamiento de este plan, salvo los peque\u00f1os tramos indicados en las semanas 8 y 10. El objetivo de las primeras 11 semanas es construir resistencia, no velocidad.\n- Dormir bien y comer de forma balanceada tienen tanto impacto como los propios entrenamientos.\n- Si pod\u00e9s sumar 1-2 sesiones cortas de fuerza (piernas, core) por semana fuera de los d\u00edas de running, ayuda mucho a prevenir lesiones, pero no es obligatorio para este plan.\n"}], "grading": {"expectations": [{"text": "El plan arranca con intervalos de caminar-trotar (no trote continuo) en las primeras semanas, porque la atleta nunca corri\u00f3", "passed": true, "evidence": "Semana 1: '8 series de (1 min trote suave + 2 min caminata)'"}, {"text": "El plan respeta los 3 d\u00edas espec\u00edficos indicados (lunes, mi\u00e9rcoles, s\u00e1bado) o los menciona expl\u00edcitamente", "passed": true, "evidence": "'D\u00edas de entrenamiento: lunes, mi\u00e9rcoles y s\u00e1bado'"}, {"text": "El plan cubre semana a semana hasta la semana 12, o explica honestamente por qu\u00e9 12 semanas puede ser justo para nivel cero y ofrece una alternativa", "passed": true, "evidence": "Cubre semanas 1-12 completas hasta el d\u00eda de carrera, sin necesidad de advertencia (progresi\u00f3n razonable)"}, {"text": "El plan incluye una reducci\u00f3n de volumen (taper) en la o las \u00faltimas semanas antes de la carrera", "passed": true, "evidence": "Semana 12 expl\u00edcitamente reduce a 'trote suave' y descanso los 2 d\u00edas previos"}, {"text": "El plan marca expl\u00edcitamente d\u00edas de descanso", "passed": true, "evidence": "'Los d\u00edas entre sesiones (martes, jueves, viernes, domingo) son de descanso'"}, {"text": "El lenguaje evita jerga t\u00e9cnica sin explicar", "passed": true, "evidence": "'ritmo conversacional' se explica; no hay jerga sin aclarar"}], "summary": {"passed": 6, "failed": 0, "total": 6, "pass_rate": 1.0}}}, {"id": "eval-weight-loss-knee-injury-with_skill", "prompt": "Un atleta de 52 a\u00f1os, corre ocasionalmente (puede trotar unos 15 minutos seguidos), tiene una lesi\u00f3n vieja en la rodilla, y su objetivo es bajar de peso corriendo. Puede entrenar 4 d\u00edas por semana. Arm\u00e1 el plan.", "eval_id": 2, "outputs": [{"name": "notes.md", "type": "text", "content": "# Notas sobre c\u00f3mo se arm\u00f3 este plan\n\n## Referencias consultadas\n- `.claude/skills/running-coach-plan/SKILL.md` (pasos 1-4 y principios generales: caminar-trotar, progresi\u00f3n ~10%, descanso, entrada en calor/vuelta a la calma, se\u00f1ales de alerta, chequeo m\u00e9dico por edad/lesi\u00f3n).\n- `.claude/skills/running-coach-plan/references/general-goal.md`, secci\u00f3n \"Bajar de peso corriendo\" \u2014 usada como referencia principal porque el objetivo del atleta es expl\u00edcitamente \"bajar de peso corriendo\" (no solo sostener una rutina de caminar-trotar).\n\nNo se consult\u00f3 `references/walk-run.md`: el atleta ya puede trotar ~15 minutos seguidos (por encima del umbral de \"menos de ~10 minutos\" que dispara caminar-trotar desde cero) y su objetivo es correr para bajar de peso, no simplemente sostener una rutina de caminata/trote. Seg\u00fan la skill, no hay que asumir la categor\u00eda walk-run solo por la edad.\n\n## Clasificaci\u00f3n del objetivo\nObjetivo general sin fecha l\u00edmite \u2192 estructura en bloques de 4 semanas (Paso 2 de la skill). Se arm\u00f3 el Bloque 1 completo (semanas 1-4) con hito de cierre, y se explic\u00f3 brevemente c\u00f3mo seguir\u00eda el Bloque 2, en vez de inventar semanas futuras sin saber c\u00f3mo responde el atleta (as\u00ed lo indica la referencia).\n\n## Supuestos hechos (no confirmados por el atleta)\n- Nivel de partida: como puede trotar 15 minutos seguidos, se tom\u00f3 el camino de la referencia para \"si ya puede trotar algo, arrancar directamente con trotes continuos cortos (10-15 min) a ritmo c\u00f3modo\" \u2014 se arranc\u00f3 en 15 min, su nivel actual, en vez de retroceder a caminar-trotar.\n- No se pregunt\u00f3 si la lesi\u00f3n de rodilla est\u00e1 activa/sintom\u00e1tica hoy o es un antecedente resuelto. Se asumi\u00f3 que est\u00e1 resuelta pero merece precauci\u00f3n (superficies blandas si es posible, calzado con amortiguaci\u00f3n, atenci\u00f3n a se\u00f1ales de dolor agudo), y se recomend\u00f3 control m\u00e9dico previo por la combinaci\u00f3n edad 52 + antecedente de lesi\u00f3n, tal como indica el Paso 1 de la skill.\n- No se pregunt\u00f3 por superficie de entrenamiento disponible ni calzado actual; se lo dej\u00f3 como sugerencia opcional, no como requisito, aclarando el supuesto en el propio plan.\n- Se sugirieron d\u00edas concretos (lunes/mi\u00e9rcoles/viernes/domingo) a modo de ejemplo, dejando expl\u00edcito que el atleta puede reacomodarlos; con 4 sesiones en una semana de 7 d\u00edas es matem\u00e1ticamente inevitable que alg\u00fan par quede sin d\u00eda de descanso completo entre medio, y se lo se\u00f1al\u00f3 con una alternativa (cambiar ese trote por caminata si la rodilla molesta).\n- La progresi\u00f3n semana a semana no sigue un c\u00e1lculo exacto de +10%, sino incrementos moderados de 1-3 minutos por sesi\u00f3n (m\u00e1s conservador que el 10% en algunas semanas), priorizando el cuidado de la rodilla por sobre maximizar el volumen.\n"}, {"name": "plan.md", "type": "text", "content": "# Tu plan para bajar de peso corriendo\n\nAntes de arrancar: como ten\u00e9s 52 a\u00f1os y una lesi\u00f3n vieja en la rodilla, te recomiendo pasar por un control m\u00e9dico (o con un traumat\u00f3logo, dado el antecedente en la rodilla) antes de empezar, solo para tener el visto bueno. No hace falta que lo repitas en cada sesi\u00f3n, es un chequeo \u00fanico al inicio.\n\n## C\u00f3mo est\u00e1 armado el plan\n\nNo hay una fecha de carrera de por medio, as\u00ed que el plan va por bloques de 4 semanas, cada uno con una meta concreta al final. Como vos ya pod\u00e9s trotar unos 15 minutos seguidos, arrancamos directo con trotes continuos (no hace falta caminar-trotar desde cero) a un ritmo c\u00f3modo, y vamos sumando minutos de a poco. Para bajar de peso, lo que m\u00e1s importa es la regularidad \u2014 entrenar tus 4 d\u00edas cada semana sin faltar \u2014 m\u00e1s que la exigencia de cada sesi\u00f3n. Por eso el ritmo siempre es conversacional (deber\u00edas poder hablar mientras trot\u00e1s) y no metemos series ni exigencia extra.\n\nPor la rodilla, dos cuidados extra sobre el plan general: eleg\u00ed superficies lo m\u00e1s parejas y blandas posible si ten\u00e9s opci\u00f3n (tierra, pasto, pista) antes que cemento, y us\u00e1 zapatillas con buena amortiguaci\u00f3n. Si no ten\u00e9s esa opci\u00f3n cerca, no pasa nada, trot\u00e1 donde puedas \u2014 es una sugerencia, no un requisito.\n\n**D\u00edas sugeridos:** lunes, mi\u00e9rcoles, viernes y domingo (pod\u00e9s moverlos a los d\u00edas que m\u00e1s te acomoden). La \u00fanica regla es que no te queden dos d\u00edas de trote seguidos salvo el par viernes-domingo con s\u00e1bado de descanso en el medio \u2014 con 4 d\u00edas en una semana de 7, siempre queda alg\u00fan par m\u00e1s cercano, y eso est\u00e1 bien, pero si not\u00e1s que la rodilla se resiente despu\u00e9s de un d\u00eda con poco descanso previo, cambi\u00e1 ese trote por una caminata firme esa semana.\n\n## Bloque 1 (semanas 1 a 4) \u2014 Objetivo: sostener 20-25 minutos de trote continuo, 4 veces por semana, sin molestias en la rodilla\n\n### Semana 1\n- **Lunes:** Camin\u00e1 5 min suave para entrar en calor. Trot\u00e1 15 minutos seguidos a ritmo c\u00f3modo. Termin\u00e1 caminando 5 min.\n- **Mi\u00e9rcoles:** Igual que el lunes (5 min caminata + 15 min trote + 5 min caminata).\n- **Viernes:** Igual que el lunes.\n- **Domingo:** Igual que el lunes.\n\n*Por qu\u00e9:* arrancamos en el mismo nivel que ya ten\u00e9s hoy, para que el cuerpo (y la rodilla) se acostumbre a la frecuencia de 4 veces por semana antes de sumar minutos.\n\n### Semana 2\n- **Lunes, mi\u00e9rcoles, viernes y domingo:** Camin\u00e1 5 min, trot\u00e1 16 minutos seguidos a ritmo c\u00f3modo, camin\u00e1 5 min para cerrar.\n\n*Por qu\u00e9:* subimos poco (un minuto por sesi\u00f3n) porque el salto de \"nada\" a \"trotar 4 veces por semana\" ya es una carga nueva importante para el cuerpo.\n\n### Semana 3\n- **Lunes:** 5 min caminata + 17 min trote + 5 min caminata.\n- **Mi\u00e9rcoles:** 5 min caminata + 17 min trote + 5 min caminata.\n- **Viernes:** 5 min caminata + 17 min trote + 5 min caminata.\n- **Domingo (d\u00eda largo):** 5 min caminata + 20 min trote + 5 min caminata.\n\n*Por qu\u00e9:* metemos un \"d\u00eda largo\" a la semana \u2014 un trote un poco m\u00e1s extenso que el resto \u2014 para ir ganando resistencia sin subir el volumen total de golpe en todas las sesiones.\n\n### Semana 4\n- **Lunes:** 5 min caminata + 18 min trote + 5 min caminata.\n- **Mi\u00e9rcoles:** 5 min caminata + 18 min trote + 5 min caminata.\n- **Viernes:** 5 min caminata + 18 min trote + 5 min caminata.\n- **Domingo (d\u00eda largo):** 5 min caminata + 25 min trote + 5 min caminata.\n\n*Hito de cierre del bloque:* llegar al domingo trotando 25 minutos seguidos, y el resto de los d\u00edas en 18 minutos, sin dolor de rodilla durante ni despu\u00e9s de las sesiones.\n\n## Al terminar el bloque\n\nFijate c\u00f3mo te fue: si llegar a los 25 minutos del domingo te cost\u00f3 mucho o la rodilla se hizo sentir, repetimos un bloque m\u00e1s al mismo nivel antes de avanzar. Si lo llevaste bien, armamos el bloque 2 sumando m\u00e1s minutos de trote de a poco, siempre 4 veces por semana, y ah\u00ed podemos empezar a sumar algo de caminata r\u00e1pida en alg\u00fan d\u00eda que hoy es de descanso \u2014 sin sacarte el d\u00eda de descanso completo semanal, que segu\u00eds necesitando.\n\n## Se\u00f1ales de alerta\n\nEl cansancio normal (piernas pesadas, un poco de falta de aire, agujetas leves al d\u00eda siguiente) es esperable y forma parte de progresar. Distinto es un dolor agudo, tipo punzada, o que te queda doliendo incluso en reposo \u2014 sobre todo en la rodilla que ya tuviste lesionada. Si te pasa eso, parate, no sigas entrenando esa sesi\u00f3n, y consult\u00e1 a un profesional antes de retomar.\n\n## Una aclaraci\u00f3n sobre el peso\n\nCorrer con regularidad ayuda mucho a bajar de peso, pero el resultado final depende tambi\u00e9n de otros factores (alimentaci\u00f3n, sue\u00f1o, etc.) que quedan fuera de este plan de entrenamiento. Si quer\u00e9s profundizar en eso, es tema para charlar aparte.\n"}], "grading": {"expectations": [{"text": "El plan est\u00e1 estructurado en bloques (ej. de 4 semanas) sin fecha de carrera fija, no como un plan de carrera con distancia y fecha", "passed": true, "evidence": "'Bloque 1 (semanas 1 a 4)... Al terminar el bloque: fijate c\u00f3mo te fue... armamos el bloque 2'"}, {"text": "El plan menciona expl\u00edcitamente la lesi\u00f3n de rodilla (precauci\u00f3n, atenci\u00f3n a se\u00f1ales de dolor, o similar) en vez de ignorarla", "passed": true, "evidence": "'Por la rodilla, dos cuidados extra...' y secci\u00f3n de se\u00f1ales de alerta menciona 'sobre todo en la rodilla que ya tuviste lesionada'"}, {"text": "El plan hace alguna menci\u00f3n a la edad (52) sugiriendo cautela o chequeo m\u00e9dico, sin ser alarmista ni repetitivo", "passed": true, "evidence": "'como ten\u00e9s 52 a\u00f1os y una lesi\u00f3n vieja en la rodilla, te recomiendo pasar por un control m\u00e9dico... antes de empezar'"}, {"text": "El plan prioriza frecuencia y consistencia sostenible por sobre intensidad alta", "passed": true, "evidence": "'lo que m\u00e1s importa es la regularidad... m\u00e1s que la exigencia de cada sesi\u00f3n... no metemos series ni exigencia extra'"}, {"text": "El plan usa los 4 d\u00edas disponibles por semana", "passed": true, "evidence": "'D\u00edas sugeridos: lunes, mi\u00e9rcoles, viernes y domingo'"}], "summary": {"passed": 5, "failed": 0, "total": 5, "pass_rate": 1.0}}}, {"id": "eval-weight-loss-knee-injury-without_skill", "prompt": "Un atleta de 52 a\u00f1os, corre ocasionalmente (puede trotar unos 15 minutos seguidos), tiene una lesi\u00f3n vieja en la rodilla, y su objetivo es bajar de peso corriendo. Puede entrenar 4 d\u00edas por semana. Arm\u00e1 el plan.", "eval_id": 2, "outputs": [{"name": "plan.md", "type": "text", "content": "# Plan de Entrenamiento de Running para Bajar de Peso\n\n## Perfil del atleta\n- Edad: 52 a\u00f1os\n- Nivel actual: corre ocasionalmente, puede trotar unos 15 minutos seguidos\n- Antecedente: lesi\u00f3n vieja de rodilla\n- Objetivo: bajar de peso corriendo\n- Disponibilidad: 4 d\u00edas por semana\n\n## Enfoque general\nDado el antecedente de lesi\u00f3n de rodilla y el objetivo de bajar de peso, la prioridad NO es correr r\u00e1pido ni mucho volumen, sino:\n1. Cuidar la rodilla: progresi\u00f3n gradual del impacto, fortalecimiento muscular y buena t\u00e9cnica.\n2. Generar un gasto cal\u00f3rico sostenido y consistente (la constancia importa m\u00e1s que la intensidad).\n3. Alternar trote y caminata para evitar sobrecarga articular mientras se construye base aer\u00f3bica.\n4. Incluir fuerza (piernas, core, cadera) para proteger la rodilla y mejorar la composici\u00f3n corporal.\n\n**Recomendaci\u00f3n previa:** consultar con un m\u00e9dico o traumat\u00f3logo antes de iniciar, especialmente por el antecedente de rodilla, y usar calzado adecuado con buena amortiguaci\u00f3n.\n\n## Estructura semanal (4 d\u00edas)\n- **D\u00eda 1:** Caminata/trote (cardio principal, bajo impacto controlado)\n- **D\u00eda 2:** Fuerza + movilidad (enfocado en piernas, core y rodilla)\n- **D\u00eda 3:** Descanso o actividad muy suave (caminata liviana, estiramiento)\n- **D\u00eda 4:** Caminata/trote (cardio principal)\n- **D\u00eda 5:** Descanso\n- **D\u00eda 6:** Cross-training de bajo impacto (bici, el\u00edptica o nataci\u00f3n) + trote corto\n- **D\u00eda 7:** Descanso completo\n\n## Calentamiento y enfriamiento (siempre)\n- 5-8 minutos de caminata suave + movilidad articular de tobillo, rodilla y cadera antes de cada sesi\u00f3n.\n- 5 minutos de caminata + estiramientos suaves de cu\u00e1driceps, isquiotibiales, gemelos y banda iliotibial al finalizar.\n\n## Plan progresivo (12 semanas)\n\n### Semanas 1-2: Adaptaci\u00f3n\n- Objetivo: acostumbrar articulaciones y tejidos al esfuerzo repetido.\n- D\u00eda 1 y D\u00eda 4: 25-30 min totales, alternando 2 min trote suave / 3 min caminata firme, x5-6 rondas.\n- D\u00eda 2: Fuerza (ver rutina abajo) 20-25 min.\n- D\u00eda 6: 20-25 min de bici o el\u00edptica a ritmo moderado.\n\n### Semanas 3-4: Progresi\u00f3n de intervalos\n- D\u00eda 1 y D\u00eda 4: 30 min, alternando 3 min trote / 2 min caminata, x6 rondas.\n- D\u00eda 2: Fuerza 25-30 min.\n- D\u00eda 6: 25-30 min cross-training + \u00faltimos 10 min trote suave continuo si la rodilla responde bien.\n\n### Semanas 5-6: Consolidaci\u00f3n\n- D\u00eda 1 y D\u00eda 4: 30-35 min, alternando 4 min trote / 2 min caminata, x5 rondas.\n- D\u00eda 2: Fuerza 25-30 min.\n- D\u00eda 6: 30 min cross-training + 10-15 min trote continuo suave.\n\n### Semanas 7-8: Aumento de trote continuo\n- D\u00eda 1: 35 min, alternando 5 min trote / 2 min caminata, x5 rondas.\n- D\u00eda 4: intentar 15-18 min de trote continuo suave + 10 min caminata de cierre.\n- D\u00eda 2: Fuerza 25-30 min.\n- D\u00eda 6: 30-35 min cross-training.\n\n### Semanas 9-10: Mayor continuidad\n- D\u00eda 1: 20 min trote continuo suave + 10 min caminata.\n- D\u00eda 4: alternar 8 min trote / 2 min caminata, x3-4 rondas (35-40 min totales).\n- D\u00eda 2: Fuerza 25-30 min.\n- D\u00eda 6: 35 min cross-training o trote muy suave.\n\n### Semanas 11-12: Meseta de mantenimiento\n- D\u00eda 1: 25 min trote continuo suave (ritmo conversacional).\n- D\u00eda 4: 30-35 min combinando trote suave con 1-2 min de caminata cada 10 min si la rodilla lo pide.\n- D\u00eda 2: Fuerza 30 min.\n- D\u00eda 6: 35-40 min cross-training o trote suave.\n\n**Nota:** el progreso NO es lineal ni obligatorio. Si la rodilla molesta, se repite la semana anterior o se reduce el trote y se aumenta la caminata. El objetivo de \"correr X minutos seguidos\" es secundario al de sostener el h\u00e1bito sin dolor.\n\n## Rutina de fuerza (D\u00eda 2), 2-3 series de 10-15 repeticiones\n- Sentadilla a silla (apoyo si hace falta)\n- Puente de gl\u00fateo\n- Elevaci\u00f3n de talones (gemelos)\n- Zancada corta o est\u00e1tica (sin bajar mucho la rodilla si genera dolor)\n- Plancha abdominal (20-40 seg)\n- Elevaciones laterales de cadera (banda el\u00e1stica) para estabilidad de rodilla\n- Estiramiento final de cu\u00e1driceps, isquiotibiales y banda IT\n\n## Se\u00f1ales de alerta en la rodilla\n- Dolor agudo o que aumenta durante la sesi\u00f3n: detener y aplicar hielo.\n- Hinchaz\u00f3n o dolor que persiste m\u00e1s de 24-48 horas: bajar la carga, consultar al m\u00e9dico.\n- Molestia leve que no aumenta y desaparece al d\u00eda siguiente: se puede continuar con precauci\u00f3n.\n\n## Alimentaci\u00f3n y h\u00e1bitos para bajar de peso (recomendaciones generales)\n- Mantener un d\u00e9ficit cal\u00f3rico moderado (no dr\u00e1stico) combinando alimentaci\u00f3n balanceada con el gasto cal\u00f3rico del entrenamiento.\n- Priorizar prote\u00edna (para conservar masa muscular), vegetales, frutas y buena hidrataci\u00f3n.\n- Dormir 7-8 horas: favorece recuperaci\u00f3n y control del apetito.\n- Pesarse o medirse una vez por semana, no a diario, para evaluar tendencia real.\n\n## Seguimiento\n- Registrar cada sesi\u00f3n: minutos de trote/caminata, sensaci\u00f3n de rodilla (0-10) y percepci\u00f3n de esfuerzo.\n- Revisar cada 2 semanas si es momento de avanzar de fase o repetir la actual.\n- Reevaluar el plan completo a las 12 semanas seg\u00fan evoluci\u00f3n de peso, resistencia y estado de la rodilla.\n"}], "grading": {"expectations": [{"text": "El plan est\u00e1 estructurado en bloques (ej. de 4 semanas) sin fecha de carrera fija, no como un plan de carrera con distancia y fecha", "passed": false, "evidence": "Est\u00e1 armado como un arco continuo de 12 semanas dividido en fases de 2 semanas ('Semanas 1-2: Adaptaci\u00f3n'...), presentado completo de entrada, sin la estructura de bloques con checkpoint de avanzar/repetir que pide la expectativa. S\u00ed evita fecha de carrera fija, pero no organiza en bloques revisables."}, {"text": "El plan menciona expl\u00edcitamente la lesi\u00f3n de rodilla (precauci\u00f3n, atenci\u00f3n a se\u00f1ales de dolor, o similar) en vez de ignorarla", "passed": true, "evidence": "Secci\u00f3n completa 'Se\u00f1ales de alerta en la rodilla' y ejercicios de fuerza dedicados a proteger la rodilla"}, {"text": "El plan hace alguna menci\u00f3n a la edad (52) sugiriendo cautela o chequeo m\u00e9dico, sin ser alarmista ni repetitivo", "passed": false, "evidence": "La recomendaci\u00f3n de consulta m\u00e9dica est\u00e1 atada solo al antecedente de rodilla ('especialmente por el antecedente de rodilla'); no menciona la edad (52) en ning\u00fan punto del documento"}, {"text": "El plan prioriza frecuencia y consistencia sostenible por sobre intensidad alta", "passed": true, "evidence": "'la prioridad NO es correr r\u00e1pido ni mucho volumen... la constancia importa m\u00e1s que la intensidad'"}, {"text": "El plan usa los 4 d\u00edas disponibles por semana", "passed": true, "evidence": "Estructura semanal de 4 d\u00edas de actividad (2 cardio, 1 fuerza, 1 cross-training)"}], "summary": {"passed": 3, "failed": 2, "total": 5, "pass_rate": 0.6}, "eval_feedback": {"overall": "La asignaci\u00f3n 'usa los 4 d\u00edas disponibles' pas\u00f3 en ambas configuraciones sin distinguir mucho valor porque es f\u00e1cil de cumplir con cualquier estructura de 4 d\u00edas. La de 'bloques de 4 semanas' s\u00ed result\u00f3 discriminante: mide una decisi\u00f3n de dise\u00f1o espec\u00edfica del skill (revisar y decidir avanzar/repetir cada 4 semanas) que el modelo base no adopta espont\u00e1neamente aunque el resultado final sea igual de seguro."}}}, {"id": "eval-zero-to-30-min-with_skill", "prompt": "Tengo un chico de 24 a\u00f1os que quiere empezar a correr de cero, nunca hizo actividad f\u00edsica, su objetivo es simplemente 'poder correr 30 minutos seguidos'. Tiene 5 d\u00edas libres por semana pero prefiere entrenar solo 3. \u00bfQu\u00e9 plan le armo?", "eval_id": 3, "outputs": [{"name": "notes.md", "type": "text", "content": "# Notas\n\n## Referencia consultada\n- `/home/user/dise-o-de-App/.claude/skills/running-coach-plan/SKILL.md` (instrucciones generales, principios de todo plan)\n- `/home/user/dise-o-de-App/.claude/skills/running-coach-plan/references/general-goal.md` \u2014 secci\u00f3n \"Empezar a correr\" / \"sostener X minutos seguidos\" (arranca de cero o casi), ya que el objetivo (\"poder correr 30 minutos seguidos\") no tiene fecha de carrera asociada.\n\nNo se consult\u00f3 `walk-run.md` porque el objetivo expl\u00edcito del atleta es llegar a correr continuo (30 min), no sostener una rutina de caminar-trotar indefinidamente.\n\n## Datos del atleta (los 4 puntos del Paso 1)\n1. Objetivo: general, sin fecha \u2014 \"poder correr 30 minutos seguidos\".\n2. Nivel actual: cero, nunca hizo actividad f\u00edsica (arranca de cero).\n3. D\u00edas disponibles: 5 libres, pero prefiere entrenar solo 3 \u2014 se us\u00f3 su preferencia de 3 sesiones/semana, siguiendo la secci\u00f3n \"Frecuencia\" de la referencia (usar los d\u00edas que dio, no forzar m\u00e1s).\n4. Edad y salud: 24 a\u00f1os, sin lesiones ni condiciones m\u00e9dicas mencionadas \u2014 no aplica la recomendaci\u00f3n de ok m\u00e9dico (esa solo se agrega si tiene 40+ o mencion\u00f3 lesi\u00f3n/condici\u00f3n).\n\n## Supuestos\n- Se asumi\u00f3 que puede elegir libremente cu\u00e1les 3 de sus 5 d\u00edas libres usar, y se sugirieron ejemplos (lunes/mi\u00e9rcoles/viernes o martes/jueves/s\u00e1bado) dejando aclarado que lo importante es el d\u00eda de descanso entre sesiones, no el d\u00eda exacto.\n- Siguiendo la referencia, se detall\u00f3 completo el Bloque 1 (semanas 1-4) sesi\u00f3n por sesi\u00f3n, y los bloques siguientes (2 a 6) se describieron con menor nivel de detalle (hito y l\u00f3gica de progresi\u00f3n), ya que la referencia indica que cada bloque se ajusta seg\u00fan c\u00f3mo le fue al atleta en el anterior \u2014 no tiene sentido prescribir las 24 semanas en detalle de antemano.\n- Se estim\u00f3 que el objetivo de 30 minutos seguidos se alcanza alrededor del bloque 5-6, tal como indica la referencia para alguien que arranca de cero.\n- No se agreg\u00f3 advertencia de control m\u00e9dico (edad 24, sin condiciones mencionadas), conforme a la regla de la skill de incluirla solo para 40+ o con lesi\u00f3n/condici\u00f3n reportada.\n"}, {"name": "plan.md", "type": "text", "content": "# Plan para empezar a correr desde cero \u2014 objetivo: correr 30 minutos seguidos\n\n**Perfil:** 24 a\u00f1os, nunca hizo actividad f\u00edsica, arranca de cero. Tiene 5 d\u00edas libres por semana pero prefiere entrenar solo 3.\n\n## C\u00f3mo est\u00e1 armado el plan\n\nComo el objetivo (\"correr 30 minutos seguidos\") no tiene fecha l\u00edmite, el plan se arma en **bloques de 4 semanas**, cada uno con una meta concreta y alcanzable al final. Se arranca con caminata-trote (nunca trote continuo desde el d\u00eda 1: es la forma de progresar sin lesionarse ni frustrarse) y, bloque a bloque, se van estirando los tramos de trote y achicando los de caminata hasta sostener los 30 minutos seguidos. Para alguien que arranca de cero, ese objetivo suele llegar alrededor del bloque 5-6, es decir, unos 5-6 meses de entrenamiento constante.\n\nEntrena 3 d\u00edas por semana (no hace falta usar los 5 d\u00edas libres): por ejemplo **lunes, mi\u00e9rcoles y viernes**, o **martes, jueves y s\u00e1bado** \u2014 lo importante es que entre sesi\u00f3n y sesi\u00f3n haya al menos un d\u00eda de por medio, sobre todo en los primeros bloques, para que el cuerpo se recupere. Los d\u00edas libres que no uses para correr pod\u00e9s dejarlos como descanso completo, o si ten\u00e9s ganas, una caminata suave \u2014 pero no es obligatorio.\n\nCada sesi\u00f3n arranca con 3 minutos de caminata o trote muy suave (entrada en calor) y termina igual (vuelta a la calma).\n\n**Una aclaraci\u00f3n importante sobre las molestias:** es normal sentir cansancio, piernas pesadas o un poco de falta de aire al principio \u2014 eso es parte de progresar. Lo que **no** es normal es un dolor agudo, tipo punzada, o un dolor que sigue incluso en reposo: si aparece algo as\u00ed, parar la sesi\u00f3n y consultar a un profesional antes de seguir.\n\n---\n\n## Bloque 1 (semanas 1 a 4) \u2014 Hito: sostener tramos de trote de 2 minutos sin agotamiento extremo\n\n### Semana 1\nLunes, mi\u00e9rcoles y viernes (misma sesi\u00f3n los 3 d\u00edas):\nTrot\u00e1 1 min / camin\u00e1 2 min, repet\u00ed 6 veces (18 min). Con calentamiento y enfriamiento: 24 min total por sesi\u00f3n.\n\n### Semana 2\nTrot\u00e1 1 min / camin\u00e1 2 min, repet\u00ed 7 veces (21 min). Con calentamiento y enfriamiento: 27 min total por sesi\u00f3n.\n\n*Por qu\u00e9: mismo ritmo de trote que la semana 1, pero un poco m\u00e1s de volumen \u2014 el cuerpo ya se est\u00e1 acostumbrando al est\u00edmulo.*\n\n### Semana 3\nTrot\u00e1 2 min / camin\u00e1 2 min, repet\u00ed 5 veces (20 min). Con calentamiento y enfriamiento: 26 min total por sesi\u00f3n.\n\n*Por qu\u00e9: ac\u00e1 se estira el tramo de trote de 1 a 2 minutos, que es el hito de este bloque.*\n\n### Semana 4\nTrot\u00e1 2 min / camin\u00e1 1 min, repet\u00ed 6 veces (18 min, de los cuales 12 min son de trote). Con calentamiento y enfriamiento: 24 min total por sesi\u00f3n.\n\n*Cierre del bloque: si llegaste a esta semana sosteniendo los 2 minutos de trote sin sensaci\u00f3n de agotamiento extremo, pas\u00e1s al bloque 2. Si cost\u00f3 mucho, no hay drama \u2014 repet\u00ed la semana 4 una vez m\u00e1s antes de avanzar.*\n\n---\n\n## Bloque 2 (semanas 5 a 8) \u2014 Hito: sostener 5 minutos de trote continuo\n\nSe sigue con caminata-trote, pero con tramos de trote m\u00e1s largos: arrancando en 3 minutos de trote / 1-2 minutos de caminata, y aumentando de a poco semana a semana hasta llegar a sostener 5 minutos seguidos seguidos de trote hacia el final del bloque. Misma frecuencia (3 sesiones/semana, con descanso entre medio) y mismo calentamiento/enfriamiento en cada sesi\u00f3n.\n\n## Bloque 3 (semanas 9 a 12) \u2014 Hito: sostener 10-15 minutos de trote continuo\n\nLos tramos de trote pasan a ser de 8-10 minutos con caminatas de apenas 1 minuto entre medio, reduciendo cada vez m\u00e1s la caminata hasta que el trote sea pr\u00e1cticamente continuo por 10-15 minutos.\n\n## Bloques 4, 5 y 6 (semanas 13 en adelante) \u2014 Hasta los 30 minutos seguidos\n\nA partir de ac\u00e1, cada bloque suma aproximadamente 5 minutos m\u00e1s de trote continuo respecto al bloque anterior:\n\n- **Bloque 4 (semanas 13-16):** hito de 15-20 min seguidos.\n- **Bloque 5 (semanas 17-20):** hito de 20-25 min seguidos.\n- **Bloque 6 (semanas 21-24):** hito de 30 minutos seguidos \u2014 objetivo cumplido.\n\n## Al final de cada bloque\n\nAntes de armar el siguiente bloque, conviene revisar c\u00f3mo le fue: si el hito cost\u00f3 mucho, repetir el bloque con el mismo nivel de exigencia en vez de avanzar; si lo cumpli\u00f3 con comodidad, pasar al siguiente. No hay problema en tardar m\u00e1s de 6 bloques si el cuerpo pide un ritmo m\u00e1s gradual \u2014 lo importante es la constancia, no la velocidad para llegar a los 30 minutos.\n"}], "grading": {"expectations": [{"text": "El plan arranca con caminar-trotar en vez de trote continuo, dado que nunca hizo actividad f\u00edsica", "passed": true, "evidence": "Bloque 1: 'Trot\u00e1 1 min / camin\u00e1 2 min, repet\u00ed 6 veces'"}, {"text": "El plan usa 3 d\u00edas por semana (respeta la preferencia del atleta) y no los 5 d\u00edas que tiene libres", "passed": true, "evidence": "'Entrena 3 d\u00edas por semana (no hace falta usar los 5 d\u00edas libres)'"}, {"text": "El plan est\u00e1 orientado a un hito concreto: sostener 30 minutos de trote continuo", "passed": true, "evidence": "T\u00edtulo del plan y Bloque 6: 'hito de 30 minutos seguidos \u2014 objetivo cumplido'"}, {"text": "La progresi\u00f3n es gradual semana a semana, sin saltos bruscos en minutos de trote", "passed": true, "evidence": "Incrementos de trote de 1\u21922\u21923... minutos por bloque, y de ~5 min por bloque de 4 semanas en la fase final; ning\u00fan salto supera ese ritmo"}, {"text": "El lenguaje es simple, sin jerga t\u00e9cnica sin explicar", "passed": true, "evidence": "Sin t\u00e9rminos t\u00e9cnicos sin explicar en todo el documento"}], "summary": {"passed": 5, "failed": 0, "total": 5, "pass_rate": 1.0}}}, {"id": "eval-zero-to-30-min-without_skill", "prompt": "Tengo un chico de 24 a\u00f1os que quiere empezar a correr de cero, nunca hizo actividad f\u00edsica, su objetivo es simplemente 'poder correr 30 minutos seguidos'. Tiene 5 d\u00edas libres por semana pero prefiere entrenar solo 3. \u00bfQu\u00e9 plan le armo?", "eval_id": 3, "outputs": [{"name": "plan.md", "type": "text", "content": "# Plan de entrenamiento: de cero a correr 30 minutos seguidos\n\n**Perfil del atleta:** 24 a\u00f1os, sin actividad f\u00edsica previa, objetivo \"poder correr 30 minutos seguidos\".\n**Disponibilidad:** 5 d\u00edas libres por semana, pero entrena 3 d\u00edas.\n**Duraci\u00f3n del plan:** 9 semanas (se puede repetir alguna semana si hace falta).\n**M\u00e9todo:** caminar/trotar en intervalos, con progresi\u00f3n gradual (estilo \"Couch to 5K\" adaptado).\n\n---\n\n## D\u00edas de entrenamiento sugeridos\n\nCon 3 sesiones por semana, lo ideal es dejar al menos un d\u00eda de descanso entre cada entrenamiento para que el cuerpo se recupere (tendones, articulaciones y m\u00fasculos necesitan adaptarse). Ejemplo con 5 d\u00edas libres:\n\n- **Lunes** \u2013 Entrenamiento 1\n- **Mi\u00e9rcoles** \u2013 Entrenamiento 2\n- **Viernes o S\u00e1bado** \u2013 Entrenamiento 3\n- Resto de los d\u00edas: descanso o actividad libre (caminar, estirar, sin presi\u00f3n)\n\n---\n\n## Estructura de cada sesi\u00f3n\n\nTodas las sesiones siguen el mismo esqueleto:\n\n1. **Entrada en calor (5 min):** caminar r\u00e1pido para activar el cuerpo.\n2. **Bloque principal:** intervalos de trote y caminata (ver progresi\u00f3n semanal).\n3. **Vuelta a la calma (5 min):** caminar suave y estirar piernas (gemelos, cu\u00e1driceps, isquiotibiales) durante 5-10 minutos.\n\n**Ritmo del trote:** debe ser un ritmo \"conversacional\", es decir, que pueda hablar sin quedarse sin aire. No importa la velocidad, importa sostener el tiempo.\n\n---\n\n## Progresi\u00f3n semana a semana\n\n| Semana | Bloque principal (se repite el ciclo indicado) | Tiempo total de trote aprox. |\n|---|---|---|\n| 1 | Trotar 1 min / caminar 2 min \u00d7 8 veces | 8 min |\n| 2 | Trotar 2 min / caminar 2 min \u00d7 6 veces | 12 min |\n| 3 | Trotar 3 min / caminar 2 min \u00d7 5 veces | 15 min |\n| 4 | Trotar 5 min / caminar 2 min \u00d7 4 veces | 20 min |\n| 5 | Trotar 7 min / caminar 2 min \u00d7 3 veces | 21 min |\n| 6 | Trotar 10 min / caminar 2 min \u00d7 2 veces + trotar 5 min final | 25 min |\n| 7 | Trotar 12 min / caminar 2 min \u00d7 2 veces | 24 min |\n| 8 | Trotar 20 min / caminar 2 min / trotar 8 min | 28 min |\n| 9 | Trotar 30 min continuos (objetivo) | 30 min |\n\n**Notas sobre la progresi\u00f3n:**\n- Cada sesi\u00f3n dentro de la misma semana es igual (se repite el mismo bloque 3 veces).\n- Si una semana se siente muy dura, repetirla antes de avanzar a la siguiente. No hay problema en tomarse 10-12 semanas en total.\n- El objetivo de las primeras semanas NO es la velocidad, es acostumbrar al cuerpo (tendones, rodillas, coraz\u00f3n) al impacto y al esfuerzo sostenido.\n\n---\n\n## Recomendaciones generales\n\n- **Calzado:** usar zapatillas con amortiguaci\u00f3n adecuada para correr (no cualquier zapatilla urbana), ideal recambiar cada 500-600 km.\n- **Hidrataci\u00f3n:** tomar agua antes y despu\u00e9s de entrenar; si hace calor, hidratarse tambi\u00e9n durante.\n- **Dolor vs. molestia:** una leve fatiga muscular es normal; un dolor agudo en articulaciones (rodilla, tobillo) es se\u00f1al de frenar y descansar un d\u00eda extra.\n- **Descanso:** dormir bien y no entrenar dos d\u00edas seguidos, sobre todo en las primeras semanas.\n- **Alimentaci\u00f3n:** no es necesario nada especial, pero evitar comidas pesadas 1-2 horas antes de correr.\n- **Superficie:** preferir superficies blandas (tierra, pasto, pista) antes que cemento, si est\u00e1n disponibles, para cuidar las articulaciones.\n- **Escuchar al cuerpo:** si aparece dolor persistente, mejor consultar con un profesional antes de seguir avanzando.\n\n---\n\n## Qu\u00e9 hacer despu\u00e9s de llegar a los 30 minutos\n\nUna vez que logre correr 30 minutos seguidos (semana 9), puede:\n- Mantener esa rutina 2-3 veces por semana como base de mantenimiento.\n- Empezar a sumar minutos de a poco (35, 40, 45 min) si quiere seguir progresando.\n- Fijar un nuevo objetivo, como una carrera de 5K.\n\n---\n\n*Plan elaborado a partir de principios generales de entrenamiento para principiantes en running (progresi\u00f3n gradual caminar-trotar, regla de no aumentar m\u00e1s del 10% de carga por semana, y respeto de d\u00edas de descanso entre sesiones).*\n"}], "grading": {"expectations": [{"text": "El plan arranca con caminar-trotar en vez de trote continuo, dado que nunca hizo actividad f\u00edsica", "passed": true, "evidence": "Semana 1: 'Trotar 1 min / caminar 2 min \u00d7 8 veces'"}, {"text": "El plan usa 3 d\u00edas por semana (respeta la preferencia del atleta) y no los 5 d\u00edas que tiene libres", "passed": true, "evidence": "'Con 3 sesiones por semana... Ejemplo con 5 d\u00edas libres: Lunes/Mi\u00e9rcoles/Viernes o S\u00e1bado'"}, {"text": "El plan est\u00e1 orientado a un hito concreto: sostener 30 minutos de trote continuo", "passed": true, "evidence": "Semana 9: 'Trotar 30 min continuos (objetivo)'"}, {"text": "La progresi\u00f3n es gradual semana a semana, sin saltos bruscos en minutos de trote", "passed": false, "evidence": "El tramo continuo m\u00e1s largo salta de 12 min (semana 7) a 20 min (semana 8) en una sola semana \u2014 un salto de ~67%, muy por encima de cualquier regla de progresi\u00f3n gradual, para alguien que nunca hizo actividad f\u00edsica"}, {"text": "El lenguaje es simple, sin jerga t\u00e9cnica sin explicar", "passed": true, "evidence": "Sin jerga sin explicar"}], "summary": {"passed": 4, "failed": 1, "total": 5, "pass_rate": 0.8}, "eval_feedback": {"overall": "Este es el hallazgo m\u00e1s importante del benchmark: sin el skill, el modelo comprime en 9 semanas un progreso que el skill reparte en ~24 semanas (6 bloques), y de paso mete un salto de progresi\u00f3n riesgoso en la semana 8. El skill previene esto expl\u00edcitamente citando la regla de no subir m\u00e1s de ~10% por semana."}}}, {"id": "eval-first-3k-8-weeks-with_skill", "prompt": "Una mujer de 45 a\u00f1os se anot\u00f3 en la app, quiere correr su primera carrera pero nunca corri\u00f3 y no tiene mucho tiempo para entrenar. Le da un poco de miedo comprometerse a algo largo. Tiene 8 semanas hasta una carrera de 3K en su ciudad. Puede entrenar 3 d\u00edas por semana.", "eval_id": 4, "outputs": [{"name": "notes.md", "type": "text", "content": "# Notas\n\n## Referencias consultadas\n- `.claude/skills/running-coach-plan/SKILL.md` (pasos 1-4, principios generales: caminar-trotar, progresi\u00f3n gradual, descanso, entrada en calor/vuelta a la calma, se\u00f1ales de alerta, taper).\n- `.claude/skills/running-coach-plan/references/3k.md` (duraci\u00f3n m\u00ednima recomendada seg\u00fan nivel, estructura por fases, frecuencia, progresi\u00f3n de ejemplo para nivel \"nunca corri\u00f3\").\n\nNo se us\u00f3 `general-goal.md` ni `walk-run.md` porque el objetivo tiene fecha y distancia concretas (3K en 8 semanas) y la atleta no expres\u00f3 preferencia por quedarse en caminar-trotar de forma permanente \u2014 el objetivo es correr la carrera.\n\n## Datos del perfil (dados por el usuario)\n- Objetivo: primera carrera, 3K, en 8 semanas.\n- Nivel actual: nunca corri\u00f3 (asumido expl\u00edcitamente por el enunciado \"nunca corri\u00f3\").\n- D\u00edas disponibles: 3 por semana.\n- Edad: 45 a\u00f1os.\n- Contexto adicional: poco tiempo para entrenar, miedo a comprometerse a algo largo.\n\n## Supuestos tomados (no dados expl\u00edcitamente por el usuario)\n- No especific\u00f3 qu\u00e9 d\u00edas de la semana tiene libres: se sugirieron ejemplos (lunes/mi\u00e9rcoles/s\u00e1bado) no consecutivos, aclarando que puede reacomodarlos.\n- No mencion\u00f3 lesiones ni condiciones m\u00e9dicas puntuales: por tener 45 a\u00f1os (>=40 seg\u00fan el criterio de la skill) se incluy\u00f3 una \u00fanica recomendaci\u00f3n de consulta m\u00e9dica antes de arrancar, sin repetirla en el resto del plan.\n- 8 semanas est\u00e1 por encima de las 6 semanas m\u00ednimas recomendadas para nivel \"nunca corri\u00f3\" en 3K, as\u00ed que se us\u00f3 el margen extra para hacer la progresi\u00f3n m\u00e1s gradual (menos abrupta que el ejemplo de 6 semanas de la referencia), en lugar de acortar el plan o agregar carga innecesaria \u2014 esto tambi\u00e9n ayuda a bajar la sensaci\u00f3n de \"compromiso grande\" mencionada por la usuaria, ya que cada sesi\u00f3n es corta (20-30 min) y el avance semana a semana es chico.\n- Se asumi\u00f3 superficie/terreno neutro (sin indicar si tiene subidas o terreno irregular cerca); no se aclar\u00f3 como supuesto separado en el plan porque no afecta la progresi\u00f3n de tiempos, solo se recomend\u00f3 ritmo c\u00f3modo.\n- El ritmo de carrera sugerido el d\u00eda de la competencia es \"c\u00f3modo, sin ir m\u00e1s r\u00e1pido de lo entrenado\", dado que el objetivo declarado es terminar la primera carrera, no una marca de tiempo.\n"}, {"name": "plan.md", "type": "text", "content": "# Tu plan para tu primera carrera: 3K en 8 semanas\n\nPrimero, tranquila: elegiste bien. El 3K es la distancia ideal para debutar \u2014 es corta, exig\u00eds poco tiempo por semana (con 3 d\u00edas alcanza y sobra) y en 8 semanas el cuerpo tiene tiempo de sobra para acostumbrarse sin apurar nada. No es un compromiso \"largo\": son sesiones de entre 20 y 30 minutos, 3 veces por semana, y en menos de dos meses est\u00e1s cruzando la meta de tu primera carrera.\n\nComo ten\u00e9s 45 a\u00f1os, una sola recomendaci\u00f3n antes de arrancar: si hace tiempo que no hac\u00e9s actividad f\u00edsica o ten\u00e9s alguna condici\u00f3n de salud, pas\u00e1 por el m\u00e9dico para un ok general antes de empezar. Despu\u00e9s de eso, no hace falta pensar m\u00e1s en el tema \u2014 segui el plan tranquila.\n\n## C\u00f3mo est\u00e1 armado el plan\n\n- **Semanas 1 a 5 (base):** vas a alternar caminar y trotar, estirando de a poco los bloques de trote. El objetivo de esta fase es que el cuerpo se acostumbre al impacto y al esfuerzo sin lesionarte ni frustrarte.\n- **Semanas 6 y 7 (consolidaci\u00f3n):** vas a empezar a sostener trote continuo, hasta llegar a cubrir c\u00f3modos los 15-18 minutos que suele tomar un 3K a ritmo suave.\n- **Semana 8 (taper):** bajamos el volumen a prop\u00f3sito para que llegues descansada y con energ\u00eda al d\u00eda de la carrera.\n\nEntren\u00e1s 3 d\u00edas por semana, no consecutivos (por ejemplo lunes, mi\u00e9rcoles y s\u00e1bado), para que el cuerpo tenga tiempo de recuperarse entre sesi\u00f3n y sesi\u00f3n.\n\nUna nota sobre se\u00f1ales de alerta, para no repetirla en cada semana: cansancio, algo de agitaci\u00f3n o que las piernas \"pesen\" al d\u00eda siguiente es normal cuando el cuerpo se est\u00e1 adaptando. Lo que **no** es normal es un dolor agudo, tipo punzada, o un dolor que sigue estando ah\u00ed incluso en reposo \u2014 si te pasa eso, par\u00e1s y consult\u00e1s a un profesional antes de seguir.\n\n---\n\n## Semana 1 \u2014 Objetivo: que el cuerpo se acostumbre a alternar caminar y trotar\n\nEleg\u00ed 3 d\u00edas no seguidos (ej. lunes, mi\u00e9rcoles, s\u00e1bado). Las tres sesiones son iguales esta semana.\n\n**Cada sesi\u00f3n:** Trot\u00e1 1 min / camin\u00e1 2 min, repet\u00ed 5 veces (15 min). Empez\u00e1 y termin\u00e1 con 3 min de caminata suave.\n\nPor qu\u00e9: bloques cortos de trote para que te familiarices con el movimiento sin cargar de m\u00e1s las piernas.\n\n## Semana 2 \u2014 Objetivo: sumar un poco m\u00e1s de trote total\n\n**Cada sesi\u00f3n:** Trot\u00e1 1 min / camin\u00e1 2 min, repet\u00ed 6 veces (18 min). Empez\u00e1 y termin\u00e1 con 3 min de caminata suave.\n\n## Semana 3 \u2014 Objetivo: alargar un poco el bloque de trote\n\n**Cada sesi\u00f3n:** Trot\u00e1 2 min / camin\u00e1 2 min, repet\u00ed 5 veces (20 min). Empez\u00e1 y termin\u00e1 con 3 min de caminata suave.\n\n## Semana 4 \u2014 Objetivo: seguir alargando el trote, sin subir el total de golpe\n\n**Cada sesi\u00f3n:** Trot\u00e1 3 min / camin\u00e1 2 min, repet\u00ed 4 veces (20 min). Empez\u00e1 y termin\u00e1 con 3 min de caminata suave.\n\nPor qu\u00e9: el tiempo total de trote+caminata no sube mucho respecto a la semana pasada \u2014 lo que cambia es que cada bloque de trote es m\u00e1s largo, as\u00ed el cuerpo aprende a sostener el esfuerzo por m\u00e1s tiempo seguido.\n\n## Semana 5 \u2014 Objetivo: acercarse al trote continuo\n\n**Cada sesi\u00f3n:** Trot\u00e1 4 min / camin\u00e1 2 min, repet\u00ed 3 veces (18 min). Empez\u00e1 y termin\u00e1 con 3 min de caminata suave.\n\n## Semana 6 \u2014 Objetivo: primer trote continuo\n\nD\u00eda 1 y D\u00eda 2: Trot\u00e1 6 min / camin\u00e1 2 min, repet\u00ed 3 veces (24 min). Empez\u00e1 y termin\u00e1 con 3 min de caminata suave.\nD\u00eda 3: Trot\u00e1 8 minutos seguidos (sin cortes). Empez\u00e1 y termin\u00e1 con 3 min de caminata suave.\n\nPor qu\u00e9: ya veniste sosteniendo bloques largos de trote, as\u00ed que el cuerpo est\u00e1 preparado para juntarlos en un tramo continuo m\u00e1s largo.\n\n## Semana 7 \u2014 Objetivo: sostener el tiempo que dura un 3K\n\nD\u00eda 1: Trot\u00e1 10 minutos seguidos. Empez\u00e1 y termin\u00e1 con 3 min de caminata suave.\nD\u00eda 2: Trot\u00e1 12 minutos seguidos. Empez\u00e1 y termin\u00e1 con 3 min de caminata suave.\nD\u00eda 3: Trot\u00e1 15 minutos seguidos, a ritmo c\u00f3modo (el mismo que ven\u00eds usando, no hace falta ir m\u00e1s r\u00e1pido). Empez\u00e1 y termin\u00e1 con 3 min de caminata suave.\n\nPor qu\u00e9: 15 minutos de trote continuo ya cubre lo que suele tomar un 3K a ritmo suave \u2014 esta semana confirm\u00e1s que pod\u00e9s sostenerlo.\n\n## Semana 8 \u2014 Taper: bajamos el volumen para llegar descansada\n\nD\u00eda 1 (principio de semana): Trot\u00e1 10 minutos suaves, sin buscar nada, solo mantener el cuerpo activo. Empez\u00e1 y termin\u00e1 con 3 min de caminata suave.\nD\u00eda 2 (unos d\u00edas despu\u00e9s): Trot\u00e1 8 minutos suaves. Empez\u00e1 y termin\u00e1 con 3 min de caminata suave.\nLos 2 d\u00edas previos a la carrera: descanso completo, nada de trote (pod\u00e9s caminar suave si ten\u00e9s ganas, pero no es necesario).\n\n**D\u00eda de la carrera:** arranc\u00e1 tranquila, a un ritmo c\u00f3modo, m\u00e1s lento de lo que te salga en el momento \u2014 es mejor guardar algo de energ\u00eda para el final que quedarte sin nada a mitad de camino. El objetivo de esta primera carrera no es un tiempo, es terminarla y disfrutarla. \u00a1\u00c9xitos!\n"}], "grading": {"expectations": [{"text": "El plan est\u00e1 construido espec\u00edficamente para la distancia 3K (no defaultea a 5K u otra distancia)", "passed": true, "evidence": "T\u00edtulo y contenido enteramente sobre 3K; notes.md confirma uso de references/3k.md"}, {"text": "El plan cubre las 8 semanas disponibles hasta la carrera", "passed": true, "evidence": "Semanas 1 a 8 completas"}, {"text": "El plan arranca con caminar-trotar dado que nunca corri\u00f3", "passed": true, "evidence": "Semana 1: 'Trot\u00e1 1 min / camin\u00e1 2 min, repet\u00ed 5 veces'"}, {"text": "El plan incluye un taper (reducci\u00f3n de volumen) antes de la carrera", "passed": true, "evidence": "Semana 8: 'Taper: bajamos el volumen para llegar descansada'"}, {"text": "El plan usa 3 d\u00edas por semana", "passed": true, "evidence": "'Entren\u00e1s 3 d\u00edas por semana, no consecutivos'"}], "summary": {"passed": 5, "failed": 0, "total": 5, "pass_rate": 1.0}}}, {"id": "eval-first-3k-8-weeks-without_skill", "prompt": "Una mujer de 45 a\u00f1os se anot\u00f3 en la app, quiere correr su primera carrera pero nunca corri\u00f3 y no tiene mucho tiempo para entrenar. Le da un poco de miedo comprometerse a algo largo. Tiene 8 semanas hasta una carrera de 3K en su ciudad. Puede entrenar 3 d\u00edas por semana.", "eval_id": 4, "outputs": [{"name": "plan.md", "type": "text", "content": "# Plan de entrenamiento: Mi primera carrera de 3K en 8 semanas\n\n## Antes de empezar\n\nHola. S\u00e9 que animarse a correr una carrera por primera vez da un poco de nervios, sobre todo cuando nunca corriste antes. La buena noticia es que 3K es una distancia perfecta para empezar, y 8 semanas entrenando solo 3 d\u00edas es m\u00e1s que suficiente para llegar bien preparada. No hace falta correr todo el tiempo ni sufrir: vamos a ir de a poco, combinando caminata y trote, y tu cuerpo se va a ir acostumbrando solo.\n\n**Algunas recomendaciones generales:**\n- Si hace mucho que no hac\u00e9s actividad f\u00edsica o ten\u00e9s alguna condici\u00f3n de salud (presi\u00f3n, coraz\u00f3n, articulaciones, etc.), te recomiendo hacer una consulta m\u00e9dica antes de arrancar. Es un buen h\u00e1bito a los 45 a\u00f1os, aunque te sientas bien.\n- Us\u00e1 zapatillas c\u00f3modas, si son de running mejor. No hace falta nada m\u00e1s sofisticado.\n- Tom\u00e1 agua durante el d\u00eda, no solo cuando entren\u00e1s.\n- La regla de oro: si un dolor es agudo o punzante, par\u00e1s. Las molestias leves de \"estoy usando m\u00fasculos que no usaba\" son normales; el dolor que te hace cambiar la forma de caminar, no.\n- Vas a entrenar 3 d\u00edas por semana, con al menos un d\u00eda de descanso entre sesi\u00f3n y sesi\u00f3n (por ejemplo: lunes, mi\u00e9rcoles y s\u00e1bado). Los d\u00edas que no entren\u00e1s, tu cuerpo se est\u00e1 recuperando y mejorando: tambi\u00e9n son parte del plan.\n- Cada sesi\u00f3n dura entre 20 y 35 minutos. Nada que no puedas encajar en tu semana.\n\n**C\u00f3mo se lee cada sesi\u00f3n:**\nSiempre arranca con 5 minutos de caminata suave para entrar en calor, y termina con 3-5 minutos de caminata suave para bajar el ritmo. Eso no lo vuelvo a repetir en cada semana, pero es fijo.\n\n\"Trotar suave\" significa un ritmo en el que podr\u00edas hablar sin quedarte sin aire. No es correr r\u00e1pido, es apenas un poquito m\u00e1s r\u00e1pido que caminar apurada.\n\n---\n\n## Semana 1 \u2014 Empezar a moverse\nObjetivo: acostumbrar el cuerpo a alternar caminata y trote.\n\n- **D\u00eda 1:** 8 rondas de (1 min trote suave + 2 min caminata)\n- **D\u00eda 2:** 8 rondas de (1 min trote suave + 2 min caminata)\n- **D\u00eda 3:** 10 rondas de (1 min trote suave + 1:30 min caminata)\n\n## Semana 2 \u2014 Sumar un poco m\u00e1s\nObjetivo: que el trote empiece a sentirse m\u00e1s natural.\n\n- **D\u00eda 1:** 8 rondas de (1:30 min trote suave + 2 min caminata)\n- **D\u00eda 2:** 8 rondas de (1:30 min trote suave + 2 min caminata)\n- **D\u00eda 3:** 10 rondas de (1:30 min trote suave + 1:30 min caminata)\n\n## Semana 3 \u2014 Ganando confianza\nObjetivo: trotar bloques m\u00e1s largos sin perder el aire.\n\n- **D\u00eda 1:** 6 rondas de (3 min trote suave + 2 min caminata)\n- **D\u00eda 2:** 6 rondas de (3 min trote suave + 2 min caminata)\n- **D\u00eda 3:** 5 rondas de (4 min trote suave + 2 min caminata)\n\n## Semana 4 \u2014 Punto medio\nObjetivo: notar que ya pod\u00e9s sostener el trote m\u00e1s tiempo que al principio.\n\n- **D\u00eda 1:** 5 rondas de (5 min trote suave + 2 min caminata)\n- **D\u00eda 2:** 4 rondas de (6 min trote suave + 2 min caminata)\n- **D\u00eda 3:** 20 minutos alternando trote/caminata a tu gusto, sin cron\u00f3metro estricto, solo disfrutando el progreso\n\n## Semana 5 \u2014 Bloques largos\nObjetivo: empezar a trotar tramos que se acercan a la duraci\u00f3n de la carrera.\n\n- **D\u00eda 1:** 3 rondas de (8 min trote suave + 2 min caminata)\n- **D\u00eda 2:** 2 rondas de (10 min trote suave + 2 min caminata)\n- **D\u00eda 3:** 15 min trote suave continuo + caminata el resto hasta completar 25 min\n\n## Semana 6 \u2014 Casi ah\u00ed\nObjetivo: probar el trote continuo y ganar seguridad.\n\n- **D\u00eda 1:** 18 min trote suave continuo (si necesit\u00e1s caminar unos segundos, est\u00e1 bien)\n- **D\u00eda 2:** 2 rondas de (10 min trote + 1 min caminata)\n- **D\u00eda 3:** 20 min trote suave continuo\n\n## Semana 7 \u2014 Simulacro de carrera\nObjetivo: probar c\u00f3mo se siente correr los 3K completos, sin exigirte por tiempo.\n\n- **D\u00eda 1:** 22 min trote suave continuo\n- **D\u00eda 2:** Sesi\u00f3n corta y liviana: 15 min trote suave (esta semana entrenamos menos para llegar frescas)\n- **D\u00eda 3:** Simulacro: recorr\u00e9 los 3K completos (pod\u00e9s medirlo con el celular o en una plaza/parque) combinando trote y caminata como necesites. La idea es sentir la distancia, no ir r\u00e1pido.\n\n## Semana 8 \u2014 Semana de la carrera\nObjetivo: llegar descansada y con confianza al d\u00eda de la carrera.\n\n- **D\u00eda 1 (principio de semana):** 15 min trote suave, relajado\n- **D\u00eda 2:** 10 min trote suave + un par de trotes cortitos de 1 min a ritmo un poco m\u00e1s vivo, para activar el cuerpo\n- **D\u00eda 3 (2-3 d\u00edas antes de la carrera):** 10 minutos suaves, caminando y trotando lo que gustes, sin cansarte\n\n**El d\u00eda de la carrera:**\n- Dorm\u00ed bien la noche anterior.\n- Desayun\u00e1 algo liviano y conocido (nada nuevo que pueda caerte mal).\n- Lleg\u00e1 con tiempo para no correr (nunca mejor dicho) para llegar a la largada.\n- Hac\u00e9 una entrada en calor de 5-10 minutos caminando y trotando suave.\n- Arranc\u00e1 tranquila: los primeros minutos de una carrera todo el mundo va r\u00e1pido por los nervios, vos manten\u00e9 tu ritmo de siempre.\n- El objetivo real de esta primera carrera no es un tiempo: es cruzar la meta y disfrutar haberlo logrado. Si necesit\u00e1s caminar alg\u00fan tramo, no pasa nada, sigue siendo un logro enorme.\n\n---\n\n## Resumen del plan\n- **Duraci\u00f3n:** 8 semanas\n- **Frecuencia:** 3 sesiones por semana, con descanso entre cada una\n- **Duraci\u00f3n de cada sesi\u00f3n:** 20 a 35 minutos\n- **M\u00e9todo:** progresi\u00f3n gradual de caminata/trote hacia trote continuo, usando el m\u00e9todo run/walk\n- **Meta:** completar 3K el d\u00eda de la carrera, priorizando terminar y disfrutar por sobre el tiempo\n\nVas a llegar preparada. Un paso (o trote) a la vez.\n"}], "grading": {"expectations": [{"text": "El plan est\u00e1 construido espec\u00edficamente para la distancia 3K (no defaultea a 5K u otra distancia)", "passed": true, "evidence": "Contenido enteramente sobre 3K, incluye 'simulacro' de 3K en semana 7"}, {"text": "El plan cubre las 8 semanas disponibles hasta la carrera", "passed": true, "evidence": "Semanas 1 a 8 completas"}, {"text": "El plan arranca con caminar-trotar dado que nunca corri\u00f3", "passed": true, "evidence": "Semana 1: '8 rondas de (1 min trote suave + 2 min caminata)'"}, {"text": "El plan incluye un taper (reducci\u00f3n de volumen) antes de la carrera", "passed": true, "evidence": "Semana 8 expl\u00edcitamente reduce volumen, 'Semana de la carrera'"}, {"text": "El plan usa 3 d\u00edas por semana", "passed": true, "evidence": "'Vas a entrenar 3 d\u00edas por semana, con al menos un d\u00eda de descanso entre sesi\u00f3n y sesi\u00f3n'"}], "summary": {"passed": 5, "failed": 0, "total": 5, "pass_rate": 1.0}, "eval_feedback": {"overall": "Este caso no result\u00f3 discriminante: el modelo base ya conoce bien el patr\u00f3n 'primera carrera corta = distancia accesible + caminar-trotar + taper', probablemente por ser un patr\u00f3n muy documentado (tipo Couch to 5K). Vale la pena tenerlo igual como test de regresi\u00f3n."}}}, {"id": "eval-walk-run-only-knee-pain-with_skill", "prompt": "Tengo un atleta de 58 a\u00f1os con bastante sobrepeso y dolor cr\u00f3nico en las rodillas. Me dijo expl\u00edcitamente que no quiere correr, que solo quiere caminar y trotar un poco para moverse m\u00e1s. Puede 3 d\u00edas por semana. \u00bfQu\u00e9 plan le armo?", "eval_id": 5, "outputs": [{"name": "notes.md", "type": "text", "content": "# Notas\n\n## Referencias consultadas\n- `.claude/skills/running-coach-plan/SKILL.md` (pasos 1-4, principios generales, criterio de \"40+ o lesi\u00f3n -> ok m\u00e9dico una sola vez\").\n- `.claude/skills/running-coach-plan/references/walk-run.md` \u2014 referencia principal, porque el atleta pidi\u00f3 expl\u00edcitamente no correr y solo caminar/trotar un poco. El perfil (58 a\u00f1os, sobrepeso importante, dolor cr\u00f3nico de rodillas) adem\u00e1s refuerza que esta es la categor\u00eda correcta y no \"empezar a correr\" (general-goal.md).\n- `.claude/skills/running-coach-plan/references/general-goal.md` \u2014 le\u00edda solo para confirmar el formato de bloques de 4 semanas y el cierre/checkpoint al final de cada bloque, ya que walk-run.md comparte esa l\u00f3gica de estructura pero con progreso medido distinto (consistencia y tiempo total, no minutos de trote continuo).\n\n## Datos que dio el atleta\n- Objetivo: sostener rutina de caminar y trotar, sin intenci\u00f3n de llegar a correr.\n- Nivel actual: no corre / no quiere trotar seguido (asumido cercano a cero en trote continuo, dado el pedido expl\u00edcito).\n- D\u00edas disponibles: 3 por semana (no especific\u00f3 cu\u00e1les).\n- Edad y salud: 58 a\u00f1os, bastante sobrepeso, dolor cr\u00f3nico en rodillas.\n\n## Supuestos hechos\n- No se preguntaron los d\u00edas exactos de la semana; se sugiri\u00f3 un ejemplo (lunes/mi\u00e9rcoles/s\u00e1bado) dejando en claro que puede elegir otros, siempre con al menos un d\u00eda de descanso entre sesiones, como indica la skill.\n- Se asumi\u00f3 terreno/superficie no especificado por el atleta: se aclar\u00f3 la recomendaci\u00f3n de terreno parejo como supuesto general, no como dato confirmado.\n- Se us\u00f3 la estructura de Bloque 1 tal como la define walk-run.md (trote 30 seg / caminata 3 min, 20-25 min totales), sin modificarla por el dolor de rodillas, pero se agreg\u00f3 una opci\u00f3n expl\u00edcita de arrancar solo caminando la primera semana si el trote de 30 seg genera molestia, dado que el dolor de rodilla es un dato de salud relevante que la skill pide tener en cuenta.\n- Se incluy\u00f3 la l\u00ednea de recomendaci\u00f3n de ok m\u00e9dico una sola vez (por edad 58 y por el dolor cr\u00f3nico de rodillas), como indica el Paso 1 de la skill, sin repetirla en cada sesi\u00f3n.\n- Se incluy\u00f3 la se\u00f1al de alerta general una sola vez (Paso 3), y se sum\u00f3 la nota espec\u00edfica de walk-run.md sobre dolor durante la caminata (no solo el trote) como bandera roja particular de este objetivo.\n- No se fij\u00f3 una fecha de \"objetivo final\" ya que walk-run.md indica expl\u00edcitamente que no hay apuro ni fecha l\u00edmite en esta categor\u00eda.\n"}, {"name": "plan.md", "type": "text", "content": "# Plan de caminata y trote \u2014 3 d\u00edas por semana\n\nAntes que nada: dado que ten\u00e9s 58 a\u00f1os, bastante sobrepeso y dolor cr\u00f3nico en las rodillas, te recomiendo consultar con tu m\u00e9dico o un kinesi\u00f3logo antes de arrancar, para tener el ok y saber si hay algo puntual a cuidar. No hace falta que lo repitamos en cada sesi\u00f3n, pero es un buen primer paso.\n\nEste plan no busca que llegues a correr en alg\u00fan momento \u2014 vos fuiste claro en que no es lo que quer\u00e9s. El objetivo es sostener en el tiempo una rutina de caminata con algunos tramos cortos de trote muy suave, que te ayude a moverte m\u00e1s sin cargar las rodillas. Se mide el progreso por consistencia (sostener los 3 d\u00edas por semana) y por cu\u00e1nto dura la sesi\u00f3n completa, no por cu\u00e1nto trot\u00e1s.\n\n## C\u00f3mo se organiza\n\nEl plan va en bloques de 4 semanas. Dentro de un bloque no buscamos exigir cada vez m\u00e1s \u2014 la idea es afianzar la rutina primero. Reci\u00e9n si el bloque se sostuvo sin molestias en las rodillas, en el siguiente bloque sumamos un poco m\u00e1s de tiempo total. Si en alg\u00fan momento las rodillas molestan o se te complica sostener los 3 d\u00edas, no pasa nada: repetimos el bloque anterior en vez de forzar un avance.\n\nTerreno y calzado importan bastante ac\u00e1, m\u00e1s que en otros planes: eleg\u00ed superficies parejas (vereda lisa, parque, cinta) en vez de terreno irregular o con pozos, y us\u00e1 zapatillas con buena amortiguaci\u00f3n si las ten\u00e9s. Eso ayuda a que el impacto en la rodilla sea el m\u00ednimo posible.\n\n## Bloque 1 (semanas 1 a 4) \u2014 Afianzar la rutina\n\nHito del bloque: llegar a la semana 4 habiendo sostenido las 3 sesiones semanales, sin dolor en las rodillas.\n\nLas 3 sesiones de la semana son todas iguales en este bloque (no vamos a subir la exigencia todav\u00eda, priorizamos que el cuerpo se acostumbre):\n\n**Estructura de cada sesi\u00f3n (20-25 min total):**\n- Empez\u00e1 caminando 5 minutos a paso suave, para entrar en calor.\n- Despu\u00e9s altern\u00e1: trot\u00e1 30 segundos muy suave / camin\u00e1 3 minutos. Repet\u00ed esto 4 veces.\n- Termin\u00e1 caminando 3 minutos suave para bajar el ritmo.\n\nEleg\u00ed 3 d\u00edas no seguidos para hacerlo, por ejemplo lunes, mi\u00e9rcoles y s\u00e1bado (dejando al menos un d\u00eda de descanso entre sesi\u00f3n y sesi\u00f3n). Los d\u00edas que no entren\u00e1s no hace falta que hagas nada especial \u2014 descans\u00e1 o hac\u00e9 alguna actividad liviana si ten\u00e9s ganas, pero no es obligatorio.\n\nEsta misma estructura se repite igual las 4 semanas del bloque. No es necesario ni buscado que cada semana sea \"m\u00e1s dif\u00edcil\" que la anterior: ac\u00e1 el logro es sostenerla, no subir la intensidad.\n\n**Si el primer d\u00eda sent\u00eds que hasta el trote de 30 segundos te genera molestia en la rodilla**, no problema: hac\u00e9 esa primera semana solo caminando (sin los tramos de trote) para ver c\u00f3mo responde la rodilla, y sum\u00e1 los tramos de trote reci\u00e9n la semana siguiente si fue bien.\n\n## Se\u00f1ales de alerta\n\nCansancio y algo de agitaci\u00f3n son normales, especialmente al principio. Lo que no es normal, y amerita parar y consultar a un profesional, es un dolor agudo, tipo punzada, o un dolor que persiste incluso cuando est\u00e1s en reposo (no solo mientras te mov\u00e9s). Para vos en particular, si el dolor de rodilla aparece durante los tramos de **caminata** (no solo durante el trote), eso ya est\u00e1 fuera de lo que este plan puede ajustar por s\u00ed solo \u2014 mejor consultar antes de seguir, en vez de forzar.\n\n## Qu\u00e9 sigue despu\u00e9s del bloque 1\n\nAl llegar a la semana 4, hac\u00e9 un balance:\n\n- Si sostuviste las 3 sesiones semanales sin molestias en las rodillas: en el bloque 2 (semanas 5-8) pod\u00e9s sumar unos 5 minutos m\u00e1s a la duraci\u00f3n total de cada sesi\u00f3n, manteniendo la misma proporci\u00f3n de trote/caminata (no hace falta estirar los tramos de trote si no ten\u00e9s ganas \u2014 es opcional, no un requisito).\n- Si hubo molestias en las rodillas o te cost\u00f3 sostener los 3 d\u00edas: repet\u00ed el bloque 1 tal cual est\u00e1, sin avanzar. No hay apuro ni fecha l\u00edmite ac\u00e1 \u2014 lo importante es que tengas ganas de volver a la pr\u00f3xima sesi\u00f3n.\n\nSeguimos armando bloques de a 4 semanas de esta forma, ajustando siempre seg\u00fan c\u00f3mo vayan respondiendo tus rodillas y c\u00f3mo te sientas, hasta que la rutina de caminar y trotar quede sostenida c\u00f3modamente en tu semana.\n"}], "grading": {"expectations": [{"text": "El plan NO est\u00e1 enmarcado como una progresi\u00f3n hacia trote continuo, sino como una rutina de caminar-trotar sostenida en el tiempo", "passed": true, "evidence": "'Este plan no busca que llegues a correr en alg\u00fan momento \u2014 vos fuiste claro en que no es lo que quer\u00e9s'"}, {"text": "El plan menciona expl\u00edcitamente el dolor de rodilla y ajusta las recomendaciones en consecuencia", "passed": true, "evidence": "M\u00faltiples menciones: terreno parejo, calzado, nota espec\u00edfica sobre dolor durante caminata vs. trote"}, {"text": "El progreso se mide por consistencia o tiempo activo total, no por minutos de trote continuo alcanzados", "passed": true, "evidence": "'Se mide el progreso por consistencia... y por cu\u00e1nto dura la sesi\u00f3n completa, no por cu\u00e1nto trot\u00e1s'"}, {"text": "El plan usa 3 d\u00edas por semana con descanso entre sesiones", "passed": true, "evidence": "'Eleg\u00ed 3 d\u00edas no seguidos... dejando al menos un d\u00eda de descanso entre sesi\u00f3n y sesi\u00f3n'"}, {"text": "El plan no empuja aumentos agresivos de intensidad dado el sobrepeso y el dolor cr\u00f3nico", "passed": true, "evidence": "Bloque 1 mantiene la misma estructura las 4 semanas expl\u00edcitamente, 'no vamos a subir la exigencia todav\u00eda'"}], "summary": {"passed": 5, "failed": 0, "total": 5, "pass_rate": 1.0}}}, {"id": "eval-walk-run-only-knee-pain-without_skill", "prompt": "Tengo un atleta de 58 a\u00f1os con bastante sobrepeso y dolor cr\u00f3nico en las rodillas. Me dijo expl\u00edcitamente que no quiere correr, que solo quiere caminar y trotar un poco para moverse m\u00e1s. Puede 3 d\u00edas por semana. \u00bfQu\u00e9 plan le armo?", "eval_id": 5, "outputs": [{"name": "plan.md", "type": "text", "content": "# Plan de entrenamiento: Caminar + Trotar suave\n\n**Perfil del atleta:** 58 a\u00f1os, sobrepeso, dolor cr\u00f3nico de rodillas, no quiere correr, busca moverse m\u00e1s caminando y trotando un poco. Disponibilidad: 3 d\u00edas por semana.\n\n## Objetivo del plan\nNo es un plan para \"correr una carrera\". El objetivo es generar el h\u00e1bito de moverse de forma segura, cuidando las rodillas, mezclando caminata (base) con peque\u00f1os tramos de trote muy suave cuando el cuerpo lo permita, sin forzar nunca el trote continuo.\n\n## Principios que gu\u00edan el plan\n- **Bajo impacto primero:** la caminata es la base de todo. El trote es solo un condimento opcional, en tramos cortos.\n- **Dolor = se\u00f1al de stop:** si aparece dolor en la rodilla (no cansancio muscular normal, sino dolor articular), se camina y no se trota ese d\u00eda. Nunca \"aguantar\" dolor.\n- **Progresi\u00f3n muy gradual:** aumentos peque\u00f1os de semana a semana, priorizando consistencia por encima de intensidad.\n- **Superficie y calzado:** preferir superficies blandas (tierra, pasto, cinta) antes que cemento/asfalto. Calzado con buena amortiguaci\u00f3n, cambiarlo si tiene m\u00e1s de 500-600 km de uso.\n- **Frecuencia:** 3 d\u00edas no consecutivos (por ejemplo lunes, mi\u00e9rcoles, s\u00e1bado), para dar tiempo de recuperaci\u00f3n a las rodillas.\n- **Fuerza como complemento clave:** el dolor de rodilla en personas con sobrepeso mejora mucho fortaleciendo cu\u00e1driceps, gl\u00fateos y core. Se incluyen ejercicios simples al final de cada sesi\u00f3n.\n\n## Estructura general de cada sesi\u00f3n\n1. Entrada en calor: 5 minutos de caminata suave + movilidad de tobillos, rodillas y cadera.\n2. Bloque principal: caminata con peque\u00f1os tramos de trote muy suave (seg\u00fan la semana).\n3. Vuelta a la calma: 5 minutos de caminata lenta + estiramientos suaves de cu\u00e1driceps, isquiotibiales, gemelos y gl\u00fateos (15-20 segundos cada uno, sin rebotes).\n4. Fuerza breve (2 de las 3 sesiones semanales): 10-12 minutos de ejercicios para rodillas y piernas.\n\n## Progresi\u00f3n semana a semana (8 semanas)\n\n### Semana 1-2: Solo caminata, construir base\n- Duraci\u00f3n total por sesi\u00f3n: 25-30 minutos.\n- Ritmo: caminata c\u00f3moda, se puede hablar sin ahogarse.\n- Sin trote todav\u00eda. El objetivo es acostumbrar al cuerpo a moverse 3 veces por semana.\n\n### Semana 3-4: Primeros tramos de trote muy suave\n- Duraci\u00f3n total: 30 minutos.\n- Estructura: 4 minutos caminando + 1 minuto de trote muy suave, repetido 5 veces.\n- El trote debe sentirse c\u00f3modo, casi un \"trote de transici\u00f3n\", nunca al l\u00edmite.\n\n### Semana 5-6: Un poco m\u00e1s de trote\n- Duraci\u00f3n total: 30-35 minutos.\n- Estructura: 3 minutos caminando + 1 minuto de trote suave, repetido 6-7 veces.\n- Si en alg\u00fan punto molesta la rodilla, esa serie se camina y se retoma el trote en la siguiente si el dolor no persiste.\n\n### Semana 7-8: Consolidar el h\u00e1bito\n- Duraci\u00f3n total: 35 minutos.\n- Estructura: 2-3 minutos caminando + 1 minuto de trote suave, repetido 7-8 veces.\n- A partir de ac\u00e1, el plan se puede sostener en el tiempo tal cual, sin necesidad de seguir \"exigiendo\" m\u00e1s trote. Lo importante es mantener la regularidad de los 3 d\u00edas semanales.\n\n> Nota: si en cualquier semana el dolor de rodilla aumenta, se retrocede a la semana anterior o directamente a solo caminata hasta que las molestias bajen. No hay apuro en avanzar.\n\n## Ejercicios de fuerza para rodillas (2 veces por semana, 10-12 min)\n- Sentadilla parcial apoyada en pared o silla: 2 series de 10-12 repeticiones.\n- Elevaci\u00f3n de talones (para gemelos): 2 series de 15 repeticiones.\n- Puente de gl\u00fateo (acostado boca arriba): 2 series de 12 repeticiones.\n- Elevaci\u00f3n de pierna extendida acostado (activa cu\u00e1driceps sin cargar la rodilla): 2 series de 12 repeticiones por pierna.\n- Step-up bajo (subir a un escal\u00f3n bajo, con apoyo): 2 series de 8 repeticiones por pierna, solo si no genera dolor.\n\n## Se\u00f1ales de alarma (consultar con m\u00e9dico/kinesi\u00f3logo)\n- Dolor agudo o punzante en la rodilla durante o despu\u00e9s de la actividad.\n- Hinchaz\u00f3n visible en la rodilla.\n- Dolor que no mejora con reposo de 48 horas.\n- Sensaci\u00f3n de inestabilidad o que la rodilla \"falla\".\n\n## Resumen para el atleta\n\"No vas a correr, vas a caminar con algunos tramos cortos de trote suave, 3 d\u00edas por semana, sumando un poco de fuerza para cuidar tus rodillas. Empezamos solo caminando y vamos agregando trote de a poco, siempre escuchando lo que dice tu rodilla. Lo m\u00e1s importante no es la velocidad ni la distancia: es que puedas sostener esto en el tiempo sin dolor.\"\n"}], "grading": {"expectations": [{"text": "El plan NO est\u00e1 enmarcado como una progresi\u00f3n hacia trote continuo, sino como una rutina de caminar-trotar sostenida en el tiempo", "passed": true, "evidence": "'No es un plan para correr una carrera... el trote es solo un condimento opcional'"}, {"text": "El plan menciona expl\u00edcitamente el dolor de rodilla y ajusta las recomendaciones en consecuencia", "passed": true, "evidence": "Secci\u00f3n completa de ejercicios de fuerza para rodillas y se\u00f1ales de alarma espec\u00edficas"}, {"text": "El progreso se mide por consistencia o tiempo activo total, no por minutos de trote continuo alcanzados", "passed": true, "evidence": "Cierra con 'Lo m\u00e1s importante no es la velocidad ni la distancia: es que puedas sostener esto en el tiempo sin dolor', aunque la tabla semanal sigue una progresi\u00f3n de minutos de trote m\u00e1s marcada que la versi\u00f3n con skill"}, {"text": "El plan usa 3 d\u00edas por semana con descanso entre sesiones", "passed": true, "evidence": "'3 d\u00edas no consecutivos (por ejemplo lunes, mi\u00e9rcoles, s\u00e1bado)'"}, {"text": "El plan no empuja aumentos agresivos de intensidad dado el sobrepeso y el dolor cr\u00f3nico", "passed": true, "evidence": "Progresi\u00f3n semana a semana muy gradual (agrupada de a 2 semanas), sin saltos bruscos"}], "summary": {"passed": 5, "failed": 0, "total": 5, "pass_rate": 1.0}, "eval_feedback": {"overall": "Como el usuario dijo expl\u00edcitamente 'no quiero correr', el modelo base ya capta bien la intenci\u00f3n sin necesitar el skill. La diferencia con la versi\u00f3n con skill es m\u00e1s de matiz (el skill evita por completo estructurar la progresi\u00f3n como 'cada vez m\u00e1s trote', el baseline todav\u00eda la organiza as\u00ed aunque cierre con el mensaje correcto) que de resultado observable."}}}], "previous_feedback": {}, "previous_outputs": {}, "benchmark": {"metadata": {"skill_name": "running-coach-plan", "skill_path": "/home/user/dise-o-de-App/.claude/skills/running-coach-plan", "executor_model": "claude-sonnet-5", "analyzer_model": "claude-sonnet-5", "timestamp": "2026-08-03T18:30:00Z", "evals_run": [1, 2, 3, 4, 5], "runs_per_configuration": 1}, "runs": [{"eval_id": 1, "eval_name": "beginner-10k-12-weeks", "configuration": "with_skill", "run_number": 1, "result": {"pass_rate": 1.0, "passed": 6, "failed": 0, "total": 6, "time_seconds": 192.2, "tokens": 49590, "tool_calls": 0, "errors": 0}, "expectations": [{"text": "El plan arranca con intervalos de caminar-trotar (no trote continuo) en las primeras semanas, porque la atleta nunca corri\u00f3", "passed": true, "evidence": "Semana 1: 'Trot\u00e1 1 min / camin\u00e1 2 min, repet\u00ed 6 veces'"}, {"text": "El plan respeta los 3 d\u00edas espec\u00edficos indicados (lunes, mi\u00e9rcoles, s\u00e1bado) o los menciona expl\u00edcitamente", "passed": true, "evidence": "Cada semana detalla Lunes/Mi\u00e9rcoles/S\u00e1bado por separado"}, {"text": "El plan cubre semana a semana hasta la semana 12, o explica honestamente por qu\u00e9 12 semanas puede ser justo para nivel cero y ofrece una alternativa", "passed": true, "evidence": "Cubre semanas 1-12 completas; notes.md documenta que 12 semanas cae dentro del rango 12-14 de references/10k.md, por eso no hizo falta advertir"}, {"text": "El plan incluye una reducci\u00f3n de volumen (taper) en la o las \u00faltimas semanas antes de la carrera", "passed": true, "evidence": "Fase 3: Taper, semanas 11-12, volumen expl\u00edcitamente reducido"}, {"text": "El plan marca expl\u00edcitamente d\u00edas de descanso", "passed": true, "evidence": "'los d\u00edas que no aparecen en la lista (martes, jueves, viernes y domingo) son de descanso'"}, {"text": "El lenguaje evita jerga t\u00e9cnica sin explicar", "passed": true, "evidence": "'ritmo c\u00f3modo' se explica como 'un ritmo al que pod\u00e9s hablar sin quedarte sin aire'; no aparecen t\u00e9rminos sin explicar"}], "notes": []}, {"eval_id": 1, "eval_name": "beginner-10k-12-weeks", "configuration": "without_skill", "run_number": 1, "result": {"pass_rate": 1.0, "passed": 6, "failed": 0, "total": 6, "time_seconds": 52.7, "tokens": 31935, "tool_calls": 0, "errors": 0}, "expectations": [{"text": "El plan arranca con intervalos de caminar-trotar (no trote continuo) en las primeras semanas, porque la atleta nunca corri\u00f3", "passed": true, "evidence": "Semana 1: '8 series de (1 min trote suave + 2 min caminata)'"}, {"text": "El plan respeta los 3 d\u00edas espec\u00edficos indicados (lunes, mi\u00e9rcoles, s\u00e1bado) o los menciona expl\u00edcitamente", "passed": true, "evidence": "'D\u00edas de entrenamiento: lunes, mi\u00e9rcoles y s\u00e1bado'"}, {"text": "El plan cubre semana a semana hasta la semana 12, o explica honestamente por qu\u00e9 12 semanas puede ser justo para nivel cero y ofrece una alternativa", "passed": true, "evidence": "Cubre semanas 1-12 completas hasta el d\u00eda de carrera, sin necesidad de advertencia (progresi\u00f3n razonable)"}, {"text": "El plan incluye una reducci\u00f3n de volumen (taper) en la o las \u00faltimas semanas antes de la carrera", "passed": true, "evidence": "Semana 12 expl\u00edcitamente reduce a 'trote suave' y descanso los 2 d\u00edas previos"}, {"text": "El plan marca expl\u00edcitamente d\u00edas de descanso", "passed": true, "evidence": "'Los d\u00edas entre sesiones (martes, jueves, viernes, domingo) son de descanso'"}, {"text": "El lenguaje evita jerga t\u00e9cnica sin explicar", "passed": true, "evidence": "'ritmo conversacional' se explica; no hay jerga sin aclarar"}], "notes": []}, {"eval_id": 2, "eval_name": "weight-loss-knee-injury", "configuration": "with_skill", "run_number": 1, "result": {"pass_rate": 1.0, "passed": 5, "failed": 0, "total": 5, "time_seconds": 122.8, "tokens": 42344, "tool_calls": 0, "errors": 0}, "expectations": [{"text": "El plan est\u00e1 estructurado en bloques (ej. de 4 semanas) sin fecha de carrera fija, no como un plan de carrera con distancia y fecha", "passed": true, "evidence": "'Bloque 1 (semanas 1 a 4)... Al terminar el bloque: fijate c\u00f3mo te fue... armamos el bloque 2'"}, {"text": "El plan menciona expl\u00edcitamente la lesi\u00f3n de rodilla (precauci\u00f3n, atenci\u00f3n a se\u00f1ales de dolor, o similar) en vez de ignorarla", "passed": true, "evidence": "'Por la rodilla, dos cuidados extra...' y secci\u00f3n de se\u00f1ales de alerta menciona 'sobre todo en la rodilla que ya tuviste lesionada'"}, {"text": "El plan hace alguna menci\u00f3n a la edad (52) sugiriendo cautela o chequeo m\u00e9dico, sin ser alarmista ni repetitivo", "passed": true, "evidence": "'como ten\u00e9s 52 a\u00f1os y una lesi\u00f3n vieja en la rodilla, te recomiendo pasar por un control m\u00e9dico... antes de empezar'"}, {"text": "El plan prioriza frecuencia y consistencia sostenible por sobre intensidad alta", "passed": true, "evidence": "'lo que m\u00e1s importa es la regularidad... m\u00e1s que la exigencia de cada sesi\u00f3n... no metemos series ni exigencia extra'"}, {"text": "El plan usa los 4 d\u00edas disponibles por semana", "passed": true, "evidence": "'D\u00edas sugeridos: lunes, mi\u00e9rcoles, viernes y domingo'"}], "notes": []}, {"eval_id": 2, "eval_name": "weight-loss-knee-injury", "configuration": "without_skill", "run_number": 1, "result": {"pass_rate": 0.6, "passed": 3, "failed": 2, "total": 5, "time_seconds": 36.7, "tokens": 30277, "tool_calls": 0, "errors": 0}, "expectations": [{"text": "El plan est\u00e1 estructurado en bloques (ej. de 4 semanas) sin fecha de carrera fija, no como un plan de carrera con distancia y fecha", "passed": false, "evidence": "Est\u00e1 armado como un arco continuo de 12 semanas dividido en fases de 2 semanas ('Semanas 1-2: Adaptaci\u00f3n'...), presentado completo de entrada, sin la estructura de bloques con checkpoint de avanzar/repetir que pide la expectativa. S\u00ed evita fecha de carrera fija, pero no organiza en bloques revisables."}, {"text": "El plan menciona expl\u00edcitamente la lesi\u00f3n de rodilla (precauci\u00f3n, atenci\u00f3n a se\u00f1ales de dolor, o similar) en vez de ignorarla", "passed": true, "evidence": "Secci\u00f3n completa 'Se\u00f1ales de alerta en la rodilla' y ejercicios de fuerza dedicados a proteger la rodilla"}, {"text": "El plan hace alguna menci\u00f3n a la edad (52) sugiriendo cautela o chequeo m\u00e9dico, sin ser alarmista ni repetitivo", "passed": false, "evidence": "La recomendaci\u00f3n de consulta m\u00e9dica est\u00e1 atada solo al antecedente de rodilla ('especialmente por el antecedente de rodilla'); no menciona la edad (52) en ning\u00fan punto del documento"}, {"text": "El plan prioriza frecuencia y consistencia sostenible por sobre intensidad alta", "passed": true, "evidence": "'la prioridad NO es correr r\u00e1pido ni mucho volumen... la constancia importa m\u00e1s que la intensidad'"}, {"text": "El plan usa los 4 d\u00edas disponibles por semana", "passed": true, "evidence": "Estructura semanal de 4 d\u00edas de actividad (2 cardio, 1 fuerza, 1 cross-training)"}], "notes": ["La asignaci\u00f3n 'usa los 4 d\u00edas disponibles' pas\u00f3 en ambas configuraciones sin distinguir mucho valor porque es f\u00e1cil de cumplir con cualquier estructura de 4 d\u00edas. La de 'bloques de 4 semanas' s\u00ed result\u00f3 discriminante: mide una decisi\u00f3n de dise\u00f1o espec\u00edfica del skill (revisar y decidir avanzar/repetir cada 4 semanas) que el modelo base no adopta espont\u00e1neamente aunque el resultado final sea igual de seguro."]}, {"eval_id": 3, "eval_name": "zero-to-30-min", "configuration": "with_skill", "run_number": 1, "result": {"pass_rate": 1.0, "passed": 5, "failed": 0, "total": 5, "time_seconds": 76.6, "tokens": 39206, "tool_calls": 0, "errors": 0}, "expectations": [{"text": "El plan arranca con caminar-trotar en vez de trote continuo, dado que nunca hizo actividad f\u00edsica", "passed": true, "evidence": "Bloque 1: 'Trot\u00e1 1 min / camin\u00e1 2 min, repet\u00ed 6 veces'"}, {"text": "El plan usa 3 d\u00edas por semana (respeta la preferencia del atleta) y no los 5 d\u00edas que tiene libres", "passed": true, "evidence": "'Entrena 3 d\u00edas por semana (no hace falta usar los 5 d\u00edas libres)'"}, {"text": "El plan est\u00e1 orientado a un hito concreto: sostener 30 minutos de trote continuo", "passed": true, "evidence": "T\u00edtulo del plan y Bloque 6: 'hito de 30 minutos seguidos \u2014 objetivo cumplido'"}, {"text": "La progresi\u00f3n es gradual semana a semana, sin saltos bruscos en minutos de trote", "passed": true, "evidence": "Incrementos de trote de 1\u21922\u21923... minutos por bloque, y de ~5 min por bloque de 4 semanas en la fase final; ning\u00fan salto supera ese ritmo"}, {"text": "El lenguaje es simple, sin jerga t\u00e9cnica sin explicar", "passed": true, "evidence": "Sin t\u00e9rminos t\u00e9cnicos sin explicar en todo el documento"}], "notes": []}, {"eval_id": 3, "eval_name": "zero-to-30-min", "configuration": "without_skill", "run_number": 1, "result": {"pass_rate": 0.8, "passed": 4, "failed": 1, "total": 5, "time_seconds": 30.7, "tokens": 29589, "tool_calls": 0, "errors": 0}, "expectations": [{"text": "El plan arranca con caminar-trotar en vez de trote continuo, dado que nunca hizo actividad f\u00edsica", "passed": true, "evidence": "Semana 1: 'Trotar 1 min / caminar 2 min \u00d7 8 veces'"}, {"text": "El plan usa 3 d\u00edas por semana (respeta la preferencia del atleta) y no los 5 d\u00edas que tiene libres", "passed": true, "evidence": "'Con 3 sesiones por semana... Ejemplo con 5 d\u00edas libres: Lunes/Mi\u00e9rcoles/Viernes o S\u00e1bado'"}, {"text": "El plan est\u00e1 orientado a un hito concreto: sostener 30 minutos de trote continuo", "passed": true, "evidence": "Semana 9: 'Trotar 30 min continuos (objetivo)'"}, {"text": "La progresi\u00f3n es gradual semana a semana, sin saltos bruscos en minutos de trote", "passed": false, "evidence": "El tramo continuo m\u00e1s largo salta de 12 min (semana 7) a 20 min (semana 8) en una sola semana \u2014 un salto de ~67%, muy por encima de cualquier regla de progresi\u00f3n gradual, para alguien que nunca hizo actividad f\u00edsica"}, {"text": "El lenguaje es simple, sin jerga t\u00e9cnica sin explicar", "passed": true, "evidence": "Sin jerga sin explicar"}], "notes": ["Este es el hallazgo m\u00e1s importante del benchmark: sin el skill, el modelo comprime en 9 semanas un progreso que el skill reparte en ~24 semanas (6 bloques), y de paso mete un salto de progresi\u00f3n riesgoso en la semana 8. El skill previene esto expl\u00edcitamente citando la regla de no subir m\u00e1s de ~10% por semana."]}, {"eval_id": 4, "eval_name": "first-3k-8-weeks", "configuration": "with_skill", "run_number": 1, "result": {"pass_rate": 1.0, "passed": 5, "failed": 0, "total": 5, "time_seconds": 68.5, "tokens": 37489, "tool_calls": 0, "errors": 0}, "expectations": [{"text": "El plan est\u00e1 construido espec\u00edficamente para la distancia 3K (no defaultea a 5K u otra distancia)", "passed": true, "evidence": "T\u00edtulo y contenido enteramente sobre 3K; notes.md confirma uso de references/3k.md"}, {"text": "El plan cubre las 8 semanas disponibles hasta la carrera", "passed": true, "evidence": "Semanas 1 a 8 completas"}, {"text": "El plan arranca con caminar-trotar dado que nunca corri\u00f3", "passed": true, "evidence": "Semana 1: 'Trot\u00e1 1 min / camin\u00e1 2 min, repet\u00ed 5 veces'"}, {"text": "El plan incluye un taper (reducci\u00f3n de volumen) antes de la carrera", "passed": true, "evidence": "Semana 8: 'Taper: bajamos el volumen para llegar descansada'"}, {"text": "El plan usa 3 d\u00edas por semana", "passed": true, "evidence": "'Entren\u00e1s 3 d\u00edas por semana, no consecutivos'"}], "notes": []}, {"eval_id": 4, "eval_name": "first-3k-8-weeks", "configuration": "without_skill", "run_number": 1, "result": {"pass_rate": 1.0, "passed": 5, "failed": 0, "total": 5, "time_seconds": 39.6, "tokens": 30331, "tool_calls": 0, "errors": 0}, "expectations": [{"text": "El plan est\u00e1 construido espec\u00edficamente para la distancia 3K (no defaultea a 5K u otra distancia)", "passed": true, "evidence": "Contenido enteramente sobre 3K, incluye 'simulacro' de 3K en semana 7"}, {"text": "El plan cubre las 8 semanas disponibles hasta la carrera", "passed": true, "evidence": "Semanas 1 a 8 completas"}, {"text": "El plan arranca con caminar-trotar dado que nunca corri\u00f3", "passed": true, "evidence": "Semana 1: '8 rondas de (1 min trote suave + 2 min caminata)'"}, {"text": "El plan incluye un taper (reducci\u00f3n de volumen) antes de la carrera", "passed": true, "evidence": "Semana 8 expl\u00edcitamente reduce volumen, 'Semana de la carrera'"}, {"text": "El plan usa 3 d\u00edas por semana", "passed": true, "evidence": "'Vas a entrenar 3 d\u00edas por semana, con al menos un d\u00eda de descanso entre sesi\u00f3n y sesi\u00f3n'"}], "notes": ["Este caso no result\u00f3 discriminante: el modelo base ya conoce bien el patr\u00f3n 'primera carrera corta = distancia accesible + caminar-trotar + taper', probablemente por ser un patr\u00f3n muy documentado (tipo Couch to 5K). Vale la pena tenerlo igual como test de regresi\u00f3n."]}, {"eval_id": 5, "eval_name": "walk-run-only-knee-pain", "configuration": "with_skill", "run_number": 1, "result": {"pass_rate": 1.0, "passed": 5, "failed": 0, "total": 5, "time_seconds": 74.3, "tokens": 39511, "tool_calls": 0, "errors": 0}, "expectations": [{"text": "El plan NO est\u00e1 enmarcado como una progresi\u00f3n hacia trote continuo, sino como una rutina de caminar-trotar sostenida en el tiempo", "passed": true, "evidence": "'Este plan no busca que llegues a correr en alg\u00fan momento \u2014 vos fuiste claro en que no es lo que quer\u00e9s'"}, {"text": "El plan menciona expl\u00edcitamente el dolor de rodilla y ajusta las recomendaciones en consecuencia", "passed": true, "evidence": "M\u00faltiples menciones: terreno parejo, calzado, nota espec\u00edfica sobre dolor durante caminata vs. trote"}, {"text": "El progreso se mide por consistencia o tiempo activo total, no por minutos de trote continuo alcanzados", "passed": true, "evidence": "'Se mide el progreso por consistencia... y por cu\u00e1nto dura la sesi\u00f3n completa, no por cu\u00e1nto trot\u00e1s'"}, {"text": "El plan usa 3 d\u00edas por semana con descanso entre sesiones", "passed": true, "evidence": "'Eleg\u00ed 3 d\u00edas no seguidos... dejando al menos un d\u00eda de descanso entre sesi\u00f3n y sesi\u00f3n'"}, {"text": "El plan no empuja aumentos agresivos de intensidad dado el sobrepeso y el dolor cr\u00f3nico", "passed": true, "evidence": "Bloque 1 mantiene la misma estructura las 4 semanas expl\u00edcitamente, 'no vamos a subir la exigencia todav\u00eda'"}], "notes": []}, {"eval_id": 5, "eval_name": "walk-run-only-knee-pain", "configuration": "without_skill", "run_number": 1, "result": {"pass_rate": 1.0, "passed": 5, "failed": 0, "total": 5, "time_seconds": 34.0, "tokens": 29805, "tool_calls": 0, "errors": 0}, "expectations": [{"text": "El plan NO est\u00e1 enmarcado como una progresi\u00f3n hacia trote continuo, sino como una rutina de caminar-trotar sostenida en el tiempo", "passed": true, "evidence": "'No es un plan para correr una carrera... el trote es solo un condimento opcional'"}, {"text": "El plan menciona expl\u00edcitamente el dolor de rodilla y ajusta las recomendaciones en consecuencia", "passed": true, "evidence": "Secci\u00f3n completa de ejercicios de fuerza para rodillas y se\u00f1ales de alarma espec\u00edficas"}, {"text": "El progreso se mide por consistencia o tiempo activo total, no por minutos de trote continuo alcanzados", "passed": true, "evidence": "Cierra con 'Lo m\u00e1s importante no es la velocidad ni la distancia: es que puedas sostener esto en el tiempo sin dolor', aunque la tabla semanal sigue una progresi\u00f3n de minutos de trote m\u00e1s marcada que la versi\u00f3n con skill"}, {"text": "El plan usa 3 d\u00edas por semana con descanso entre sesiones", "passed": true, "evidence": "'3 d\u00edas no consecutivos (por ejemplo lunes, mi\u00e9rcoles, s\u00e1bado)'"}, {"text": "El plan no empuja aumentos agresivos de intensidad dado el sobrepeso y el dolor cr\u00f3nico", "passed": true, "evidence": "Progresi\u00f3n semana a semana muy gradual (agrupada de a 2 semanas), sin saltos bruscos"}], "notes": ["Como el usuario dijo expl\u00edcitamente 'no quiero correr', el modelo base ya capta bien la intenci\u00f3n sin necesitar el skill. La diferencia con la versi\u00f3n con skill es m\u00e1s de matiz (el skill evita por completo estructurar la progresi\u00f3n como 'cada vez m\u00e1s trote', el baseline todav\u00eda la organiza as\u00ed aunque cierre con el mensaje correcto) que de resultado observable."]}], "run_summary": {"with_skill": {"pass_rate": {"mean": 1.0, "stddev": 0.0, "min": 1.0, "max": 1.0}, "time_seconds": {"mean": 106.88, "stddev": 52.403, "min": 68.5, "max": 192.2}, "tokens": {"mean": 41628.0, "stddev": 4779.7802, "min": 37489, "max": 49590}}, "without_skill": {"pass_rate": {"mean": 0.88, "stddev": 0.1789, "min": 0.6, "max": 1.0}, "time_seconds": {"mean": 38.74, "stddev": 8.4689, "min": 30.7, "max": 52.7}, "tokens": {"mean": 30387.4, "stddev": 920.1993, "min": 29589, "max": 31935}}, "delta": {"pass_rate": "+0.12", "time_seconds": "+68.1", "tokens": "+11241"}}, "notes": ["Assertion 'usa los N d\u00edas disponibles' and 'incluye taper' pass in both configurations on most evals - not very discriminating on their own.", "Eval 'weight-loss-knee-injury': without_skill fails 2/5 assertions (no block structure with review checkpoints, no explicit age-52 mention) - with_skill passes all 5.", "Eval 'zero-to-30-min': without_skill takes a risky progression jump (12min continuous to 20min continuous in one week, ~67% increase) violating safe progression; with_skill spreads the same milestone gradually over ~24 weeks in 4-week blocks instead of 9. This is the clearest safety-relevant difference found.", "Evals 'first-3k-8-weeks' and 'walk-run-only-knee-pain' show no measurable pass-rate difference: the base model already handles these patterns well (well-documented 'couch to 5K'-style progressions, and an explicit 'I don't want to run' instruction that's easy to follow either way).", "with_skill runs take roughly 2-3x longer and use ~35% more tokens than without_skill, mainly from reading SKILL.md plus the relevant reference file(s) before answering - reasonable overhead for the quality/safety gains observed, but worth knowing."]}};
+
+    // ---- State ----
+    let feedbackMap = {};  // run_id -> feedback text
+    let currentIndex = 0;
+    let visitedRuns = new Set();
+
+    // ---- Init ----
+    async function init() {
+      // Load saved feedback from server — but only if this isn't a fresh
+      // iteration (indicated by previous_feedback being present). When
+      // previous feedback exists, the feedback.json on disk is stale from
+      // the prior iteration and should not pre-fill the textareas.
+      const hasPrevious = Object.keys(EMBEDDED_DATA.previous_feedback || {}).length > 0
+        || Object.keys(EMBEDDED_DATA.previous_outputs || {}).length > 0;
+      if (!hasPrevious) {
+        try {
+          const resp = await fetch("/api/feedback");
+          const data = await resp.json();
+          if (data.reviews) {
+            for (const r of data.reviews) feedbackMap[r.run_id] = r.feedback;
+          }
+        } catch { /* first run, no feedback yet */ }
+      }
+
+      document.getElementById("skill-name").textContent = EMBEDDED_DATA.skill_name;
+      showRun(0);
+
+      // Wire up feedback auto-save
+      const textarea = document.getElementById("feedback");
+      let saveTimeout = null;
+      textarea.addEventListener("input", () => {
+        clearTimeout(saveTimeout);
+        document.getElementById("feedback-status").textContent = "";
+        saveTimeout = setTimeout(() => saveCurrentFeedback(), 800);
+      });
+    }
+
+    // ---- Navigation ----
+    function navigate(delta) {
+      const newIndex = currentIndex + delta;
+      if (newIndex >= 0 && newIndex < EMBEDDED_DATA.runs.length) {
+        saveCurrentFeedback();
+        showRun(newIndex);
+      }
+    }
+
+    function updateNavButtons() {
+      document.getElementById("prev-btn").disabled = currentIndex === 0;
+      document.getElementById("next-btn").disabled =
+        currentIndex === EMBEDDED_DATA.runs.length - 1;
+    }
+
+    // ---- Show a run ----
+    function showRun(index) {
+      currentIndex = index;
+      const run = EMBEDDED_DATA.runs[index];
+
+      // Progress
+      document.getElementById("progress").textContent =
+        `${index + 1} of ${EMBEDDED_DATA.runs.length}`;
+
+      // Prompt
+      document.getElementById("prompt-text").textContent = run.prompt;
+
+      // Config badge
+      const badge = document.getElementById("config-badge");
+      const configMatch = run.id.match(/(with_skill|without_skill|new_skill|old_skill)/);
+      if (configMatch) {
+        const config = configMatch[1];
+        const isBaseline = config === "without_skill" || config === "old_skill";
+        badge.textContent = config.replace(/_/g, " ");
+        badge.className = "config-badge " + (isBaseline ? "config-baseline" : "config-primary");
+        badge.style.display = "inline-block";
+      } else {
+        badge.style.display = "none";
+      }
+
+      // Outputs
+      renderOutputs(run);
+
+      // Previous outputs
+      renderPrevOutputs(run);
+
+      // Grades
+      renderGrades(run);
+
+      // Previous feedback
+      const prevFb = (EMBEDDED_DATA.previous_feedback || {})[run.id];
+      const prevEl = document.getElementById("prev-feedback");
+      if (prevFb) {
+        document.getElementById("prev-feedback-text").textContent = prevFb;
+        prevEl.style.display = "block";
+      } else {
+        prevEl.style.display = "none";
+      }
+
+      // Feedback
+      document.getElementById("feedback").value = feedbackMap[run.id] || "";
+      document.getElementById("feedback-status").textContent = "";
+
+      updateNavButtons();
+
+      // Track visited runs and promote done button when all visited
+      visitedRuns.add(index);
+      const doneBtn = document.getElementById("done-btn");
+      if (visitedRuns.size >= EMBEDDED_DATA.runs.length) {
+        doneBtn.classList.add("ready");
+      }
+
+      // Scroll main content to top
+      document.querySelector(".main").scrollTop = 0;
+    }
+
+    // ---- Render outputs ----
+    function renderOutputs(run) {
+      const container = document.getElementById("outputs-body");
+      container.innerHTML = "";
+
+      const outputs = run.outputs || [];
+      if (outputs.length === 0) {
+        container.innerHTML = '<div class="empty-state">No output files</div>';
+        return;
+      }
+
+      for (const file of outputs) {
+        const fileDiv = document.createElement("div");
+        fileDiv.className = "output-file";
+
+        // Always show file header with download link
+        const header = document.createElement("div");
+        header.className = "output-file-header";
+        const nameSpan = document.createElement("span");
+        nameSpan.textContent = file.name;
+        header.appendChild(nameSpan);
+        const dlBtn = document.createElement("a");
+        dlBtn.className = "dl-btn";
+        dlBtn.textContent = "Download";
+        dlBtn.download = file.name;
+        dlBtn.href = getDownloadUri(file);
+        header.appendChild(dlBtn);
+        fileDiv.appendChild(header);
+
+        const content = document.createElement("div");
+        content.className = "output-file-content";
+
+        if (file.type === "text") {
+          const pre = document.createElement("pre");
+          pre.textContent = file.content;
+          content.appendChild(pre);
+        } else if (file.type === "image") {
+          const img = document.createElement("img");
+          img.src = file.data_uri;
+          img.alt = file.name;
+          content.appendChild(img);
+        } else if (file.type === "pdf") {
+          const iframe = document.createElement("iframe");
+          iframe.src = file.data_uri;
+          content.appendChild(iframe);
+        } else if (file.type === "xlsx") {
+          renderXlsx(content, file.data_b64);
+        } else if (file.type === "binary") {
+          const a = document.createElement("a");
+          a.className = "download-link";
+          a.href = file.data_uri;
+          a.download = file.name;
+          a.textContent = "Download " + file.name;
+          content.appendChild(a);
+        } else if (file.type === "error") {
+          const pre = document.createElement("pre");
+          pre.textContent = file.content;
+          pre.style.color = "var(--red)";
+          content.appendChild(pre);
+        }
+
+        fileDiv.appendChild(content);
+        container.appendChild(fileDiv);
+      }
+    }
+
+    // ---- XLSX rendering via SheetJS ----
+    function renderXlsx(container, b64Data) {
+      try {
+        const raw = Uint8Array.from(atob(b64Data), c => c.charCodeAt(0));
+        const wb = XLSX.read(raw, { type: "array" });
+
+        for (let i = 0; i < wb.SheetNames.length; i++) {
+          const sheetName = wb.SheetNames[i];
+          const ws = wb.Sheets[sheetName];
+
+          if (wb.SheetNames.length > 1) {
+            const sheetLabel = document.createElement("div");
+            sheetLabel.style.cssText =
+              "font-weight:600; font-size:0.8rem; color:#b0aea5; margin-top:0.5rem; margin-bottom:0.25rem;";
+            sheetLabel.textContent = "Sheet: " + sheetName;
+            container.appendChild(sheetLabel);
+          }
+
+          const htmlStr = XLSX.utils.sheet_to_html(ws, { editable: false });
+          const wrapper = document.createElement("div");
+          wrapper.innerHTML = htmlStr;
+          container.appendChild(wrapper);
+        }
+      } catch (err) {
+        container.textContent = "Error rendering spreadsheet: " + err.message;
+      }
+    }
+
+    // ---- Grades ----
+    function renderGrades(run) {
+      const section = document.getElementById("grades-section");
+      const content = document.getElementById("grades-content");
+
+      if (!run.grading) {
+        section.style.display = "none";
+        return;
+      }
+
+      const grading = run.grading;
+      section.style.display = "block";
+      // Reset to collapsed
+      content.classList.remove("open");
+      document.getElementById("grades-arrow").classList.remove("open");
+
+      const summary = grading.summary || {};
+      const expectations = grading.expectations || [];
+
+      let html = '<div style="padding: 1rem;">';
+
+      // Summary line
+      const passRate = summary.pass_rate != null
+        ? Math.round(summary.pass_rate * 100) + "%"
+        : "?";
+      const badgeClass = summary.pass_rate >= 0.8 ? "grade-pass" : summary.pass_rate >= 0.5 ? "" : "grade-fail";
+      html += '<div class="grades-summary">';
+      html += '<span class="grade-badge ' + badgeClass + '">' + passRate + '</span>';
+      html += '<span>' + (summary.passed || 0) + ' passed, ' + (summary.failed || 0) + ' failed of ' + (summary.total || 0) + '</span>';
+      html += '</div>';
+
+      // Assertions list
+      html += '<ul class="assertion-list">';
+      for (const exp of expectations) {
+        const statusClass = exp.passed ? "pass" : "fail";
+        const statusIcon = exp.passed ? "\u2713" : "\u2717";
+        html += '<li class="assertion-item">';
+        html += '<span class="assertion-status ' + statusClass + '">' + statusIcon + '</span>';
+        html += '<span>' + escapeHtml(exp.text) + '</span>';
+        if (exp.evidence) {
+          html += '<div class="assertion-evidence">' + escapeHtml(exp.evidence) + '</div>';
+        }
+        html += '</li>';
+      }
+      html += '</ul>';
+
+      html += '</div>';
+      content.innerHTML = html;
+    }
+
+    function toggleGrades() {
+      const content = document.getElementById("grades-content");
+      const arrow = document.getElementById("grades-arrow");
+      content.classList.toggle("open");
+      arrow.classList.toggle("open");
+    }
+
+    // ---- Previous outputs (collapsible) ----
+    function renderPrevOutputs(run) {
+      const section = document.getElementById("prev-outputs-section");
+      const content = document.getElementById("prev-outputs-content");
+      const prevOutputs = (EMBEDDED_DATA.previous_outputs || {})[run.id];
+
+      if (!prevOutputs || prevOutputs.length === 0) {
+        section.style.display = "none";
+        return;
+      }
+
+      section.style.display = "block";
+      // Reset to collapsed
+      content.classList.remove("open");
+      document.getElementById("prev-outputs-arrow").classList.remove("open");
+
+      // Render the files into the content area
+      content.innerHTML = "";
+      const wrapper = document.createElement("div");
+      wrapper.style.padding = "1rem";
+
+      for (const file of prevOutputs) {
+        const fileDiv = document.createElement("div");
+        fileDiv.className = "output-file";
+
+        const header = document.createElement("div");
+        header.className = "output-file-header";
+        const nameSpan = document.createElement("span");
+        nameSpan.textContent = file.name;
+        header.appendChild(nameSpan);
+        const dlBtn = document.createElement("a");
+        dlBtn.className = "dl-btn";
+        dlBtn.textContent = "Download";
+        dlBtn.download = file.name;
+        dlBtn.href = getDownloadUri(file);
+        header.appendChild(dlBtn);
+        fileDiv.appendChild(header);
+
+        const fc = document.createElement("div");
+        fc.className = "output-file-content";
+
+        if (file.type === "text") {
+          const pre = document.createElement("pre");
+          pre.textContent = file.content;
+          fc.appendChild(pre);
+        } else if (file.type === "image") {
+          const img = document.createElement("img");
+          img.src = file.data_uri;
+          img.alt = file.name;
+          fc.appendChild(img);
+        } else if (file.type === "pdf") {
+          const iframe = document.createElement("iframe");
+          iframe.src = file.data_uri;
+          fc.appendChild(iframe);
+        } else if (file.type === "xlsx") {
+          renderXlsx(fc, file.data_b64);
+        } else if (file.type === "binary") {
+          const a = document.createElement("a");
+          a.className = "download-link";
+          a.href = file.data_uri;
+          a.download = file.name;
+          a.textContent = "Download " + file.name;
+          fc.appendChild(a);
+        }
+
+        fileDiv.appendChild(fc);
+        wrapper.appendChild(fileDiv);
+      }
+
+      content.appendChild(wrapper);
+    }
+
+    function togglePrevOutputs() {
+      const content = document.getElementById("prev-outputs-content");
+      const arrow = document.getElementById("prev-outputs-arrow");
+      content.classList.toggle("open");
+      arrow.classList.toggle("open");
+    }
+
+    // ---- Feedback (saved to server -> feedback.json) ----
+    function saveCurrentFeedback() {
+      const run = EMBEDDED_DATA.runs[currentIndex];
+      const text = document.getElementById("feedback").value;
+
+      if (text.trim() === "") {
+        delete feedbackMap[run.id];
+      } else {
+        feedbackMap[run.id] = text;
+      }
+
+      // Build reviews array from map
+      const reviews = [];
+      for (const [run_id, feedback] of Object.entries(feedbackMap)) {
+        if (feedback.trim()) {
+          reviews.push({ run_id, feedback, timestamp: new Date().toISOString() });
+        }
+      }
+
+      fetch("/api/feedback", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ reviews, status: "in_progress" }),
+      }).then(() => {
+        document.getElementById("feedback-status").textContent = "Saved";
+      }).catch(() => {
+        // Static mode or server unavailable — no-op on auto-save,
+        // feedback will be downloaded on final submit
+        document.getElementById("feedback-status").textContent = "Will download on submit";
+      });
+    }
+
+    // ---- Done ----
+    function showDoneDialog() {
+      // Save current textarea to feedbackMap (but don't POST yet)
+      const run = EMBEDDED_DATA.runs[currentIndex];
+      const text = document.getElementById("feedback").value;
+      if (text.trim() === "") {
+        delete feedbackMap[run.id];
+      } else {
+        feedbackMap[run.id] = text;
+      }
+
+      // POST once with status: complete — include ALL runs so the model
+      // can distinguish "no feedback" (looks good) from "not reviewed"
+      const reviews = [];
+      const ts = new Date().toISOString();
+      for (const r of EMBEDDED_DATA.runs) {
+        reviews.push({ run_id: r.id, feedback: feedbackMap[r.id] || "", timestamp: ts });
+      }
+      const payload = JSON.stringify({ reviews, status: "complete" }, null, 2);
+      fetch("/api/feedback", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: payload,
+      }).then(() => {
+        document.getElementById("done-overlay").classList.add("visible");
+      }).catch(() => {
+        // Server not available (static mode) — download as file
+        const blob = new Blob([payload], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "feedback.json";
+        a.click();
+        URL.revokeObjectURL(url);
+        document.getElementById("done-overlay").classList.add("visible");
+      });
+    }
+
+    function closeDoneDialog() {
+      // Reset status back to in_progress
+      saveCurrentFeedback();
+      document.getElementById("done-overlay").classList.remove("visible");
+    }
+
+    // ---- Toast ----
+    function showToast(message) {
+      const toast = document.getElementById("toast");
+      toast.textContent = message;
+      toast.classList.add("visible");
+      setTimeout(() => toast.classList.remove("visible"), 2000);
+    }
+
+    // ---- Keyboard nav ----
+    document.addEventListener("keydown", (e) => {
+      // Don't capture when typing in textarea
+      if (e.target.tagName === "TEXTAREA") return;
+
+      if (e.key === "ArrowLeft" || e.key === "ArrowUp") {
+        e.preventDefault();
+        navigate(-1);
+      } else if (e.key === "ArrowRight" || e.key === "ArrowDown") {
+        e.preventDefault();
+        navigate(1);
+      }
+    });
+
+    // ---- Util ----
+    function getDownloadUri(file) {
+      if (file.data_uri) return file.data_uri;
+      if (file.data_b64) return "data:application/octet-stream;base64," + file.data_b64;
+      if (file.type === "text") return "data:text/plain;charset=utf-8," + encodeURIComponent(file.content);
+      return "#";
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement("div");
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    // ---- View switching ----
+    function switchView(view) {
+      document.querySelectorAll(".view-tab").forEach(t => t.classList.remove("active"));
+      document.querySelectorAll(".view-panel").forEach(p => p.classList.remove("active"));
+      document.querySelector(`[onclick="switchView('${view}')"]`).classList.add("active");
+      document.getElementById("panel-" + view).classList.add("active");
+    }
+
+    // ---- Benchmark rendering ----
+    function renderBenchmark() {
+      const data = EMBEDDED_DATA.benchmark;
+      if (!data) return;
+
+      // Show the tabs
+      document.getElementById("view-tabs").style.display = "flex";
+
+      const container = document.getElementById("benchmark-content");
+      const summary = data.run_summary || {};
+      const metadata = data.metadata || {};
+      const notes = data.notes || [];
+
+      let html = "";
+
+      // Header
+      html += "<h2 style='font-family: Poppins, sans-serif; margin-bottom: 0.5rem;'>Benchmark Results</h2>";
+      html += "<p style='color: var(--text-muted); font-size: 0.875rem; margin-bottom: 1.25rem;'>";
+      if (metadata.skill_name) html += "<strong>" + escapeHtml(metadata.skill_name) + "</strong> &mdash; ";
+      if (metadata.timestamp) html += metadata.timestamp + " &mdash; ";
+      if (metadata.evals_run) html += "Evals: " + metadata.evals_run.join(", ") + " &mdash; ";
+      html += (metadata.runs_per_configuration || "?") + " runs per configuration";
+      html += "</p>";
+
+      // Summary table
+      html += '<table class="benchmark-table">';
+
+      function fmtStat(stat, pct) {
+        if (!stat) return "—";
+        const suffix = pct ? "%" : "";
+        const m = pct ? (stat.mean * 100).toFixed(0) : stat.mean.toFixed(1);
+        const s = pct ? (stat.stddev * 100).toFixed(0) : stat.stddev.toFixed(1);
+        return m + suffix + " ± " + s + suffix;
+      }
+
+      function deltaClass(val) {
+        if (!val) return "";
+        const n = parseFloat(val);
+        if (n > 0) return "benchmark-delta-positive";
+        if (n < 0) return "benchmark-delta-negative";
+        return "";
+      }
+
+      // Discover config names dynamically (everything except "delta")
+      const configs = Object.keys(summary).filter(k => k !== "delta");
+      const configA = configs[0] || "config_a";
+      const configB = configs[1] || "config_b";
+      const labelA = configA.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase());
+      const labelB = configB.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase());
+      const a = summary[configA] || {};
+      const b = summary[configB] || {};
+      const delta = summary.delta || {};
+
+      html += "<thead><tr><th>Metric</th><th>" + escapeHtml(labelA) + "</th><th>" + escapeHtml(labelB) + "</th><th>Delta</th></tr></thead>";
+      html += "<tbody>";
+
+      html += "<tr><td><strong>Pass Rate</strong></td>";
+      html += "<td>" + fmtStat(a.pass_rate, true) + "</td>";
+      html += "<td>" + fmtStat(b.pass_rate, true) + "</td>";
+      html += '<td class="' + deltaClass(delta.pass_rate) + '">' + (delta.pass_rate || "—") + "</td></tr>";
+
+      // Time (only show row if data exists)
+      if (a.time_seconds || b.time_seconds) {
+        html += "<tr><td><strong>Time (s)</strong></td>";
+        html += "<td>" + fmtStat(a.time_seconds, false) + "</td>";
+        html += "<td>" + fmtStat(b.time_seconds, false) + "</td>";
+        html += '<td class="' + deltaClass(delta.time_seconds) + '">' + (delta.time_seconds ? delta.time_seconds + "s" : "—") + "</td></tr>";
+      }
+
+      // Tokens (only show row if data exists)
+      if (a.tokens || b.tokens) {
+        html += "<tr><td><strong>Tokens</strong></td>";
+        html += "<td>" + fmtStat(a.tokens, false) + "</td>";
+        html += "<td>" + fmtStat(b.tokens, false) + "</td>";
+        html += '<td class="' + deltaClass(delta.tokens) + '">' + (delta.tokens || "—") + "</td></tr>";
+      }
+
+      html += "</tbody></table>";
+
+      // Per-eval breakdown (if runs data available)
+      const runs = data.runs || [];
+      if (runs.length > 0) {
+        const evalIds = [...new Set(runs.map(r => r.eval_id))].sort((a, b) => a - b);
+
+        html += "<h3 style='font-family: Poppins, sans-serif; margin-bottom: 0.75rem;'>Per-Eval Breakdown</h3>";
+
+        const hasTime = runs.some(r => r.result && r.result.time_seconds != null);
+        const hasErrors = runs.some(r => r.result && r.result.errors > 0);
+
+        for (const evalId of evalIds) {
+          const evalRuns = runs.filter(r => r.eval_id === evalId);
+          const evalName = evalRuns[0] && evalRuns[0].eval_name ? evalRuns[0].eval_name : "Eval " + evalId;
+
+          html += "<h4 style='font-family: Poppins, sans-serif; margin: 1rem 0 0.5rem; color: var(--text);'>" + escapeHtml(evalName) + "</h4>";
+          html += '<table class="benchmark-table">';
+          html += "<thead><tr><th>Config</th><th>Run</th><th>Pass Rate</th>";
+          if (hasTime) html += "<th>Time (s)</th>";
+          if (hasErrors) html += "<th>Crashes During Execution</th>";
+          html += "</tr></thead>";
+          html += "<tbody>";
+
+          // Group by config and render with average rows
+          const configGroups = [...new Set(evalRuns.map(r => r.configuration))];
+          for (let ci = 0; ci < configGroups.length; ci++) {
+            const config = configGroups[ci];
+            const configRuns = evalRuns.filter(r => r.configuration === config);
+            if (configRuns.length === 0) continue;
+
+            const rowClass = ci === 0 ? "benchmark-row-with" : "benchmark-row-without";
+            const configLabel = config.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase());
+
+            for (const run of configRuns) {
+              const r = run.result || {};
+              const prClass = r.pass_rate >= 0.8 ? "benchmark-delta-positive" : r.pass_rate < 0.5 ? "benchmark-delta-negative" : "";
+              html += '<tr class="' + rowClass + '">';
+              html += "<td>" + configLabel + "</td>";
+              html += "<td>" + run.run_number + "</td>";
+              html += '<td class="' + prClass + '">' + ((r.pass_rate || 0) * 100).toFixed(0) + "% (" + (r.passed || 0) + "/" + (r.total || 0) + ")</td>";
+              if (hasTime) html += "<td>" + (r.time_seconds != null ? r.time_seconds.toFixed(1) : "—") + "</td>";
+              if (hasErrors) html += "<td>" + (r.errors || 0) + "</td>";
+              html += "</tr>";
+            }
+
+            // Average row
+            const rates = configRuns.map(r => (r.result || {}).pass_rate || 0);
+            const avgRate = rates.reduce((a, b) => a + b, 0) / rates.length;
+            const avgPrClass = avgRate >= 0.8 ? "benchmark-delta-positive" : avgRate < 0.5 ? "benchmark-delta-negative" : "";
+            html += '<tr class="benchmark-row-avg ' + rowClass + '">';
+            html += "<td>" + configLabel + "</td>";
+            html += "<td>Avg</td>";
+            html += '<td class="' + avgPrClass + '">' + (avgRate * 100).toFixed(0) + "%</td>";
+            if (hasTime) {
+              const times = configRuns.map(r => (r.result || {}).time_seconds).filter(t => t != null);
+              html += "<td>" + (times.length ? (times.reduce((a, b) => a + b, 0) / times.length).toFixed(1) : "—") + "</td>";
+            }
+            if (hasErrors) html += "<td></td>";
+            html += "</tr>";
+          }
+          html += "</tbody></table>";
+
+          // Per-assertion detail for this eval
+          const runsWithExpectations = {};
+          for (const config of configGroups) {
+            runsWithExpectations[config] = evalRuns.filter(r => r.configuration === config && r.expectations && r.expectations.length > 0);
+          }
+          const hasAnyExpectations = Object.values(runsWithExpectations).some(runs => runs.length > 0);
+          if (hasAnyExpectations) {
+            // Collect all unique assertion texts across all configs
+            const allAssertions = [];
+            const seen = new Set();
+            for (const config of configGroups) {
+              for (const run of runsWithExpectations[config]) {
+                for (const exp of (run.expectations || [])) {
+                  if (!seen.has(exp.text)) {
+                    seen.add(exp.text);
+                    allAssertions.push(exp.text);
+                  }
+                }
+              }
+            }
+
+            html += '<table class="benchmark-table" style="margin-top: 0.5rem;">';
+            html += "<thead><tr><th>Assertion</th>";
+            for (const config of configGroups) {
+              const label = config.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase());
+              html += "<th>" + escapeHtml(label) + "</th>";
+            }
+            html += "</tr></thead><tbody>";
+
+            for (const assertionText of allAssertions) {
+              html += "<tr><td>" + escapeHtml(assertionText) + "</td>";
+
+              for (const config of configGroups) {
+                html += "<td>";
+                for (const run of runsWithExpectations[config]) {
+                  const exp = (run.expectations || []).find(e => e.text === assertionText);
+                  if (exp) {
+                    const cls = exp.passed ? "benchmark-delta-positive" : "benchmark-delta-negative";
+                    const icon = exp.passed ? "\u2713" : "\u2717";
+                    html += '<span class="' + cls + '" title="Run ' + run.run_number + ': ' + escapeHtml(exp.evidence || "") + '">' + icon + "</span> ";
+                  } else {
+                    html += "— ";
+                  }
+                }
+                html += "</td>";
+              }
+              html += "</tr>";
+            }
+            html += "</tbody></table>";
+          }
+        }
+      }
+
+      // Notes
+      if (notes.length > 0) {
+        html += '<div class="benchmark-notes">';
+        html += "<h3>Analysis Notes</h3>";
+        html += "<ul>";
+        for (const note of notes) {
+          html += "<li>" + escapeHtml(note) + "</li>";
+        }
+        html += "</ul></div>";
+      }
+
+      container.innerHTML = html;
+    }
+
+    // ---- Start ----
+    init();
+    renderBenchmark();
+  </script>
+</body>
+</html>
