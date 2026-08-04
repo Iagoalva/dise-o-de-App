@@ -878,6 +878,7 @@
     border-radius: 12px;
   }
   .ath-row + .ath-row { margin-top: 2px; }
+  .ath-row:not(.ath-head) { cursor: pointer; }
   .ath-row:not(.ath-head):hover { background: var(--surface-2); }
   .ath-head {
     font-size: 11px;
@@ -935,6 +936,187 @@
     .kpi-row { grid-template-columns: repeat(2, 1fr); }
     .coach-search { width: 180px; }
   }
+
+  /* ===== athlete drawer ===== */
+  .drawer-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(10, 8, 20, 0.45);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+    z-index: 40;
+  }
+  .drawer-backdrop.active { opacity: 1; pointer-events: auto; }
+
+  .athlete-drawer {
+    position: fixed;
+    top: 0; right: 0;
+    height: 100vh;
+    width: 420px;
+    max-width: 92vw;
+    background: var(--surface);
+    box-shadow: -20px 0 50px -20px var(--shadow);
+    display: flex;
+    flex-direction: column;
+    transform: translateX(100%);
+    transition: transform 0.25s ease;
+    z-index: 41;
+  }
+  .athlete-drawer.active { transform: translateX(0); }
+  @media (prefers-reduced-motion: reduce) {
+    .athlete-drawer, .drawer-backdrop { transition: none; }
+  }
+
+  .drawer-head {
+    flex: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 20px 22px;
+    border-bottom: 1px solid var(--line);
+  }
+  .drawer-athlete { display: flex; align-items: center; gap: 12px; min-width: 0; }
+  .drawer-name { font-size: 15.5px; font-weight: 800; color: var(--ink); }
+  .drawer-meta { font-size: 12.5px; color: var(--ink-soft); margin-top: 2px; }
+  .drawer-close {
+    flex: none;
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    background: var(--surface-2);
+    color: var(--ink-soft);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+  }
+
+  .drawer-scroll { flex: 1; min-height: 0; overflow-y: auto; padding: 20px 22px; }
+  .drawer-section-label {
+    font-size: 11.5px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--accent-strong);
+    margin-bottom: 6px;
+  }
+  .drawer-hint { font-size: 12.5px; color: var(--ink-faint); line-height: 1.5; margin: 0 0 18px; }
+
+  .drawer-foot { flex: none; padding: 16px 22px 20px; border-top: 1px solid var(--line); }
+
+  .session-edit-card {
+    border: 1.5px solid var(--line);
+    border-radius: 16px;
+    padding: 15px 16px;
+    margin-bottom: 12px;
+    transition: border-color 0.2s ease;
+  }
+  .session-edit-card.saved { border-color: var(--secondary); }
+  .sec-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+  }
+  .sec-day-wrap { display: flex; align-items: center; gap: 8px; }
+  .sec-day { font-size: 14px; font-weight: 800; color: var(--ink); }
+  .sec-edited-tag {
+    display: none;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--secondary);
+    background: var(--secondary-soft);
+    border-radius: 100px;
+    padding: 2px 8px;
+  }
+  .session-edit-card.saved .sec-edited-tag { display: inline-block; }
+  .sec-edit-btn {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-family: 'Work Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--ink-soft);
+    background: var(--surface-2);
+    border: none;
+    border-radius: 100px;
+    padding: 5px 11px;
+    cursor: pointer;
+  }
+  .sec-edit-btn:hover { color: var(--ink); }
+  .sec-text { font-size: 13px; line-height: 1.55; color: var(--ink-soft); margin: 0; }
+
+  .sec-edit-form { display: none; margin-top: 4px; }
+  .session-edit-card.editing .sec-text,
+  .session-edit-card.editing .sec-edit-btn { display: none; }
+  .session-edit-card.editing .sec-edit-form { display: block; }
+
+  .sec-edit-form textarea {
+    width: 100%;
+    min-height: 78px;
+    font-family: 'Work Sans', sans-serif;
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--ink);
+    background: var(--surface-2);
+    border: 1.5px solid var(--accent);
+    border-radius: 12px;
+    padding: 10px 12px;
+    resize: vertical;
+    outline: none;
+  }
+  .sec-edit-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 10px;
+  }
+  .btn-ghost {
+    font-family: 'Work Sans', sans-serif;
+    font-size: 12.5px;
+    font-weight: 700;
+    color: var(--ink-soft);
+    background: transparent;
+    border: 1.5px solid var(--line);
+    border-radius: 100px;
+    padding: 7px 14px;
+    cursor: pointer;
+  }
+  .btn-save-session {
+    font-family: 'Work Sans', sans-serif;
+    font-size: 12.5px;
+    font-weight: 700;
+    color: var(--accent-ink);
+    background: var(--accent);
+    border: none;
+    border-radius: 100px;
+    padding: 7px 14px;
+    cursor: pointer;
+  }
+  .btn-save-session:hover { background: var(--accent-strong); }
+
+  .toast {
+    position: fixed;
+    left: 50%;
+    bottom: 28px;
+    transform: translateX(-50%) translateY(20px);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13.5px;
+    font-weight: 700;
+    color: var(--secondary);
+    background: var(--secondary-soft);
+    border-radius: 100px;
+    padding: 11px 20px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    z-index: 50;
+  }
+  .toast.active { opacity: 1; transform: translateX(-50%) translateY(0); }
 </style>
 
 <div class="page">
@@ -1288,7 +1470,7 @@
                 <div class="c-status">Estado</div>
               </div>
 
-              <div class="ath-row">
+              <div class="ath-row" onclick="openAthlete('mg')">
                 <div class="c-athlete"><div class="ath-avatar">MG</div><div><div class="ath-name">Marina Gómez</div><div class="ath-age">34 años</div></div></div>
                 <div class="c-goal">10K · 26 oct</div>
                 <div class="c-week">Semana 3 de 12</div>
@@ -1297,7 +1479,7 @@
                 <div class="c-status"><span class="pill good">Al día</span></div>
               </div>
 
-              <div class="ath-row">
+              <div class="ath-row" onclick="openAthlete('ci')">
                 <div class="c-athlete"><div class="ath-avatar">CI</div><div><div class="ath-name">Carlos Ibáñez</div><div class="ath-age">41 años</div></div></div>
                 <div class="c-goal">5K · 14 sept</div>
                 <div class="c-week">Semana 5 de 8</div>
@@ -1306,7 +1488,7 @@
                 <div class="c-status"><span class="pill good">Al día</span></div>
               </div>
 
-              <div class="ath-row attention">
+              <div class="ath-row attention" onclick="openAthlete('sr')">
                 <div class="c-athlete"><div class="ath-avatar">SR</div><div><div class="ath-name">Sofía Rearte</div><div class="ath-age">29 años</div></div></div>
                 <div class="c-goal">Bajar de peso</div>
                 <div class="c-week">Bloque 2</div>
@@ -1315,7 +1497,7 @@
                 <div class="c-status"><span class="pill warn">Atención</span><div class="pill-note">2 sesiones sin completar</div></div>
               </div>
 
-              <div class="ath-row">
+              <div class="ath-row" onclick="openAthlete('jp')">
                 <div class="c-athlete"><div class="ath-avatar">JP</div><div><div class="ath-name">Julián Peralta</div><div class="ath-age">37 años</div></div></div>
                 <div class="c-goal">21K · 15 nov</div>
                 <div class="c-week">Semana 7 de 14</div>
@@ -1324,7 +1506,7 @@
                 <div class="c-status"><span class="pill good">Al día</span></div>
               </div>
 
-              <div class="ath-row">
+              <div class="ath-row" onclick="openAthlete('cd')">
                 <div class="c-athlete"><div class="ath-avatar">CD</div><div><div class="ath-name">Camila Duarte</div><div class="ath-age">52 años</div></div></div>
                 <div class="c-goal">Caminar y trotar</div>
                 <div class="c-week">Bloque 1</div>
@@ -1333,7 +1515,7 @@
                 <div class="c-status"><span class="pill good">Al día</span></div>
               </div>
 
-              <div class="ath-row critical">
+              <div class="ath-row critical" onclick="openAthlete('nf')">
                 <div class="c-athlete"><div class="ath-avatar">NF</div><div><div class="ath-name">Nicolás Farías</div><div class="ath-age">27 años</div></div></div>
                 <div class="c-goal">10K · 3 oct</div>
                 <div class="c-week">Semana 2 de 12</div>
@@ -1342,7 +1524,7 @@
                 <div class="c-status"><span class="pill crit">Sin actividad</span><div class="pill-note">9 días sin registrar</div></div>
               </div>
 
-              <div class="ath-row">
+              <div class="ath-row" onclick="openAthlete('vr')">
                 <div class="c-athlete"><div class="ath-avatar">VR</div><div><div class="ath-name">Valentina Ríos</div><div class="ath-age">23 años</div></div></div>
                 <div class="c-goal">Empezar a correr</div>
                 <div class="c-week">Bloque 3</div>
@@ -1351,7 +1533,7 @@
                 <div class="c-status"><span class="pill good">Al día</span></div>
               </div>
 
-              <div class="ath-row">
+              <div class="ath-row" onclick="openAthlete('ba')">
                 <div class="c-athlete"><div class="ath-avatar">BA</div><div><div class="ath-name">Bruno Acosta</div><div class="ath-age">45 años</div></div></div>
                 <div class="c-goal">5K · 21 sept</div>
                 <div class="c-week">Semana 6 de 6</div>
@@ -1360,7 +1542,7 @@
                 <div class="c-status"><span class="pill good">Al día</span><div class="pill-note">Carrera esta semana</div></div>
               </div>
 
-              <div class="ath-row attention">
+              <div class="ath-row attention" onclick="openAthlete('lm')">
                 <div class="c-athlete"><div class="ath-avatar">LM</div><div><div class="ath-name">Lucía Molina</div><div class="ath-age">48 años</div></div></div>
                 <div class="c-goal">10K · 9 nov</div>
                 <div class="c-week">Semana 1 de 13</div>
@@ -1369,7 +1551,7 @@
                 <div class="c-status"><span class="pill warn">Atención</span><div class="pill-note">Reportó dolor de rodilla</div></div>
               </div>
 
-              <div class="ath-row">
+              <div class="ath-row" onclick="openAthlete('th')">
                 <div class="c-athlete"><div class="ath-avatar">TH</div><div><div class="ath-name">Tomás Herrera</div><div class="ath-age">33 años</div></div></div>
                 <div class="c-goal">Mejorar resistencia</div>
                 <div class="c-week">Bloque 4</div>
@@ -1385,6 +1567,35 @@
       </div>
     </div>
   </div>
+</div>
+
+<div class="drawer-backdrop" id="drawerBackdrop" onclick="closeAthlete()"></div>
+<div class="athlete-drawer" id="athleteDrawer">
+  <div class="drawer-head">
+    <div class="drawer-athlete">
+      <div class="ath-avatar" id="drawerAvatar">MG</div>
+      <div>
+        <div class="drawer-name" id="drawerName">Marina Gómez</div>
+        <div class="drawer-meta" id="drawerMeta">34 años · 10K · 26 oct</div>
+      </div>
+    </div>
+    <div class="drawer-close" onclick="closeAthlete()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.1" stroke-linecap="round"/></svg>
+    </div>
+  </div>
+  <div class="drawer-scroll">
+    <div class="drawer-section-label" id="drawerWeekLabel">Semana 3 de 12</div>
+    <p class="drawer-hint">Tocá "Editar" en cualquier sesión para ajustarla. El atleta ve el cambio en su app.</p>
+    <div id="drawerSessions"></div>
+  </div>
+  <div class="drawer-foot">
+    <button class="btn-primary" onclick="saveAthleteChanges()">Guardar cambios</button>
+  </div>
+</div>
+
+<div class="toast" id="toast">
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M5 12l5 5L19 7" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  Cambios guardados
 </div>
 
 <script>
@@ -1437,4 +1648,152 @@
   }
 
   showScreen('splash');
+
+  // ===== coach: athlete drawer =====
+  const athleteData = {
+    mg: { name: 'Marina Gómez', avatar: 'MG', meta: '34 años · 10K · 26 oct', week: 'Semana 3 de 12',
+      sessions: [
+        { day: 'Lunes', text: 'Caminata 3 min. Trotá 3 min / caminá 2 min, repetí 5 veces (25 min). Caminata 3 min.' },
+        { day: 'Miércoles', text: 'Caminata 3 min. Trotá 3 min / caminá 2 min, repetí 4 veces (20 min) — día más liviano para recuperar. Caminata 3 min.' },
+        { day: 'Sábado', text: 'Caminata 3 min. Trotá 4 min / caminá 2 min, repetí 4 veces (24 min). Caminata 3 min.' },
+      ] },
+    ci: { name: 'Carlos Ibáñez', avatar: 'CI', meta: '41 años · 5K · 14 sept', week: 'Semana 5 de 8',
+      sessions: [
+        { day: 'Lunes', text: 'Trotá 15 min continuos a ritmo cómodo.' },
+        { day: 'Miércoles', text: 'Trotá 12 min, con 3 tramos de 1 min un poco más rápido en el medio.' },
+        { day: 'Sábado', text: 'Trotá 18-20 min continuos a ritmo cómodo.' },
+      ] },
+    sr: { name: 'Sofía Rearte', avatar: 'SR', meta: '29 años · Bajar de peso', week: 'Bloque 2',
+      sessions: [
+        { day: 'Lunes', text: 'Trotá 20 min continuos a ritmo cómodo.' },
+        { day: 'Miércoles', text: 'Descanso o caminata liviana.' },
+        { day: 'Viernes', text: 'Trotá 20 min continuos a ritmo cómodo.' },
+      ] },
+    jp: { name: 'Julián Peralta', avatar: 'JP', meta: '37 años · 21K · 15 nov', week: 'Semana 7 de 14',
+      sessions: [
+        { day: 'Lunes', text: 'Trotá 30 min a ritmo cómodo.' },
+        { day: 'Miércoles', text: 'Trotá 8 min a ritmo más exigente / 3 min suave, repetí 3 veces.' },
+        { day: 'Sábado (trote largo)', text: 'Trotá 75 minutos continuos a ritmo cómodo.' },
+      ] },
+    cd: { name: 'Camila Duarte', avatar: 'CD', meta: '52 años · Caminar y trotar', week: 'Bloque 1',
+      sessions: [
+        { day: 'Lunes', text: 'Caminá 5 min. Trotá 30 seg / caminá 3 min, repetí 4 veces. Caminá 3 min.' },
+        { day: 'Miércoles', text: 'Caminá 5 min. Trotá 30 seg / caminá 3 min, repetí 4 veces. Caminá 3 min.' },
+        { day: 'Sábado', text: 'Caminá 5 min. Trotá 30 seg / caminá 3 min, repetí 4 veces. Caminá 3 min.' },
+      ] },
+    nf: { name: 'Nicolás Farías', avatar: 'NF', meta: '27 años · 10K · 3 oct', week: 'Semana 2 de 12',
+      sessions: [
+        { day: 'Lunes', text: 'Caminata 3 min. Trotá 1 min / caminá 2 min, repetí 6 veces (18 min). Caminata 3 min.' },
+        { day: 'Miércoles', text: 'Caminata 3 min. Trotá 1 min / caminá 2 min, repetí 6 veces (18 min). Caminata 3 min.' },
+        { day: 'Sábado', text: 'Caminata 3 min. Trotá 2 min / caminá 2 min, repetí 5 veces (20 min). Caminata 3 min.' },
+      ] },
+    vr: { name: 'Valentina Ríos', avatar: 'VR', meta: '23 años · Empezar a correr', week: 'Bloque 3',
+      sessions: [
+        { day: 'Lunes', text: 'Trotá 8 min / caminá 1 min, repetí 3 veces (27 min).' },
+        { day: 'Miércoles', text: 'Trotá 8 min / caminá 1 min, repetí 3 veces (27 min).' },
+        { day: 'Viernes', text: 'Trotá 10 min / caminá 1 min, repetí 3 veces (33 min).' },
+      ] },
+    ba: { name: 'Bruno Acosta', avatar: 'BA', meta: '45 años · 5K · 21 sept', week: 'Semana 6 de 6 · Taper',
+      sessions: [
+        { day: 'Lunes', text: 'Trotá 10 min suaves, sin buscar nada.' },
+        { day: 'Miércoles', text: 'Trotá 8 min suaves.' },
+        { day: 'Sábado', text: 'Día de la carrera — 5K. Entrada en calor de 10 min antes de la largada.' },
+      ] },
+    lm: { name: 'Lucía Molina', avatar: 'LM', meta: '48 años · 10K · 9 nov', week: 'Semana 1 de 13',
+      sessions: [
+        { day: 'Lunes', text: 'Caminata 3 min. Trotá 1 min / caminá 2 min, repetí 6 veces (18 min). Caminata 3 min.' },
+        { day: 'Miércoles', text: 'Mismo esquema que el lunes.' },
+        { day: 'Sábado', text: 'Caminata 3 min. Trotá 1 min / caminá 2 min, repetí 7 veces (21 min). Caminata 3 min.' },
+      ] },
+    th: { name: 'Tomás Herrera', avatar: 'TH', meta: '33 años · Mejorar resistencia', week: 'Bloque 4',
+      sessions: [
+        { day: 'Lunes', text: 'Trotá 35 min a ritmo cómodo.' },
+        { day: 'Miércoles', text: 'Trotá 30 min a ritmo cómodo.' },
+        { day: 'Sábado (día largo)', text: 'Trotá 50 min a ritmo cómodo.' },
+      ] },
+  };
+
+  function renderSessions(id) {
+    const wrap = document.getElementById('drawerSessions');
+    wrap.innerHTML = '';
+    athleteData[id].sessions.forEach((s, i) => {
+      const card = document.createElement('div');
+      card.className = 'session-edit-card';
+      card.dataset.athlete = id;
+      card.dataset.index = i;
+      card.innerHTML = `
+        <div class="sec-top">
+          <div class="sec-day-wrap">
+            <span class="sec-day">${s.day}</span>
+            <span class="sec-edited-tag">Editado</span>
+          </div>
+          <button class="sec-edit-btn" onclick="toggleEditSession(this)">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M16.5 3.5l4 4L8 20H4v-4L16.5 3.5z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+            Editar
+          </button>
+        </div>
+        <p class="sec-text">${s.text}</p>
+        <div class="sec-edit-form">
+          <textarea>${s.text}</textarea>
+          <div class="sec-edit-actions">
+            <button class="btn-ghost" onclick="cancelEditSession(this)">Cancelar</button>
+            <button class="btn-save-session" onclick="saveEditSession(this)">Guardar sesión</button>
+          </div>
+        </div>`;
+      wrap.appendChild(card);
+    });
+  }
+
+  function openAthlete(id) {
+    const a = athleteData[id];
+    if (!a) return;
+    document.getElementById('drawerAvatar').textContent = a.avatar;
+    document.getElementById('drawerName').textContent = a.name;
+    document.getElementById('drawerMeta').textContent = a.meta;
+    document.getElementById('drawerWeekLabel').textContent = a.week;
+    renderSessions(id);
+    document.getElementById('athleteDrawer').classList.add('active');
+    document.getElementById('drawerBackdrop').classList.add('active');
+  }
+
+  function closeAthlete() {
+    document.getElementById('athleteDrawer').classList.remove('active');
+    document.getElementById('drawerBackdrop').classList.remove('active');
+  }
+
+  function toggleEditSession(btn) {
+    const card = btn.closest('.session-edit-card');
+    card.classList.add('editing');
+    const textarea = card.querySelector('textarea');
+    textarea.focus();
+    textarea.setSelectionRange(textarea.value.length, textarea.value.length);
+  }
+
+  function cancelEditSession(btn) {
+    const card = btn.closest('.session-edit-card');
+    const id = card.dataset.athlete;
+    const idx = card.dataset.index;
+    card.querySelector('textarea').value = athleteData[id].sessions[idx].text;
+    card.classList.remove('editing');
+  }
+
+  function saveEditSession(btn) {
+    const card = btn.closest('.session-edit-card');
+    const id = card.dataset.athlete;
+    const idx = card.dataset.index;
+    const newText = card.querySelector('textarea').value.trim();
+    if (newText) {
+      athleteData[id].sessions[idx].text = newText;
+      card.querySelector('.sec-text').textContent = newText;
+      card.classList.add('saved');
+    }
+    card.classList.remove('editing');
+  }
+
+  function saveAthleteChanges() {
+    const toast = document.getElementById('toast');
+    toast.classList.add('active');
+    setTimeout(() => toast.classList.remove('active'), 2200);
+    setTimeout(closeAthlete, 350);
+  }
 </script>
