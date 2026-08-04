@@ -590,8 +590,10 @@
   .week-day.rest .dot { background: transparent; }
 
   .today-card {
-    background: var(--ink);
-    color: var(--bg);
+    /* deliberately theme-invariant, like the splash screen — a dark "spotlight"
+       card that always keeps the same contrast for its pills and glow */
+    background: var(--splash-bg);
+    color: var(--splash-ink);
     border-radius: 22px;
     padding: 22px;
     margin-bottom: 18px;
@@ -698,6 +700,29 @@
     color: var(--ink-soft);
     margin: 0;
   }
+
+  /* duration + FC pills — shared by phone session cards, the today-card and the coach drawer */
+  .sess-meta-row { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 9px; }
+  .meta-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-family: 'Work Sans', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--ink-soft);
+    background: var(--surface-2);
+    border-radius: 100px;
+    padding: 4px 10px 4px 9px;
+    white-space: nowrap;
+  }
+  .meta-pill.fc { color: var(--accent-strong); background: var(--accent-soft); }
+  .meta-pill.special { color: var(--secondary); background: var(--secondary-soft); }
+  .meta-pill svg { flex: none; }
+
+  .today-card .meta-pill { color: rgba(245, 244, 251, 0.82); background: rgba(255, 255, 255, 0.10); }
+  .today-card .meta-pill.fc { color: var(--accent); background: rgba(255, 107, 74, 0.20); }
+  .today-card .meta-pill.special { color: var(--secondary); background: rgba(95, 183, 154, 0.20); }
 
   /* bottom nav */
   .bottom-nav {
@@ -1067,6 +1092,30 @@
     resize: vertical;
     outline: none;
   }
+  .effort-select { display: flex; gap: 6px; margin-top: 10px; }
+  .effort-opt {
+    flex: 1;
+    text-align: center;
+    font-family: 'Work Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--ink-soft);
+    background: var(--surface-2);
+    border-radius: 10px;
+    padding: 7px 0;
+    cursor: pointer;
+  }
+  .effort-opt.selected { background: var(--accent); color: var(--accent-ink); }
+  .effort-preview {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--accent-strong);
+    margin-top: 8px;
+  }
+
   .sec-edit-actions {
     display: flex;
     justify-content: flex-end;
@@ -1313,6 +1362,10 @@
               <div class="glow"></div>
               <div class="eyebrow">Hoy · Sábado</div>
               <h3>Trote cortado, 24 minutos</h3>
+              <div class="sess-meta-row">
+                <span class="meta-pill"><svg width="11" height="11" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="1.8"/><path d="M12 7.5V12l3 2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>24 min</span>
+                <span class="meta-pill fc"><svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21s-7.5-4.7-10.2-9.3C.2 8.9 1.4 5.2 4.9 4.2c2.1-.6 4.2.2 5.5 2 .5.7 1 .7 1.5 0 1.3-1.8 3.4-2.6 5.5-2 3.5 1 4.7 4.7 3.1 7.5C19.5 16.3 12 21 12 21z"/></svg>FC objetivo <span data-fc="comodo"></span></span>
+              </div>
               <p class="sess">Caminata 3 min. Trotá 4 min / caminá 2 min, repetí 4 veces (24 min). Caminata 3 min.</p>
               <button class="btn-primary" onclick="showScreen('semana')">Empezar sesión</button>
             </div>
@@ -1353,14 +1406,26 @@
 
             <div class="session-card">
               <div class="day-name"><span>Lunes</span></div>
+              <div class="sess-meta-row">
+                <span class="meta-pill"><svg width="11" height="11" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="1.8"/><path d="M12 7.5V12l3 2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>25 min</span>
+                <span class="meta-pill fc"><svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21s-7.5-4.7-10.2-9.3C.2 8.9 1.4 5.2 4.9 4.2c2.1-.6 4.2.2 5.5 2 .5.7 1 .7 1.5 0 1.3-1.8 3.4-2.6 5.5-2 3.5 1 4.7 4.7 3.1 7.5C19.5 16.3 12 21 12 21z"/></svg>FC objetivo <span data-fc="comodo"></span></span>
+              </div>
               <p>Caminata 3 min. Trotá 3 min / caminá 2 min, repetí 5 veces (25 min). Caminata 3 min.</p>
             </div>
             <div class="session-card">
               <div class="day-name"><span>Miércoles</span></div>
+              <div class="sess-meta-row">
+                <span class="meta-pill"><svg width="11" height="11" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="1.8"/><path d="M12 7.5V12l3 2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>20 min</span>
+                <span class="meta-pill fc"><svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21s-7.5-4.7-10.2-9.3C.2 8.9 1.4 5.2 4.9 4.2c2.1-.6 4.2.2 5.5 2 .5.7 1 .7 1.5 0 1.3-1.8 3.4-2.6 5.5-2 3.5 1 4.7 4.7 3.1 7.5C19.5 16.3 12 21 12 21z"/></svg>FC objetivo <span data-fc="suave"></span></span>
+              </div>
               <p>Caminata 3 min. Trotá 3 min / caminá 2 min, repetí 4 veces (20 min) — día más liviano para recuperar. Caminata 3 min.</p>
             </div>
             <div class="session-card today">
               <div class="day-name"><span>Sábado</span><span class="today-pill">Hoy</span></div>
+              <div class="sess-meta-row">
+                <span class="meta-pill"><svg width="11" height="11" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="1.8"/><path d="M12 7.5V12l3 2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>24 min</span>
+                <span class="meta-pill fc"><svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21s-7.5-4.7-10.2-9.3C.2 8.9 1.4 5.2 4.9 4.2c2.1-.6 4.2.2 5.5 2 .5.7 1 .7 1.5 0 1.3-1.8 3.4-2.6 5.5-2 3.5 1 4.7 4.7 3.1 7.5C19.5 16.3 12 21 12 21z"/></svg>FC objetivo <span data-fc="comodo"></span></span>
+              </div>
               <p>Caminata 3 min. Trotá 4 min / caminá 2 min, repetí 4 veces (24 min). Caminata 3 min.</p>
             </div>
 
@@ -1650,72 +1715,113 @@
   showScreen('splash');
 
   // ===== coach: athlete drawer =====
+  // FC objetivo = % de la FC máxima estimada (220 - edad), por nivel de esfuerzo.
+  // Es la misma fórmula de siempre (ninguna ciencia nueva): la usamos solo para
+  // traducir "cómodo" / "activo" a un número que sirva de referencia en el reloj.
+  const EFFORT_RANGES = { suave: [0.50, 0.62], comodo: [0.60, 0.72], activo: [0.68, 0.80] };
+  const EFFORT_LABELS = { suave: 'Suave', comodo: 'Cómodo', activo: 'Activo' };
+
+  function fcRange(age, tier) {
+    const max = 220 - age;
+    const [lo, hi] = EFFORT_RANGES[tier];
+    return [Math.round(max * lo), Math.round(max * hi)];
+  }
+
+  function fcText(age, tier) {
+    const [lo, hi] = fcRange(age, tier);
+    return `${lo}–${hi} lpm`;
+  }
+
+  const heartIcon = '<svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21s-7.5-4.7-10.2-9.3C.2 8.9 1.4 5.2 4.9 4.2c2.1-.6 4.2.2 5.5 2 .5.7 1 .7 1.5 0 1.3-1.8 3.4-2.6 5.5-2 3.5 1 4.7 4.7 3.1 7.5C19.5 16.3 12 21 12 21z"/></svg>';
+  const clockIcon = '<svg width="11" height="11" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="1.8"/><path d="M12 7.5V12l3 2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
   const athleteData = {
-    mg: { name: 'Marina Gómez', avatar: 'MG', meta: '34 años · 10K · 26 oct', week: 'Semana 3 de 12',
+    mg: { name: 'Marina Gómez', avatar: 'MG', age: 34, meta: '34 años · 10K · 26 oct', week: 'Semana 3 de 12',
       sessions: [
-        { day: 'Lunes', text: 'Caminata 3 min. Trotá 3 min / caminá 2 min, repetí 5 veces (25 min). Caminata 3 min.' },
-        { day: 'Miércoles', text: 'Caminata 3 min. Trotá 3 min / caminá 2 min, repetí 4 veces (20 min) — día más liviano para recuperar. Caminata 3 min.' },
-        { day: 'Sábado', text: 'Caminata 3 min. Trotá 4 min / caminá 2 min, repetí 4 veces (24 min). Caminata 3 min.' },
+        { day: 'Lunes', text: 'Caminata 3 min. Trotá 3 min / caminá 2 min, repetí 5 veces (25 min). Caminata 3 min.', duration: '25 min', effort: 'comodo' },
+        { day: 'Miércoles', text: 'Caminata 3 min. Trotá 3 min / caminá 2 min, repetí 4 veces (20 min) — día más liviano para recuperar. Caminata 3 min.', duration: '20 min', effort: 'suave' },
+        { day: 'Sábado', text: 'Caminata 3 min. Trotá 4 min / caminá 2 min, repetí 4 veces (24 min). Caminata 3 min.', duration: '24 min', effort: 'comodo' },
       ] },
-    ci: { name: 'Carlos Ibáñez', avatar: 'CI', meta: '41 años · 5K · 14 sept', week: 'Semana 5 de 8',
+    ci: { name: 'Carlos Ibáñez', avatar: 'CI', age: 41, meta: '41 años · 5K · 14 sept', week: 'Semana 5 de 8',
       sessions: [
-        { day: 'Lunes', text: 'Trotá 15 min continuos a ritmo cómodo.' },
-        { day: 'Miércoles', text: 'Trotá 12 min, con 3 tramos de 1 min un poco más rápido en el medio.' },
-        { day: 'Sábado', text: 'Trotá 18-20 min continuos a ritmo cómodo.' },
+        { day: 'Lunes', text: 'Trotá 15 min continuos a ritmo cómodo.', duration: '15 min', effort: 'comodo' },
+        { day: 'Miércoles', text: 'Trotá 12 min, con 3 tramos de 1 min un poco más rápido en el medio.', duration: '12 min', effort: 'activo' },
+        { day: 'Sábado', text: 'Trotá 18-20 min continuos a ritmo cómodo.', duration: '18-20 min', effort: 'comodo' },
       ] },
-    sr: { name: 'Sofía Rearte', avatar: 'SR', meta: '29 años · Bajar de peso', week: 'Bloque 2',
+    sr: { name: 'Sofía Rearte', avatar: 'SR', age: 29, meta: '29 años · Bajar de peso', week: 'Bloque 2',
       sessions: [
-        { day: 'Lunes', text: 'Trotá 20 min continuos a ritmo cómodo.' },
-        { day: 'Miércoles', text: 'Descanso o caminata liviana.' },
-        { day: 'Viernes', text: 'Trotá 20 min continuos a ritmo cómodo.' },
+        { day: 'Lunes', text: 'Trotá 20 min continuos a ritmo cómodo.', duration: '20 min', effort: 'comodo' },
+        { day: 'Miércoles', text: 'Descanso o caminata liviana.', duration: null, effort: null, tag: 'Descanso' },
+        { day: 'Viernes', text: 'Trotá 20 min continuos a ritmo cómodo.', duration: '20 min', effort: 'comodo' },
       ] },
-    jp: { name: 'Julián Peralta', avatar: 'JP', meta: '37 años · 21K · 15 nov', week: 'Semana 7 de 14',
+    jp: { name: 'Julián Peralta', avatar: 'JP', age: 37, meta: '37 años · 21K · 15 nov', week: 'Semana 7 de 14',
       sessions: [
-        { day: 'Lunes', text: 'Trotá 30 min a ritmo cómodo.' },
-        { day: 'Miércoles', text: 'Trotá 8 min a ritmo más exigente / 3 min suave, repetí 3 veces.' },
-        { day: 'Sábado (trote largo)', text: 'Trotá 75 minutos continuos a ritmo cómodo.' },
+        { day: 'Lunes', text: 'Trotá 30 min a ritmo cómodo.', duration: '30 min', effort: 'comodo' },
+        { day: 'Miércoles', text: 'Trotá 8 min a ritmo más exigente / 3 min suave, repetí 3 veces.', duration: '33 min', effort: 'activo' },
+        { day: 'Sábado (trote largo)', text: 'Trotá 75 minutos continuos a ritmo cómodo.', duration: '75 min', effort: 'comodo' },
       ] },
-    cd: { name: 'Camila Duarte', avatar: 'CD', meta: '52 años · Caminar y trotar', week: 'Bloque 1',
+    cd: { name: 'Camila Duarte', avatar: 'CD', age: 52, meta: '52 años · Caminar y trotar', week: 'Bloque 1',
       sessions: [
-        { day: 'Lunes', text: 'Caminá 5 min. Trotá 30 seg / caminá 3 min, repetí 4 veces. Caminá 3 min.' },
-        { day: 'Miércoles', text: 'Caminá 5 min. Trotá 30 seg / caminá 3 min, repetí 4 veces. Caminá 3 min.' },
-        { day: 'Sábado', text: 'Caminá 5 min. Trotá 30 seg / caminá 3 min, repetí 4 veces. Caminá 3 min.' },
+        { day: 'Lunes', text: 'Caminá 5 min. Trotá 30 seg / caminá 3 min, repetí 4 veces. Caminá 3 min.', duration: '22 min', effort: 'suave' },
+        { day: 'Miércoles', text: 'Caminá 5 min. Trotá 30 seg / caminá 3 min, repetí 4 veces. Caminá 3 min.', duration: '22 min', effort: 'suave' },
+        { day: 'Sábado', text: 'Caminá 5 min. Trotá 30 seg / caminá 3 min, repetí 4 veces. Caminá 3 min.', duration: '22 min', effort: 'suave' },
       ] },
-    nf: { name: 'Nicolás Farías', avatar: 'NF', meta: '27 años · 10K · 3 oct', week: 'Semana 2 de 12',
+    nf: { name: 'Nicolás Farías', avatar: 'NF', age: 27, meta: '27 años · 10K · 3 oct', week: 'Semana 2 de 12',
       sessions: [
-        { day: 'Lunes', text: 'Caminata 3 min. Trotá 1 min / caminá 2 min, repetí 6 veces (18 min). Caminata 3 min.' },
-        { day: 'Miércoles', text: 'Caminata 3 min. Trotá 1 min / caminá 2 min, repetí 6 veces (18 min). Caminata 3 min.' },
-        { day: 'Sábado', text: 'Caminata 3 min. Trotá 2 min / caminá 2 min, repetí 5 veces (20 min). Caminata 3 min.' },
+        { day: 'Lunes', text: 'Caminata 3 min. Trotá 1 min / caminá 2 min, repetí 6 veces (18 min). Caminata 3 min.', duration: '24 min', effort: 'suave' },
+        { day: 'Miércoles', text: 'Caminata 3 min. Trotá 1 min / caminá 2 min, repetí 6 veces (18 min). Caminata 3 min.', duration: '24 min', effort: 'suave' },
+        { day: 'Sábado', text: 'Caminata 3 min. Trotá 2 min / caminá 2 min, repetí 5 veces (20 min). Caminata 3 min.', duration: '26 min', effort: 'suave' },
       ] },
-    vr: { name: 'Valentina Ríos', avatar: 'VR', meta: '23 años · Empezar a correr', week: 'Bloque 3',
+    vr: { name: 'Valentina Ríos', avatar: 'VR', age: 23, meta: '23 años · Empezar a correr', week: 'Bloque 3',
       sessions: [
-        { day: 'Lunes', text: 'Trotá 8 min / caminá 1 min, repetí 3 veces (27 min).' },
-        { day: 'Miércoles', text: 'Trotá 8 min / caminá 1 min, repetí 3 veces (27 min).' },
-        { day: 'Viernes', text: 'Trotá 10 min / caminá 1 min, repetí 3 veces (33 min).' },
+        { day: 'Lunes', text: 'Trotá 8 min / caminá 1 min, repetí 3 veces (27 min).', duration: '27 min', effort: 'comodo' },
+        { day: 'Miércoles', text: 'Trotá 8 min / caminá 1 min, repetí 3 veces (27 min).', duration: '27 min', effort: 'comodo' },
+        { day: 'Viernes', text: 'Trotá 10 min / caminá 1 min, repetí 3 veces (33 min).', duration: '33 min', effort: 'comodo' },
       ] },
-    ba: { name: 'Bruno Acosta', avatar: 'BA', meta: '45 años · 5K · 21 sept', week: 'Semana 6 de 6 · Taper',
+    ba: { name: 'Bruno Acosta', avatar: 'BA', age: 45, meta: '45 años · 5K · 21 sept', week: 'Semana 6 de 6 · Taper',
       sessions: [
-        { day: 'Lunes', text: 'Trotá 10 min suaves, sin buscar nada.' },
-        { day: 'Miércoles', text: 'Trotá 8 min suaves.' },
-        { day: 'Sábado', text: 'Día de la carrera — 5K. Entrada en calor de 10 min antes de la largada.' },
+        { day: 'Lunes', text: 'Trotá 10 min suaves, sin buscar nada.', duration: '10 min', effort: 'suave' },
+        { day: 'Miércoles', text: 'Trotá 8 min suaves.', duration: '8 min', effort: 'suave' },
+        { day: 'Sábado', text: 'Día de la carrera — 5K. Entrada en calor de 10 min antes de la largada.', duration: null, effort: null, tag: 'Carrera' },
       ] },
-    lm: { name: 'Lucía Molina', avatar: 'LM', meta: '48 años · 10K · 9 nov', week: 'Semana 1 de 13',
+    lm: { name: 'Lucía Molina', avatar: 'LM', age: 48, meta: '48 años · 10K · 9 nov', week: 'Semana 1 de 13',
       sessions: [
-        { day: 'Lunes', text: 'Caminata 3 min. Trotá 1 min / caminá 2 min, repetí 6 veces (18 min). Caminata 3 min.' },
-        { day: 'Miércoles', text: 'Mismo esquema que el lunes.' },
-        { day: 'Sábado', text: 'Caminata 3 min. Trotá 1 min / caminá 2 min, repetí 7 veces (21 min). Caminata 3 min.' },
+        { day: 'Lunes', text: 'Caminata 3 min. Trotá 1 min / caminá 2 min, repetí 6 veces (18 min). Caminata 3 min.', duration: '24 min', effort: 'suave' },
+        { day: 'Miércoles', text: 'Mismo esquema que el lunes.', duration: '24 min', effort: 'suave' },
+        { day: 'Sábado', text: 'Caminata 3 min. Trotá 1 min / caminá 2 min, repetí 7 veces (21 min). Caminata 3 min.', duration: '27 min', effort: 'suave' },
       ] },
-    th: { name: 'Tomás Herrera', avatar: 'TH', meta: '33 años · Mejorar resistencia', week: 'Bloque 4',
+    th: { name: 'Tomás Herrera', avatar: 'TH', age: 33, meta: '33 años · Mejorar resistencia', week: 'Bloque 4',
       sessions: [
-        { day: 'Lunes', text: 'Trotá 35 min a ritmo cómodo.' },
-        { day: 'Miércoles', text: 'Trotá 30 min a ritmo cómodo.' },
-        { day: 'Sábado (día largo)', text: 'Trotá 50 min a ritmo cómodo.' },
+        { day: 'Lunes', text: 'Trotá 35 min a ritmo cómodo.', duration: '35 min', effort: 'comodo' },
+        { day: 'Miércoles', text: 'Trotá 30 min a ritmo cómodo.', duration: '30 min', effort: 'comodo' },
+        { day: 'Sábado (día largo)', text: 'Trotá 50 min a ritmo cómodo.', duration: '50 min', effort: 'comodo' },
       ] },
   };
+
+  function metaRowHtml(age, session) {
+    if (session.tag) {
+      return `<div class="sess-meta-row"><span class="meta-pill special">${session.tag}</span></div>`;
+    }
+    return `<div class="sess-meta-row">
+      <span class="meta-pill">${clockIcon}${session.duration}</span>
+      <span class="meta-pill fc">${heartIcon}FC objetivo ${fcText(age, session.effort)}</span>
+    </div>`;
+  }
+
+  function effortSelectHtml(session) {
+    if (!session.effort) return '';
+    return `<div class="effort-select">
+      ${['suave', 'comodo', 'activo'].map(t =>
+        `<div class="effort-opt${t === session.effort ? ' selected' : ''}" data-tier="${t}" onclick="pickEffort(this)">${EFFORT_LABELS[t]}</div>`
+      ).join('')}
+    </div>
+    <div class="effort-preview">${heartIcon}<span class="effort-preview-text"></span></div>`;
+  }
 
   function renderSessions(id) {
     const wrap = document.getElementById('drawerSessions');
     wrap.innerHTML = '';
+    const age = athleteData[id].age;
     athleteData[id].sessions.forEach((s, i) => {
       const card = document.createElement('div');
       card.className = 'session-edit-card';
@@ -1732,16 +1838,34 @@
             Editar
           </button>
         </div>
+        ${metaRowHtml(age, s)}
         <p class="sec-text">${s.text}</p>
         <div class="sec-edit-form">
           <textarea>${s.text}</textarea>
+          ${effortSelectHtml(s)}
           <div class="sec-edit-actions">
             <button class="btn-ghost" onclick="cancelEditSession(this)">Cancelar</button>
             <button class="btn-save-session" onclick="saveEditSession(this)">Guardar sesión</button>
           </div>
         </div>`;
       wrap.appendChild(card);
+      updateEffortPreview(card);
     });
+  }
+
+  function updateEffortPreview(card) {
+    const selected = card.querySelector('.effort-opt.selected');
+    const preview = card.querySelector('.effort-preview-text');
+    if (!selected || !preview) return;
+    const id = card.dataset.athlete;
+    const age = athleteData[id].age;
+    preview.textContent = `FC objetivo ${fcText(age, selected.dataset.tier)}`;
+  }
+
+  function pickEffort(el) {
+    const card = el.closest('.session-edit-card');
+    card.querySelectorAll('.effort-opt').forEach(o => o.classList.toggle('selected', o === el));
+    updateEffortPreview(card);
   }
 
   function openAthlete(id) {
@@ -1773,7 +1897,10 @@
     const card = btn.closest('.session-edit-card');
     const id = card.dataset.athlete;
     const idx = card.dataset.index;
-    card.querySelector('textarea').value = athleteData[id].sessions[idx].text;
+    const original = athleteData[id].sessions[idx];
+    card.querySelector('textarea').value = original.text;
+    card.querySelectorAll('.effort-opt').forEach(o => o.classList.toggle('selected', o.dataset.tier === original.effort));
+    updateEffortPreview(card);
     card.classList.remove('editing');
   }
 
@@ -1782,9 +1909,14 @@
     const id = card.dataset.athlete;
     const idx = card.dataset.index;
     const newText = card.querySelector('textarea').value.trim();
+    const selectedTier = card.querySelector('.effort-opt.selected');
     if (newText) {
       athleteData[id].sessions[idx].text = newText;
+      if (selectedTier) athleteData[id].sessions[idx].effort = selectedTier.dataset.tier;
       card.querySelector('.sec-text').textContent = newText;
+      const age = athleteData[id].age;
+      const metaRow = card.querySelector('.sess-meta-row');
+      if (metaRow) metaRow.outerHTML = metaRowHtml(age, athleteData[id].sessions[idx]);
       card.classList.add('saved');
     }
     card.classList.remove('editing');
@@ -1796,4 +1928,9 @@
     setTimeout(() => toast.classList.remove('active'), 2200);
     setTimeout(closeAthlete, 350);
   }
+
+  // Same FC formula applied to the athlete-facing phone screens (Marina, 34 años)
+  document.querySelectorAll('[data-fc]').forEach(el => {
+    el.textContent = fcText(34, el.dataset.fc);
+  });
 </script>
