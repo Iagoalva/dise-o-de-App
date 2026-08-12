@@ -782,6 +782,59 @@
   .today-card .meta-pill.fc { color: var(--accent); background: rgba(255, 107, 74, 0.20); }
   .today-card .meta-pill.special { color: var(--secondary); background: rgba(95, 183, 154, 0.20); }
 
+  /* sesión partida en entrada en calor / bloque principal / vuelta a la calma,
+     en vez de una sola oración — así no hay que desarmar el texto para
+     entender qué hacer primero */
+  .plan-blocks { display: flex; flex-direction: column; gap: 11px; margin: 2px 0 4px; }
+  .plan-block { display: flex; gap: 10px; align-items: flex-start; }
+  .plan-block-icon {
+    flex: none;
+    width: 22px; height: 22px;
+    border-radius: 7px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--surface-2);
+    color: var(--ink-faint);
+    margin-top: 1px;
+  }
+  .plan-block-content { flex: 1; min-width: 0; }
+  .plan-block-label {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin-bottom: 3px;
+  }
+  .plan-block.main .plan-block-icon { background: var(--accent-soft); color: var(--accent-strong); }
+  .plan-block.main .plan-block-label { color: var(--accent-strong); }
+  .plan-repeat {
+    font-size: 10.5px;
+    font-weight: 800;
+    letter-spacing: normal;
+    text-transform: none;
+    color: var(--accent-ink);
+    background: var(--accent);
+    border-radius: 100px;
+    padding: 1px 8px 2px;
+  }
+  .plan-block-body { font-size: 13.5px; line-height: 1.5; color: var(--ink); font-weight: 500; }
+  .plan-block-body .arrow { color: var(--ink-faint); margin: 0 3px; font-weight: 400; }
+  .plan-note { font-size: 12px; color: var(--ink-soft); font-style: italic; margin: 2px 0 4px; }
+
+  /* misma estructura, adaptada a la tarjeta oscura "Hoy" */
+  .today-card .plan-block-icon { background: rgba(255, 255, 255, 0.10); color: rgba(245, 244, 251, 0.65); }
+  .today-card .plan-block-label { color: rgba(245, 244, 251, 0.55); }
+  .today-card .plan-block.main .plan-block-icon { background: rgba(255, 107, 74, 0.22); color: var(--accent); }
+  .today-card .plan-block.main .plan-block-label { color: var(--accent); }
+  .today-card .plan-block-body { color: rgba(245, 244, 251, 0.92); }
+  .today-card .plan-block-body .arrow { color: rgba(245, 244, 251, 0.5); }
+  .today-card .plan-note { color: rgba(245, 244, 251, 0.6); }
+
   /* bottom nav */
   .bottom-nav {
     flex: none;
@@ -1424,7 +1477,29 @@
                 <span class="meta-pill"><svg width="11" height="11" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="1.8"/><path d="M12 7.5V12l3 2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>24 min</span>
                 <span class="meta-pill fc"><svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21s-7.5-4.7-10.2-9.3C.2 8.9 1.4 5.2 4.9 4.2c2.1-.6 4.2.2 5.5 2 .5.7 1 .7 1.5 0 1.3-1.8 3.4-2.6 5.5-2 3.5 1 4.7 4.7 3.1 7.5C19.5 16.3 12 21 12 21z"/></svg>FC objetivo <span data-fc="comodo"></span></span>
               </div>
-              <p class="sess">Caminata 3 min. Trotá 4 min / caminá 2 min, repetí 4 veces (24 min). Caminata 3 min.</p>
+              <div class="plan-blocks">
+                <div class="plan-block warmup">
+                  <div class="plan-block-icon"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2c.8 3.2-2.2 4.4-2.4 7.6a4.4 4.4 0 108.8 0c0-1.8-.9-2.9-1.8-3.8.3 1.7-.7 2.6-1.6 2.6-1.1 0-1.6-1-1.4-2.2.2-1.4-.4-2.8-1.6-4.2z"/></svg></div>
+                  <div class="plan-block-content">
+                    <div class="plan-block-label">Entrada en calor</div>
+                    <div class="plan-block-body">Caminá 3 min</div>
+                  </div>
+                </div>
+                <div class="plan-block main">
+                  <div class="plan-block-icon"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M13 2L4.5 14h5.7l-1.2 8L19 10h-5.7l1.2-8z"/></svg></div>
+                  <div class="plan-block-content">
+                    <div class="plan-block-label">Bloque principal <span class="plan-repeat">&times; 4</span></div>
+                    <div class="plan-block-body">Trotá 4 min <span class="arrow">&rarr;</span> Caminá 2 min</div>
+                  </div>
+                </div>
+                <div class="plan-block cooldown">
+                  <div class="plan-block-icon"><svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M3 12c1.8-3 3.6-3 5.4 0s3.6 3 5.4 0 3.6-3 5.4 0" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div>
+                  <div class="plan-block-content">
+                    <div class="plan-block-label">Vuelta a la calma</div>
+                    <div class="plan-block-body">Caminá 3 min</div>
+                  </div>
+                </div>
+              </div>
 
               <div id="todayInitial" class="today-log-row">
                 <button class="btn-log ok" onclick="markToday('done')">
@@ -1500,7 +1575,29 @@
                 <span class="meta-pill"><svg width="11" height="11" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="1.8"/><path d="M12 7.5V12l3 2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>25 min</span>
                 <span class="meta-pill fc"><svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21s-7.5-4.7-10.2-9.3C.2 8.9 1.4 5.2 4.9 4.2c2.1-.6 4.2.2 5.5 2 .5.7 1 .7 1.5 0 1.3-1.8 3.4-2.6 5.5-2 3.5 1 4.7 4.7 3.1 7.5C19.5 16.3 12 21 12 21z"/></svg>FC objetivo <span data-fc="comodo"></span></span>
               </div>
-              <p>Caminata 3 min. Trotá 3 min / caminá 2 min, repetí 5 veces (25 min). Caminata 3 min.</p>
+              <div class="plan-blocks">
+                <div class="plan-block warmup">
+                  <div class="plan-block-icon"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2c.8 3.2-2.2 4.4-2.4 7.6a4.4 4.4 0 108.8 0c0-1.8-.9-2.9-1.8-3.8.3 1.7-.7 2.6-1.6 2.6-1.1 0-1.6-1-1.4-2.2.2-1.4-.4-2.8-1.6-4.2z"/></svg></div>
+                  <div class="plan-block-content">
+                    <div class="plan-block-label">Entrada en calor</div>
+                    <div class="plan-block-body">Caminá 3 min</div>
+                  </div>
+                </div>
+                <div class="plan-block main">
+                  <div class="plan-block-icon"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M13 2L4.5 14h5.7l-1.2 8L19 10h-5.7l1.2-8z"/></svg></div>
+                  <div class="plan-block-content">
+                    <div class="plan-block-label">Bloque principal <span class="plan-repeat">&times; 5</span></div>
+                    <div class="plan-block-body">Trotá 3 min <span class="arrow">&rarr;</span> Caminá 2 min</div>
+                  </div>
+                </div>
+                <div class="plan-block cooldown">
+                  <div class="plan-block-icon"><svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M3 12c1.8-3 3.6-3 5.4 0s3.6 3 5.4 0 3.6-3 5.4 0" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div>
+                  <div class="plan-block-content">
+                    <div class="plan-block-label">Vuelta a la calma</div>
+                    <div class="plan-block-body">Caminá 3 min</div>
+                  </div>
+                </div>
+              </div>
             </div>
             <div class="session-card">
               <div class="day-name"><span>Miércoles</span></div>
@@ -1508,7 +1605,30 @@
                 <span class="meta-pill"><svg width="11" height="11" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="1.8"/><path d="M12 7.5V12l3 2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>20 min</span>
                 <span class="meta-pill fc"><svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21s-7.5-4.7-10.2-9.3C.2 8.9 1.4 5.2 4.9 4.2c2.1-.6 4.2.2 5.5 2 .5.7 1 .7 1.5 0 1.3-1.8 3.4-2.6 5.5-2 3.5 1 4.7 4.7 3.1 7.5C19.5 16.3 12 21 12 21z"/></svg>FC objetivo <span data-fc="suave"></span></span>
               </div>
-              <p>Caminata 3 min. Trotá 3 min / caminá 2 min, repetí 4 veces (20 min) — día más liviano para recuperar. Caminata 3 min.</p>
+              <div class="plan-blocks">
+                <div class="plan-block warmup">
+                  <div class="plan-block-icon"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2c.8 3.2-2.2 4.4-2.4 7.6a4.4 4.4 0 108.8 0c0-1.8-.9-2.9-1.8-3.8.3 1.7-.7 2.6-1.6 2.6-1.1 0-1.6-1-1.4-2.2.2-1.4-.4-2.8-1.6-4.2z"/></svg></div>
+                  <div class="plan-block-content">
+                    <div class="plan-block-label">Entrada en calor</div>
+                    <div class="plan-block-body">Caminá 3 min</div>
+                  </div>
+                </div>
+                <div class="plan-block main">
+                  <div class="plan-block-icon"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M13 2L4.5 14h5.7l-1.2 8L19 10h-5.7l1.2-8z"/></svg></div>
+                  <div class="plan-block-content">
+                    <div class="plan-block-label">Bloque principal <span class="plan-repeat">&times; 4</span></div>
+                    <div class="plan-block-body">Trotá 3 min <span class="arrow">&rarr;</span> Caminá 2 min</div>
+                  </div>
+                </div>
+                <div class="plan-block cooldown">
+                  <div class="plan-block-icon"><svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M3 12c1.8-3 3.6-3 5.4 0s3.6 3 5.4 0 3.6-3 5.4 0" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div>
+                  <div class="plan-block-content">
+                    <div class="plan-block-label">Vuelta a la calma</div>
+                    <div class="plan-block-body">Caminá 3 min</div>
+                  </div>
+                </div>
+              </div>
+              <div class="plan-note">Día más liviano, para recuperar.</div>
             </div>
             <div class="session-card today" id="semanaSabadoCard">
               <div class="day-name"><span>Sábado</span><span class="today-pill">Hoy</span></div>
@@ -1516,7 +1636,29 @@
                 <span class="meta-pill"><svg width="11" height="11" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="1.8"/><path d="M12 7.5V12l3 2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>24 min</span>
                 <span class="meta-pill fc"><svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21s-7.5-4.7-10.2-9.3C.2 8.9 1.4 5.2 4.9 4.2c2.1-.6 4.2.2 5.5 2 .5.7 1 .7 1.5 0 1.3-1.8 3.4-2.6 5.5-2 3.5 1 4.7 4.7 3.1 7.5C19.5 16.3 12 21 12 21z"/></svg>FC objetivo <span data-fc="comodo"></span></span>
               </div>
-              <p>Caminata 3 min. Trotá 4 min / caminá 2 min, repetí 4 veces (24 min). Caminata 3 min.</p>
+              <div class="plan-blocks">
+                <div class="plan-block warmup">
+                  <div class="plan-block-icon"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2c.8 3.2-2.2 4.4-2.4 7.6a4.4 4.4 0 108.8 0c0-1.8-.9-2.9-1.8-3.8.3 1.7-.7 2.6-1.6 2.6-1.1 0-1.6-1-1.4-2.2.2-1.4-.4-2.8-1.6-4.2z"/></svg></div>
+                  <div class="plan-block-content">
+                    <div class="plan-block-label">Entrada en calor</div>
+                    <div class="plan-block-body">Caminá 3 min</div>
+                  </div>
+                </div>
+                <div class="plan-block main">
+                  <div class="plan-block-icon"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M13 2L4.5 14h5.7l-1.2 8L19 10h-5.7l1.2-8z"/></svg></div>
+                  <div class="plan-block-content">
+                    <div class="plan-block-label">Bloque principal <span class="plan-repeat">&times; 4</span></div>
+                    <div class="plan-block-body">Trotá 4 min <span class="arrow">&rarr;</span> Caminá 2 min</div>
+                  </div>
+                </div>
+                <div class="plan-block cooldown">
+                  <div class="plan-block-icon"><svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M3 12c1.8-3 3.6-3 5.4 0s3.6 3 5.4 0 3.6-3 5.4 0" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div>
+                  <div class="plan-block-content">
+                    <div class="plan-block-label">Vuelta a la calma</div>
+                    <div class="plan-block-body">Caminá 3 min</div>
+                  </div>
+                </div>
+              </div>
               <div class="today-summary" id="semanaSabadoSummary"></div>
             </div>
 
