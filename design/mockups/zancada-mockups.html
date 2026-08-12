@@ -588,6 +588,13 @@
   .week-day.done .dot { background: var(--secondary-soft); color: var(--secondary); }
   .week-day.today .dot { background: var(--accent); color: var(--accent-ink); font-weight: 700; font-size: 11.5px; }
   .week-day.rest .dot { background: transparent; }
+  .week-day.moved .dot {
+    background: transparent;
+    border: 1.5px dashed var(--accent);
+    color: var(--accent);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .week-day.skipped .dot { background: var(--status-crit-soft); color: var(--status-crit); font-weight: 700; }
 
   .today-card {
     /* deliberately theme-invariant, like the splash screen — a dark "spotlight"
@@ -688,6 +695,55 @@
   .today-card .today-summary.good { color: var(--secondary); background: rgba(95, 183, 154, 0.18); }
   .today-card .today-summary.warn { color: #ff9d95; background: rgba(226, 102, 95, 0.20); }
   .today-card .today-summary.muted { color: rgba(245, 244, 251, 0.85); background: rgba(255, 255, 255, 0.10); }
+
+  .today-edit-link {
+    display: none;
+    align-items: center;
+    gap: 5px;
+    font-family: 'Work Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--ink-soft);
+    cursor: pointer;
+    margin: -6px 0 14px;
+    width: fit-content;
+  }
+  .today-edit-link:hover { color: var(--ink); }
+  .today-edit-link.active { display: flex; }
+  .today-card .today-edit-link { color: rgba(245, 244, 251, 0.6); }
+  .today-card .today-edit-link:hover { color: rgba(245, 244, 251, 0.9); }
+
+  /* recuperar la sesión en otro día */
+  .reschedule-block { display: none; margin-top: 12px; position: relative; }
+  .reschedule-block.active { display: block; }
+  .reschedule-q { font-size: 12.5px; font-weight: 700; color: rgba(245, 244, 251, 0.75); margin-bottom: 8px; }
+  .reschedule-days { display: flex; flex-wrap: wrap; gap: 7px; }
+  .reschedule-day {
+    font-family: 'Work Sans', sans-serif;
+    font-size: 12.5px;
+    font-weight: 700;
+    color: rgba(245, 244, 251, 0.9);
+    background: rgba(255, 255, 255, 0.10);
+    border-radius: 100px;
+    padding: 7px 14px;
+    cursor: pointer;
+  }
+  .reschedule-day:hover { background: rgba(255, 255, 255, 0.18); }
+  .reschedule-skip {
+    display: block;
+    font-family: 'Work Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    color: rgba(245, 244, 251, 0.55);
+    margin-top: 10px;
+    cursor: pointer;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+  .reschedule-skip:hover { color: rgba(245, 244, 251, 0.85); }
+
+  .session-card.moved { border-color: var(--accent); border-style: dashed; }
+  .moved-pill { background: var(--accent-soft) !important; color: var(--accent-strong) !important; }
 
   .see-week {
     display: flex;
@@ -1460,13 +1516,13 @@
             </div>
 
             <div class="week-strip">
-              <div class="week-day done"><span class="lbl">L</span><div class="dot"><svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M5 12l5 5L19 7" stroke="#3E7C6B" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>
-              <div class="week-day done"><span class="lbl">M</span><div class="dot"><svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M5 12l5 5L19 7" stroke="#3E7C6B" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>
-              <div class="week-day rest"><span class="lbl">M</span><div class="dot"></div></div>
-              <div class="week-day rest"><span class="lbl">J</span><div class="dot"></div></div>
-              <div class="week-day rest"><span class="lbl">V</span><div class="dot"></div></div>
-              <div class="week-day today" id="weekDaySat"><span class="lbl">S</span><div class="dot">Hoy</div></div>
-              <div class="week-day rest"><span class="lbl">D</span><div class="dot"></div></div>
+              <div class="week-day done" data-day-index="0"><span class="lbl">L</span><div class="dot"><svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M5 12l5 5L19 7" stroke="#3E7C6B" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>
+              <div class="week-day rest" id="weekDayTue" data-day-index="1"><span class="lbl">M</span><div class="dot"></div></div>
+              <div class="week-day done" data-day-index="2"><span class="lbl">M</span><div class="dot"><svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M5 12l5 5L19 7" stroke="#3E7C6B" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>
+              <div class="week-day rest" id="weekDayThu" data-day-index="3"><span class="lbl">J</span><div class="dot"></div></div>
+              <div class="week-day rest" id="weekDayFri" data-day-index="4"><span class="lbl">V</span><div class="dot"></div></div>
+              <div class="week-day today" id="weekDaySat" data-day-index="5"><span class="lbl">S</span><div class="dot">Hoy</div></div>
+              <div class="week-day rest" id="weekDaySun" data-day-index="6"><span class="lbl">D</span><div class="dot"></div></div>
             </div>
 
             <div class="today-card">
@@ -1524,13 +1580,28 @@
               <div id="todayReason" class="today-log-followup">
                 <div class="today-log-q">¿Qué pasó?</div>
                 <div class="today-log-chips">
-                  <div class="log-chip" onclick="finishToday('skip','tiempo')">Sin tiempo</div>
-                  <div class="log-chip" onclick="finishToday('skip','cansancio')">Cansancio</div>
-                  <div class="log-chip warn" onclick="finishToday('skip','dolor')">Molestia física</div>
+                  <div class="log-chip" onclick="pickReason('tiempo')">Sin tiempo</div>
+                  <div class="log-chip" onclick="pickReason('cansancio')">Cansancio</div>
+                  <div class="log-chip warn" onclick="pickReason('dolor')">Molestia física</div>
+                </div>
+
+                <div id="todayReschedule" class="reschedule-block">
+                  <div class="reschedule-q">¿Querés recuperarla otro día esta semana?</div>
+                  <div class="reschedule-days">
+                    <div class="reschedule-day" onclick="finishReschedule('martes')">Martes</div>
+                    <div class="reschedule-day" onclick="finishReschedule('jueves')">Jueves</div>
+                    <div class="reschedule-day" onclick="finishReschedule('viernes')">Viernes</div>
+                    <div class="reschedule-day" onclick="finishReschedule('domingo')">Domingo</div>
+                  </div>
+                  <div class="reschedule-skip" onclick="finishReschedule(null)">Ahora no, seguimos con el plan normal</div>
                 </div>
               </div>
 
               <div id="todaySummary" class="today-summary"></div>
+              <div id="todayEditLink" class="today-edit-link" onclick="editToday()">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none"><path d="M16.5 3.5l4 4L8 20H4v-4L16.5 3.5z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+                ¿Te equivocaste? Corregir
+              </div>
 
               <button class="btn-primary" id="todayStartBtn" onclick="showScreen('semana')">Empezar sesión</button>
             </div>
@@ -1569,7 +1640,8 @@
             </div>
             <p class="screen-sub">Objetivo: sostener 5 minutos de trote seguido.</p>
 
-            <div class="session-card">
+            <div id="semanaCardList">
+            <div class="session-card" data-day-index="0">
               <div class="day-name"><span>Lunes</span></div>
               <div class="sess-meta-row">
                 <span class="meta-pill"><svg width="11" height="11" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="1.8"/><path d="M12 7.5V12l3 2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>25 min</span>
@@ -1599,7 +1671,7 @@
                 </div>
               </div>
             </div>
-            <div class="session-card">
+            <div class="session-card" data-day-index="2">
               <div class="day-name"><span>Miércoles</span></div>
               <div class="sess-meta-row">
                 <span class="meta-pill"><svg width="11" height="11" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="1.8"/><path d="M12 7.5V12l3 2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>20 min</span>
@@ -1630,7 +1702,7 @@
               </div>
               <div class="plan-note">Día más liviano, para recuperar.</div>
             </div>
-            <div class="session-card today" id="semanaSabadoCard">
+            <div class="session-card today" id="semanaSabadoCard" data-day-index="5">
               <div class="day-name"><span>Sábado</span><span class="today-pill">Hoy</span></div>
               <div class="sess-meta-row">
                 <span class="meta-pill"><svg width="11" height="11" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="1.8"/><path d="M12 7.5V12l3 2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>24 min</span>
@@ -1660,6 +1732,11 @@
                 </div>
               </div>
               <div class="today-summary" id="semanaSabadoSummary"></div>
+              <div id="semanaSabadoEditLink" class="today-edit-link" onclick="editToday()">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none"><path d="M16.5 3.5l4 4L8 20H4v-4L16.5 3.5z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+                ¿Te equivocaste? Corregir
+              </div>
+            </div>
             </div>
 
             <div class="card-block">
@@ -2176,9 +2253,17 @@
   // Esto es lo que responde "¿cómo se registra si el cliente completó la
   // sesión?": marca hecha/no hecha + una razón, y con eso alimenta la
   // Tabla del Paso 5 (SKILL.md) que decide cómo dosificar la semana siguiente.
+  // También cubre dos casos que surgieron después: corregir un registro
+  // equivocado, y mover una sesión salteada a otro día de la semana.
   const FEELING_LABEL = { facil: 'más fácil de lo esperado', esperado: 'como esperaba', dificil: 'más difícil de lo esperado' };
   const REASON_LABEL = { tiempo: 'sin tiempo', cansancio: 'cansancio', dolor: 'reportó una molestia física' };
   const CHECK_SVG = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M5 12l5 5L19 7" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  const DAY_INDEX = { lunes: 0, martes: 1, miercoles: 2, jueves: 3, viernes: 4, sabado: 5, domingo: 6 };
+  const DAY_LABEL = { martes: 'Martes', jueves: 'Jueves', viernes: 'Viernes', domingo: 'Domingo' };
+  const WEEKDAY_EL = { martes: 'weekDayTue', jueves: 'weekDayThu', viernes: 'weekDayFri', domingo: 'weekDaySun' };
+
+  let pendingReason = null; // motivo elegido, mientras se decide si se mueve a otro día
+  let todayLog = null;      // { kind, detail, dayKey, attentionBumped } — el último registro aplicado
 
   function markToday(kind) {
     document.getElementById('todayInitial').style.display = 'none';
@@ -2189,15 +2274,30 @@
     }
   }
 
-  function finishToday(kind, detail) {
+  function pickReason(reason) {
+    pendingReason = reason;
+    document.querySelector('#todayReason .today-log-chips').style.display = 'none';
+    document.getElementById('todayReschedule').classList.add('active');
+  }
+
+  function finishReschedule(dayKey) {
+    finishToday('skip', pendingReason, dayKey);
+  }
+
+  function finishToday(kind, detail, dayKey) {
+    if (todayLog) resetMgRow(); // si ya había un registro previo, empezamos de cero antes de aplicar el nuevo
+
     document.getElementById('todayFeeling').style.display = 'none';
     document.getElementById('todayReason').style.display = 'none';
+    document.querySelector('#todayReason .today-log-chips').style.display = 'flex';
+    document.getElementById('todayReschedule').classList.remove('active');
     document.getElementById('todayStartBtn').style.display = 'none';
+    pendingReason = null;
 
-    // resumen dentro de la tarjeta "Hoy" (Home)
     const summary = document.getElementById('todaySummary');
     const weekDay = document.getElementById('weekDaySat');
     const dot = weekDay.querySelector('.dot');
+    weekDay.classList.remove('done');
     let summaryHtml, summaryClass, toastMsg;
 
     if (kind === 'done') {
@@ -2209,9 +2309,11 @@
     } else {
       const isPain = detail === 'dolor';
       summaryHtml = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg> No completada · ' + REASON_LABEL[detail];
+      if (dayKey) summaryHtml += ' · Movida a ' + DAY_LABEL[dayKey];
       summaryClass = isPain ? 'warn' : 'muted';
       dot.textContent = '–';
-      toastMsg = isPain ? 'Registrado — le avisamos a tu coach' : 'Sesión registrada';
+      weekDay.classList.add('skipped');
+      toastMsg = dayKey ? ('Sesión movida a ' + DAY_LABEL[dayKey]) : (isPain ? 'Registrado — le avisamos a tu coach' : 'Sesión registrada');
     }
 
     summary.innerHTML = summaryHtml;
@@ -2222,12 +2324,86 @@
     semanaSummary.innerHTML = summaryHtml;
     semanaSummary.className = 'today-summary ' + summaryClass;
 
-    updateCoachRowFromSession('mg', kind, detail);
+    // mostrar el link para corregir en las dos pantallas
+    document.getElementById('todayEditLink').classList.add('active');
+    document.getElementById('semanaSabadoEditLink').classList.add('active');
+
+    if (dayKey) insertMovedCard(dayKey);
+
+    const attentionBumped = updateCoachRowFromSession('mg', kind, detail);
+    todayLog = { kind, detail, dayKey, attentionBumped };
     showToast(toastMsg);
   }
 
+  function editToday() {
+    // vuelve todo al estado sin registrar, y deshace lo que ese registro haya tocado
+    if (todayLog && todayLog.dayKey) removeMovedCard(todayLog.dayKey);
+    resetMgRow();
+    todayLog = null;
+
+    document.getElementById('todayInitial').style.display = 'flex';
+    document.getElementById('todayFeeling').style.display = 'none';
+    document.getElementById('todayReason').style.display = 'none';
+    document.getElementById('todayReschedule').classList.remove('active');
+    document.getElementById('todayStartBtn').style.display = 'flex';
+    document.getElementById('todayEditLink').classList.remove('active');
+    document.getElementById('semanaSabadoEditLink').classList.remove('active');
+
+    const summary = document.getElementById('todaySummary');
+    summary.innerHTML = '';
+    summary.className = 'today-summary';
+    const semanaSummary = document.getElementById('semanaSabadoSummary');
+    semanaSummary.innerHTML = '';
+    semanaSummary.className = 'today-summary';
+
+    const weekDay = document.getElementById('weekDaySat');
+    weekDay.classList.remove('done', 'skipped');
+    weekDay.querySelector('.dot').textContent = 'Hoy';
+
+    showToast('Listo, podés volver a registrarla');
+  }
+
+  function insertMovedCard(dayKey) {
+    const list = document.getElementById('semanaCardList');
+    const targetIndex = DAY_INDEX[dayKey];
+
+    const card = document.createElement('div');
+    card.className = 'session-card moved';
+    card.id = 'card-' + dayKey;
+    card.innerHTML = `
+      <div class="day-name"><span>${DAY_LABEL[dayKey]}</span><span class="today-pill moved-pill">Recuperación</span></div>
+      <div class="sess-meta-row">
+        <span class="meta-pill">${document.querySelector('#semanaSabadoCard .meta-pill').innerHTML}</span>
+        <span class="meta-pill fc">${document.querySelector('#semanaSabadoCard .meta-pill.fc').innerHTML}</span>
+      </div>
+      ${document.querySelector('#semanaSabadoCard .plan-blocks').outerHTML}
+      <div class="plan-note">Movida desde el sábado — no se completó ese día.</div>
+    `;
+
+    // insertarla en orden dentro de la semana, no siempre al final
+    const existing = Array.from(list.querySelectorAll('.session-card'));
+    const after = existing.find(el => Number(el.dataset.dayIndex) > targetIndex);
+    if (after) list.insertBefore(card, after); else list.appendChild(card);
+    card.dataset.dayIndex = targetIndex;
+
+    // marcar ese día en el calendario semanal de Home como "recuperación pendiente"
+    const dayEl = document.getElementById(WEEKDAY_EL[dayKey]);
+    dayEl.classList.remove('rest');
+    dayEl.classList.add('moved');
+    dayEl.querySelector('.dot').innerHTML = '<svg width="9" height="9" viewBox="0 0 24 24" fill="none"><path d="M12 2v20M2 12h20" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>';
+  }
+
+  function removeMovedCard(dayKey) {
+    const card = document.getElementById('card-' + dayKey);
+    if (card) card.remove();
+    const dayEl = document.getElementById(WEEKDAY_EL[dayKey]);
+    dayEl.classList.remove('moved');
+    dayEl.classList.add('rest');
+    dayEl.querySelector('.dot').innerHTML = '';
+  }
+
   function updateCoachRowFromSession(athleteId, kind, detail) {
-    if (athleteId !== 'mg') return; // demo conectado a Marina, que es la atleta del teléfono
+    if (athleteId !== 'mg') return false; // demo conectado a Marina, que es la atleta del teléfono
     const row = document.getElementById('mgRow');
     const statusCell = document.getElementById('mgStatusCell');
     const lastCell = document.getElementById('mgLastSession');
@@ -2238,7 +2414,7 @@
       const adhPct = document.getElementById('mgAdhPct');
       adhFill.style.width = '96%';
       adhPct.textContent = '96%';
-      if (detail !== 'dificil') return; // sin más cambios si vino bien
+      if (detail !== 'dificil') return false; // sin más cambios si vino bien
     }
 
     if (detail === 'dolor') {
@@ -2246,15 +2422,29 @@
       row.classList.add('critical');
       statusCell.innerHTML = '<span class="pill crit">Atención</span><div class="pill-note">Reportó molestia física hoy</div>';
       bumpAttentionCount(1);
+      return true;
     } else if (kind === 'skip') {
       row.classList.add('attention');
       statusCell.innerHTML = '<span class="pill warn">Atención</span><div class="pill-note">No completó la sesión de hoy (' + REASON_LABEL[detail] + ')</div>';
       bumpAttentionCount(1);
+      return true;
     } else if (detail === 'dificil') {
       statusCell.innerHTML = '<span class="pill warn">Atención</span><div class="pill-note">La sesión le costó más de lo esperado</div>';
       row.classList.add('attention');
       bumpAttentionCount(1);
+      return true;
     }
+    return false;
+  }
+
+  function resetMgRow() {
+    const row = document.getElementById('mgRow');
+    row.classList.remove('attention', 'critical');
+    document.getElementById('mgStatusCell').innerHTML = '<span class="pill good">Al día</span>';
+    document.getElementById('mgLastSession').textContent = 'Miércoles';
+    document.getElementById('mgAdhFill').style.width = '92%';
+    document.getElementById('mgAdhPct').textContent = '92%';
+    if (todayLog && todayLog.attentionBumped) bumpAttentionCount(-1);
   }
 
   function bumpAttentionCount(delta) {
