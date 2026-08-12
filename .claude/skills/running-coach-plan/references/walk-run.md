@@ -21,7 +21,7 @@ No por minutos de trote continuo, sino por lo que realmente importa para este ob
 - **Bloque 1:** afianzar la rutina. Caminata con tramos cortos de trote muy suave (ej. trote 30 seg / caminata 3 min), 20-25 min totales por sesión. El objetivo del bloque es sostener la frecuencia elegida las 4 semanas, no aumentar intensidad.
 - **Bloque 2 en adelante:** si el bloque anterior se sostuvo sin molestias, se puede extender el tiempo total de la sesión (unos 5 min más) o, si el atleta lo pide, estirar un poco los tramos de trote. Si hubo molestias o se saltearon sesiones seguido, repetí el bloque anterior en vez de avanzar.
 
-No hay una progresión numérica fija más allá de esto — el ritmo lo marca cómo responde el atleta, mucho más que en los otros objetivos de esta skill.
+No hay una progresión numérica fija más allá de esto — el ritmo lo marca cómo responde el atleta, mucho más que en los otros objetivos de esta skill. La tabla del Paso 5 del SKILL.md te sirve igual para decidir semana a semana, dentro del bloque, si tocás algo o dejás todo como está — acá, ante la duda, la respuesta casi siempre es "dejalo igual".
 
 ## Frecuencia
 

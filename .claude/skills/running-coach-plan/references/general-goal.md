@@ -39,3 +39,5 @@ Usá los días disponibles que dio el atleta. Si dio más días de los que el ob
 ## Cierre de cada bloque
 
 Al final de cada bloque de 4 semanas, sugerí revisar cómo le fue al atleta antes de armar el siguiente: si el hito costó mucho, repetir el bloque con el mismo nivel de exigencia en vez de avanzar; si lo cumplió con comodidad, avanzar al siguiente bloque de la progresión.
+
+Dentro del bloque, semana a semana, usá la tabla del Paso 5 del SKILL.md (cumplimiento + cómo se sintió) para decidir si esa semana puntual repite nivel o progresa — el cierre de bloque es la decisión grande cada 4 semanas, el Paso 5 es el ajuste fino de cada semana.

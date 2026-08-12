@@ -1,6 +1,6 @@
 ---
 name: running-coach-plan
-description: Genera planes de entrenamiento de running personalizados, semana a semana y sesión por sesión, a partir del perfil de un atleta (objetivo, nivel, días disponibles, edad y salud). Usar cada vez que pidan armar, ajustar o explicar un plan para correr, mencionen un objetivo de carrera (3K, 5K, 10K, 21K) o general (empezar a correr, bajar de peso, mejorar resistencia, sostener X minutos), o describan un atleta que no puede/quiere trotar continuo y solo busca caminar-trotar. Pensada para principiantes de 20-60 años sin conocimientos de running, con explicaciones simples y sin jerga. Disparar ante "armame un plan de running", "qué entreno esta semana", "coach de running" o "cuánto debería correr para [objetivo]".
+description: Genera planes de entrenamiento de running personalizados, semana a semana y sesión por sesión, a partir del perfil de un atleta (objetivo, nivel, días disponibles, edad y salud), y ajusta la semana siguiente según haya cumplido o no las sesiones. Usar cada vez que pidan armar, ajustar o explicar un plan para correr, mencionen un objetivo de carrera (3K, 5K, 10K, 21K) o general (empezar a correr, bajar de peso, mejorar resistencia, sostener X minutos), describan un atleta que no puede/quiere trotar continuo y solo busca caminar-trotar, o cuenten cómo le fue a un atleta con la semana (se salteó sesiones, le costó, reportó dolor) para decidir qué sigue. Pensada para principiantes de 20-60 años sin conocimientos de running, con explicaciones simples y sin jerga. Disparar ante "armame un plan de running", "qué entreno esta semana", "coach de running", "cuánto debería correr para [objetivo]" o "no cumplió la semana, ¿qué le armo ahora?".
 ---
 
 # Coach de running
@@ -67,6 +67,28 @@ Por qué esta semana: vamos sumando minutos de trote de a poco así el cuerpo se
 Notá el patrón: cada sesión dice exactamente qué hacer (no "trote fácil" sin más contexto para quien no sabe qué significa eso), y el "por qué" es opcional y breve — solo cuando ayuda a que la persona entienda que el plan tiene lógica, no para dar una clase de fisiología.
 
 Si el atleta dio menos información de la necesaria para alguna semana puntual (por ejemplo, no sabés si tiene una superficie plana o con subidas cerca), no lo bloquees: aclará el supuesto que estás tomando en una línea y seguí.
+
+## Paso 5: ajustar la semana según cómo le fue al atleta
+
+El plan no se escribe una sola vez y listo. Cuando el atleta (o quien lo acompaña) te cuente cómo vino una semana, usá esa información para decidir la semana siguiente en vez de continuar la progresión como si nada — es la misma regla del 10% del Paso 3, aplicada ahora al eje de "qué tan bien sostuvo lo que ya tenía" en vez de solo "cuánto sumarle".
+
+Para ajustar bien necesitás dos datos por sesión:
+- **Se hizo o no**: completa, parcial, o no se hizo (y si no se hizo, por qué — sin tiempo, cansancio, o una molestia física).
+- **Cómo se sintió** (solo si se hizo): más fácil de lo esperado, como esperaba, o más difícil.
+
+Con eso, decidí la semana siguiente según esta tabla:
+
+| Cómo vino la semana | Qué hacer |
+| --- | --- |
+| Completó todas las sesiones, sin dificultad reportada | Seguí la progresión tal como está planificada |
+| Completó todo, pero reportó "más difícil de lo esperado" en 2 o más sesiones | No subas el volumen esta vez — repetí el nivel de esta semana en la próxima, aunque el plan original indicara sumar |
+| Se salteó una sesión suelta, sin mencionar dolor | Seguí la progresión normal — una sesión salteada aislada no justifica frenar el plan |
+| Completó menos de la mitad de las sesiones de la semana, o viene floja hace 2 semanas seguidas | No avances — repetí la semana (o el bloque, si el plan está armado en bloques) en vez de sumar carga sobre una base que no se terminó de asentar |
+| Cualquier sesión marcada con dolor o molestia física | No avances automáticamente. Decilo con franqueza y sugerí bajar la próxima sesión o consultar a un profesional antes de seguir — esta decisión no es tuya sola, es del atleta (o de su coach) con más contexto del que tenés vos |
+
+Para planes en bloques (`general-goal.md`, `walk-run.md`), esta tabla aplica semana a semana *dentro* del bloque; la revisión de "avanzar al siguiente bloque o repetir este" que ya describe cada referencia sigue siendo la decisión de cierre cada 4 semanas — son dos chequeos a distinta escala, uno no reemplaza al otro.
+
+No inventes que tenés estos datos si no te los dieron: si te piden "armá la semana 5" sin contarte cómo vino la 4, preguntá primero en vez de asumir que fue perfecta.
 
 ## Referencias
 
