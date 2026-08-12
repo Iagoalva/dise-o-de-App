@@ -1,0 +1,13 @@
+{
+  "expectations": [
+    {"text": "El plan NO está enmarcado como una progresión hacia trote continuo, sino como una rutina de caminar-trotar sostenida en el tiempo", "passed": true, "evidence": "'No es un plan para correr una carrera... el trote es solo un condimento opcional'"},
+    {"text": "El plan menciona explícitamente el dolor de rodilla y ajusta las recomendaciones en consecuencia", "passed": true, "evidence": "Sección completa de ejercicios de fuerza para rodillas y señales de alarma específicas"},
+    {"text": "El progreso se mide por consistencia o tiempo activo total, no por minutos de trote continuo alcanzados", "passed": true, "evidence": "Cierra con 'Lo más importante no es la velocidad ni la distancia: es que puedas sostener esto en el tiempo sin dolor', aunque la tabla semanal sigue una progresión de minutos de trote más marcada que la versión con skill"},
+    {"text": "El plan usa 3 días por semana con descanso entre sesiones", "passed": true, "evidence": "'3 días no consecutivos (por ejemplo lunes, miércoles, sábado)'"},
+    {"text": "El plan no empuja aumentos agresivos de intensidad dado el sobrepeso y el dolor crónico", "passed": true, "evidence": "Progresión semana a semana muy gradual (agrupada de a 2 semanas), sin saltos bruscos"}
+  ],
+  "summary": {"passed": 5, "failed": 0, "total": 5, "pass_rate": 1.0},
+  "eval_feedback": {
+    "overall": "Como el usuario dijo explícitamente 'no quiero correr', el modelo base ya capta bien la intención sin necesitar el skill. La diferencia con la versión con skill es más de matiz (el skill evita por completo estructurar la progresión como 'cada vez más trote', el baseline todavía la organiza así aunque cierre con el mensaje correcto) que de resultado observable."
+  }
+}

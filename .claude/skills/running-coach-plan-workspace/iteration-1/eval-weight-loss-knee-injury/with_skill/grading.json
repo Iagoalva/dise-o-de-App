@@ -1,0 +1,10 @@
+{
+  "expectations": [
+    {"text": "El plan está estructurado en bloques (ej. de 4 semanas) sin fecha de carrera fija, no como un plan de carrera con distancia y fecha", "passed": true, "evidence": "'Bloque 1 (semanas 1 a 4)... Al terminar el bloque: fijate cómo te fue... armamos el bloque 2'"},
+    {"text": "El plan menciona explícitamente la lesión de rodilla (precaución, atención a señales de dolor, o similar) en vez de ignorarla", "passed": true, "evidence": "'Por la rodilla, dos cuidados extra...' y sección de señales de alerta menciona 'sobre todo en la rodilla que ya tuviste lesionada'"},
+    {"text": "El plan hace alguna mención a la edad (52) sugiriendo cautela o chequeo médico, sin ser alarmista ni repetitivo", "passed": true, "evidence": "'como tenés 52 años y una lesión vieja en la rodilla, te recomiendo pasar por un control médico... antes de empezar'"},
+    {"text": "El plan prioriza frecuencia y consistencia sostenible por sobre intensidad alta", "passed": true, "evidence": "'lo que más importa es la regularidad... más que la exigencia de cada sesión... no metemos series ni exigencia extra'"},
+    {"text": "El plan usa los 4 días disponibles por semana", "passed": true, "evidence": "'Días sugeridos: lunes, miércoles, viernes y domingo'"}
+  ],
+  "summary": {"passed": 5, "failed": 0, "total": 5, "pass_rate": 1.0}
+}

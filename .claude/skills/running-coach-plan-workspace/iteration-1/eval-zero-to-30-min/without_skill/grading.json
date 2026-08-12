@@ -1,0 +1,13 @@
+{
+  "expectations": [
+    {"text": "El plan arranca con caminar-trotar en vez de trote continuo, dado que nunca hizo actividad física", "passed": true, "evidence": "Semana 1: 'Trotar 1 min / caminar 2 min × 8 veces'"},
+    {"text": "El plan usa 3 días por semana (respeta la preferencia del atleta) y no los 5 días que tiene libres", "passed": true, "evidence": "'Con 3 sesiones por semana... Ejemplo con 5 días libres: Lunes/Miércoles/Viernes o Sábado'"},
+    {"text": "El plan está orientado a un hito concreto: sostener 30 minutos de trote continuo", "passed": true, "evidence": "Semana 9: 'Trotar 30 min continuos (objetivo)'"},
+    {"text": "La progresión es gradual semana a semana, sin saltos bruscos en minutos de trote", "passed": false, "evidence": "El tramo continuo más largo salta de 12 min (semana 7) a 20 min (semana 8) en una sola semana — un salto de ~67%, muy por encima de cualquier regla de progresión gradual, para alguien que nunca hizo actividad física"},
+    {"text": "El lenguaje es simple, sin jerga técnica sin explicar", "passed": true, "evidence": "Sin jerga sin explicar"}
+  ],
+  "summary": {"passed": 4, "failed": 1, "total": 5, "pass_rate": 0.8},
+  "eval_feedback": {
+    "overall": "Este es el hallazgo más importante del benchmark: sin el skill, el modelo comprime en 9 semanas un progreso que el skill reparte en ~24 semanas (6 bloques), y de paso mete un salto de progresión riesgoso en la semana 8. El skill previene esto explícitamente citando la regla de no subir más de ~10% por semana."
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "expectations": [
+    {"text": "El plan está estructurado en bloques (ej. de 4 semanas) sin fecha de carrera fija, no como un plan de carrera con distancia y fecha", "passed": false, "evidence": "Está armado como un arco continuo de 12 semanas dividido en fases de 2 semanas ('Semanas 1-2: Adaptación'...), presentado completo de entrada, sin la estructura de bloques con checkpoint de avanzar/repetir que pide la expectativa. Sí evita fecha de carrera fija, pero no organiza en bloques revisables."},
+    {"text": "El plan menciona explícitamente la lesión de rodilla (precaución, atención a señales de dolor, o similar) en vez de ignorarla", "passed": true, "evidence": "Sección completa 'Señales de alerta en la rodilla' y ejercicios de fuerza dedicados a proteger la rodilla"},
+    {"text": "El plan hace alguna mención a la edad (52) sugiriendo cautela o chequeo médico, sin ser alarmista ni repetitivo", "passed": false, "evidence": "La recomendación de consulta médica está atada solo al antecedente de rodilla ('especialmente por el antecedente de rodilla'); no menciona la edad (52) en ningún punto del documento"},
+    {"text": "El plan prioriza frecuencia y consistencia sostenible por sobre intensidad alta", "passed": true, "evidence": "'la prioridad NO es correr rápido ni mucho volumen... la constancia importa más que la intensidad'"},
+    {"text": "El plan usa los 4 días disponibles por semana", "passed": true, "evidence": "Estructura semanal de 4 días de actividad (2 cardio, 1 fuerza, 1 cross-training)"}
+  ],
+  "summary": {"passed": 3, "failed": 2, "total": 5, "pass_rate": 0.6},
+  "eval_feedback": {
+    "overall": "La asignación 'usa los 4 días disponibles' pasó en ambas configuraciones sin distinguir mucho valor porque es fácil de cumplir con cualquier estructura de 4 días. La de 'bloques de 4 semanas' sí resultó discriminante: mide una decisión de diseño específica del skill (revisar y decidir avanzar/repetir cada 4 semanas) que el modelo base no adopta espontáneamente aunque el resultado final sea igual de seguro."
+  }
+}

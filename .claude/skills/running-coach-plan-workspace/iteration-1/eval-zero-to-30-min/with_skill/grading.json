@@ -1,0 +1,10 @@
+{
+  "expectations": [
+    {"text": "El plan arranca con caminar-trotar en vez de trote continuo, dado que nunca hizo actividad física", "passed": true, "evidence": "Bloque 1: 'Trotá 1 min / caminá 2 min, repetí 6 veces'"},
+    {"text": "El plan usa 3 días por semana (respeta la preferencia del atleta) y no los 5 días que tiene libres", "passed": true, "evidence": "'Entrena 3 días por semana (no hace falta usar los 5 días libres)'"},
+    {"text": "El plan está orientado a un hito concreto: sostener 30 minutos de trote continuo", "passed": true, "evidence": "Título del plan y Bloque 6: 'hito de 30 minutos seguidos — objetivo cumplido'"},
+    {"text": "La progresión es gradual semana a semana, sin saltos bruscos en minutos de trote", "passed": true, "evidence": "Incrementos de trote de 1→2→3... minutos por bloque, y de ~5 min por bloque de 4 semanas en la fase final; ningún salto supera ese ritmo"},
+    {"text": "El lenguaje es simple, sin jerga técnica sin explicar", "passed": true, "evidence": "Sin términos técnicos sin explicar en todo el documento"}
+  ],
+  "summary": {"passed": 5, "failed": 0, "total": 5, "pass_rate": 1.0}
+}
